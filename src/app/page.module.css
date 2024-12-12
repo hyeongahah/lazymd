@@ -150,9 +150,85 @@
 
 .toolbar {
   height: 8vh;
-  background-color: #28a745;
+  background-color: #f8f9fa;
   margin-bottom: 1rem;
   border-radius: 4px;
+  border: 1px solid #eaeaea;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.toolbarContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  width: 100%;
+}
+
+.toolbarScrollButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: 1px solid #eaeaea;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.toolbarScrollButton:hover {
+  background-color: #f1f1f1;
+}
+
+.toolbarScrollLeft {
+  left: 0;
+}
+
+.toolbarScrollRight {
+  right: 0;
+}
+
+/* 스크롤 버튼이 있을 때 내용물 여백 조정 */
+.toolbarContent {
+  margin: 0 24px;
+}
+
+.toolbarButton {
+  padding: 0.5rem;
+  border: 1px solid #eaeaea;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  font-size: 0.9rem;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.toolbarButton:hover {
+  background-color: #f1f1f1;
+}
+
+.toolbarDivider {
+  width: 1px;
+  height: 60%;
+  background-color: #eaeaea;
+  margin: 0 0.5rem;
 }
 
 .editor {
