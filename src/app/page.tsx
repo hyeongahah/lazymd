@@ -76,6 +76,7 @@ export default function Home() {
       }),
     []
   );
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -96,8 +97,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const html = md.render(markdownText);
+    const processedText = markdownText
+      .split('\n')
+      .map((line) => (line.trim() === '' ? '&nbsp;' : line))
+      .join('\n');
+
+    const html = md.render(processedText);
     setHtmlContent(html);
+
+    setTimeout(() => {
+      const textarea = document.querySelector(
+        `.${styles.editor}`
+      ) as HTMLTextAreaElement | null;
+      const preview = document.querySelector(`.${styles.preview}`);
+
+      if (textarea && preview) {
+        textarea.scrollTop = textarea.scrollHeight;
+        preview.scrollTop = preview.scrollHeight;
+      }
+    }, 0);
   }, [markdownText, md]);
 
   const handleSave = useCallback(() => {
@@ -165,12 +183,50 @@ export default function Home() {
         </div>
         <div className={styles.editorContainer}>
           <Toolbar />
-          <textarea
-            className={styles.editor}
-            placeholder='마크다운을 입력하세요...'
-            value={markdownText}
-            onChange={(e) => setMarkdownText(e.target.value)}
-          />
+          <div className={styles.editorWrapper}>
+            <div className={styles.lineNumbers}>
+              {Array.from({ length: markdownText.split('\n').length || 1 }).map(
+                (_, i) => (
+                  <div key={i} className={styles.lineNumber}>
+                    {i + 1}
+                  </div>
+                )
+              )}
+            </div>
+            <textarea
+              className={styles.editor}
+              placeholder='마크다운을 입력하세요...'
+              value={markdownText}
+              onChange={(e) => {
+                setMarkdownText(e.target.value);
+                const textarea = e.target;
+                const preview = document.querySelector(`.${styles.preview}`);
+
+                if (textarea && preview) {
+                  textarea.scrollTop = textarea.scrollHeight;
+                  preview.scrollTop = preview.scrollHeight;
+                }
+              }}
+              onScroll={(e) => {
+                const lineNumbers = document.querySelector(
+                  `.${styles.lineNumbers}`
+                );
+                if (lineNumbers) {
+                  lineNumbers.scrollTop = e.currentTarget.scrollTop;
+                }
+
+                const preview = document.querySelector(`.${styles.preview}`);
+                if (preview) {
+                  const scrollRatio =
+                    e.currentTarget.scrollTop /
+                    (e.currentTarget.scrollHeight -
+                      e.currentTarget.clientHeight);
+                  preview.scrollTop =
+                    scrollRatio * (preview.scrollHeight - preview.clientHeight);
+                }
+              }}
+            />
+          </div>
         </div>
         <div className={styles.previewContainer}>
           <div className={styles.previewToolbar}>마크다운 미리보기</div>

@@ -65,9 +65,7 @@
   color: var(--text-color);
   white-space: pre-wrap;
   word-break: break-all;
-  overflow-y: auto;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  overflow-y: hidden;
 }
 
 .preview {
@@ -290,24 +288,24 @@
 }
 
 .lineNumbers {
-  display: flex;
-  flex-direction: column;
   background-color: var(--menu-background);
   border-right: 1px solid var(--border-color);
-  color: #666;
+  padding: var(--editor-padding) 0;
+  min-width: 3rem;
+  overflow-y: hidden;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.lineNumber {
   font-family: var(--editor-font-family);
   font-size: var(--editor-font-size);
   line-height: var(--editor-line-height);
-  padding: var(--editor-padding) 0;
+  color: #666;
   text-align: right;
-  min-width: 3rem;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.lineNumbers div {
+  padding-right: 1rem;
   height: var(--editor-line-height);
-  padding-right: var(--editor-padding);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -344,6 +342,7 @@
 }
 .preview p {
   margin: 0;
+  min-height: var(--editor-line-height);
 }
 .preview code {
   background-color: var(--menu-background);
