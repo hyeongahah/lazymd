@@ -215,6 +215,7 @@
   overflow-x: hidden;
   scroll-behavior: smooth;
   width: 100%;
+  position: relative;
 }
 
 .toolbarScrollButton {
@@ -255,10 +256,27 @@
   font-size: 0.9rem;
   color: var(--text-color);
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .toolbarButton:hover {
   background-color: #f1f1f1;
+}
+
+.toolbarButton:hover::after {
+  content: attr(title);
+  position: fixed;
+  transform: translate(-50%, 5px);
+  left: var(--tooltip-x);
+  top: var(--tooltip-y);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
 }
 
 .toolbarDivider {

@@ -345,6 +345,26 @@ export default function Home() {
                       ? handleClearFormatting
                       : undefined
                   }
+                  title={
+                    index === 0
+                      ? 'Undo Editor (↶)'
+                      : index === 1
+                      ? 'Redo Editor (↷)'
+                      : index === 2
+                      ? 'Clear Text Formatting'
+                      : `Button ${index + 1}`
+                  }
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    document.documentElement.style.setProperty(
+                      '--tooltip-x',
+                      `${rect.left + rect.width / 2}px`
+                    );
+                    document.documentElement.style.setProperty(
+                      '--tooltip-y',
+                      `${rect.bottom}px`
+                    );
+                  }}
                   style={{
                     width: '40px',
                     height: '30px',
