@@ -11,6 +11,7 @@ import {
   Bold,
   Italic,
   Strikethrough,
+  Underline,
 } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
@@ -166,6 +167,7 @@ export default function Home() {
   const [isCursorBold, setIsCursorBold] = useState(false);
   const [isCursorItalic, setIsCursorItalic] = useState(false);
   const [isCursorStrike, setIsCursorStrike] = useState(false);
+  const [isCursorUnderline, setIsCursorUnderline] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -497,6 +499,57 @@ export default function Home() {
     setMarkdownText(newText);
   }, [markdownText]);
 
+  const handleUnderline = useCallback(() => {
+    const textarea = document.querySelector(
+      `.${styles.editor}`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    if (start === end) {
+      alert('밑줄을 적용할 텍스트를 선택해주세요.');
+      return;
+    }
+
+    const beforeText = markdownText.substring(Math.max(0, start - 3), start);
+    const afterText = markdownText.substring(
+      end,
+      Math.min(markdownText.length, end + 4)
+    );
+    const selectedText = markdownText.substring(start, end);
+
+    const isUnderline = beforeText === '<u>' && afterText === '</u>';
+
+    let newText;
+    if (isUnderline) {
+      // 밑줄 제거
+      newText =
+        markdownText.substring(0, start - 3) +
+        selectedText +
+        markdownText.substring(end + 4);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start - 3, end - 3);
+      }, 0);
+    } else {
+      // 밑줄 적용
+      newText =
+        markdownText.substring(0, start) +
+        `<u>${selectedText}</u>` +
+        markdownText.substring(end);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 3, end + 3);
+      }, 0);
+    }
+
+    setMarkdownText(newText);
+  }, [markdownText]);
+
   const handleCursorChange = useCallback(() => {
     const textarea = document.querySelector(
       `.${styles.editor}`
@@ -564,9 +617,24 @@ export default function Home() {
       }
     }
 
+    // 밑줄 패턴 찾기 (<u>text</u>)
+    const underlineRegex = /<u>([^<]+)<\/u>/g;
+    let underlineMatch;
+    let isUnderline = false;
+
+    while ((underlineMatch = underlineRegex.exec(currentLine)) !== null) {
+      const matchStart = lineStart + underlineMatch.index;
+      const matchEnd = matchStart + underlineMatch[0].length;
+      if (start >= matchStart && start <= matchEnd) {
+        isUnderline = true;
+        break;
+      }
+    }
+
     setIsCursorBold(isBold);
     setIsCursorItalic(isItalic);
     setIsCursorStrike(isStrike);
+    setIsCursorUnderline(isUnderline);
   }, [markdownText]);
 
   useEffect(() => {
@@ -616,7 +684,7 @@ export default function Home() {
 
             <div className={styles.toolbarContent}>
               {Array.from({ length: 20 }).map((_, index) => (
-                <button
+                <div
                   key={index}
                   className={styles.toolbarButton}
                   onClick={
@@ -632,6 +700,8 @@ export default function Home() {
                       ? handleItalic
                       : index === 6
                       ? handleStrike
+                      : index === 7
+                      ? handleUnderline
                       : undefined
                   }
                   style={{
@@ -640,6 +710,24 @@ export default function Home() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    cursor: 'pointer',
+                    backgroundColor:
+                      index === 4 && isCursorBold
+                        ? '#1E90FF'
+                        : index === 5 && isCursorItalic
+                        ? '#1E90FF'
+                        : index === 6 && isCursorStrike
+                        ? '#1E90FF'
+                        : index === 7 && isCursorUnderline
+                        ? '#1E90FF'
+                        : 'var(--background-color)',
+                    color:
+                      (index === 4 && isCursorBold) ||
+                      (index === 5 && isCursorItalic) ||
+                      (index === 6 && isCursorStrike) ||
+                      (index === 7 && isCursorUnderline)
+                        ? 'white'
+                        : 'var(--text-color)',
                   }}
                 >
                   {index === 0 ? (
@@ -649,91 +737,29 @@ export default function Home() {
                   ) : index === 2 ? (
                     <FileX size={18} />
                   ) : index === 3 ? (
-                    <div
-                      className={styles.headingButtonWrapper}
-                      onMouseEnter={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const dropdown = e.currentTarget.querySelector(
-                          `.${styles.headingDropdown}`
-                        );
-                        if (dropdown) {
-                          (dropdown as HTMLElement).style.top = `${
-                            rect.bottom + 5
-                          }px`;
-                          (
-                            dropdown as HTMLElement
-                          ).style.left = `${rect.left}px`;
-                        }
-                      }}
-                    >
+                    <div className={styles.headingButtonWrapper}>
                       <Heading size={18} />
                       <div className={styles.headingDropdown}>
-                        <button className={styles.headingOption}>H1</button>
-                        <button className={styles.headingOption}>H2</button>
-                        <button className={styles.headingOption}>H3</button>
-                        <button className={styles.headingOption}>H4</button>
-                        <button className={styles.headingOption}>H5</button>
-                        <button className={styles.headingOption}>H6</button>
+                        <div className={styles.headingOption}>H1</div>
+                        <div className={styles.headingOption}>H2</div>
+                        <div className={styles.headingOption}>H3</div>
+                        <div className={styles.headingOption}>H4</div>
+                        <div className={styles.headingOption}>H5</div>
+                        <div className={styles.headingOption}>H6</div>
                       </div>
                     </div>
                   ) : index === 4 ? (
-                    <div
-                      className={styles.toolbarButton}
-                      style={{
-                        width: '40px',
-                        height: '30px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: isCursorBold
-                          ? '#1E90FF'
-                          : 'var(--background-color)',
-                        color: isCursorBold ? 'white' : 'var(--text-color)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Bold size={18} />
-                    </div>
+                    <Bold size={18} />
                   ) : index === 5 ? (
-                    <div
-                      className={styles.toolbarButton}
-                      style={{
-                        width: '40px',
-                        height: '30px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: isCursorItalic
-                          ? '#1E90FF'
-                          : 'var(--background-color)',
-                        color: isCursorItalic ? 'white' : 'var(--text-color)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Italic size={18} />
-                    </div>
+                    <Italic size={18} />
                   ) : index === 6 ? (
-                    <div
-                      className={styles.toolbarButton}
-                      style={{
-                        width: '40px',
-                        height: '30px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: isCursorStrike
-                          ? '#1E90FF'
-                          : 'var(--background-color)',
-                        color: isCursorStrike ? 'white' : 'var(--text-color)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Strikethrough size={18} />
-                    </div>
+                    <Strikethrough size={18} />
+                  ) : index === 7 ? (
+                    <Underline size={18} />
                   ) : (
                     index + 1
                   )}
-                </button>
+                </div>
               ))}
             </div>
 
