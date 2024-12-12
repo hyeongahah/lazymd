@@ -2,7 +2,6 @@
 
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import Toolbar from '@/components/Toolbar';
 import MarkdownIt from 'markdown-it';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
@@ -255,7 +254,55 @@ export default function Home() {
           />
         </div>
         <div className={styles.editorContainer}>
-          <Toolbar />
+          <div className={styles.previewToolbar}>
+            <button
+              className={`${styles.toolbarScrollButton} ${styles.toolbarScrollLeft}`}
+              onClick={() => {
+                const content = document.querySelector(
+                  `.${styles.toolbarContent}`
+                );
+                if (content) {
+                  content.scrollLeft -= 200;
+                }
+              }}
+              style={{ backgroundColor: '#90EE90' }}
+            >
+              ≪
+            </button>
+
+            <div className={styles.toolbarContent}>
+              {Array.from({ length: 20 }).map((_, index) => (
+                <button
+                  key={index}
+                  className={styles.toolbarButton}
+                  style={{
+                    width: '40px',
+                    height: '30px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+
+            <button
+              className={`${styles.toolbarScrollButton} ${styles.toolbarScrollRight}`}
+              onClick={() => {
+                const content = document.querySelector(
+                  `.${styles.toolbarContent}`
+                );
+                if (content) {
+                  content.scrollLeft += 200;
+                }
+              }}
+              style={{ backgroundColor: '#90EE90' }}
+            >
+              ≫
+            </button>
+          </div>
           <div className={styles.editorWrapper}>
             <div className={styles.lineNumbers}>
               {Array.from({ length: markdownText.split('\n').length || 1 }).map(

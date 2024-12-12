@@ -210,8 +210,8 @@
 .toolbarContent {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0 1rem;
+  gap: 4px;
+  padding: 0 40px;
   overflow-x: hidden;
   scroll-behavior: smooth;
   width: 100%;
@@ -221,35 +221,24 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--border-color);
+  width: 30px;
+  height: 30px;
   background-color: var(--background-color);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2;
-  color: var(--text-color);
-  transition: all 0.2s ease;
-}
-
-.toolbarScrollButton:hover {
-  background-color: #f1f1f1;
+  z-index: 1;
 }
 
 .toolbarScrollLeft {
-  left: 0;
+  left: 5px;
 }
 
 .toolbarScrollRight {
-  right: 0;
-}
-
-/* 스크롤 버튼이 있을 때 내용물 여백 조정 */
-.toolbarContent {
-  margin: 0 24px;
+  right: 5px;
 }
 
 .toolbarButton {
@@ -320,9 +309,7 @@
   border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--text-color);
-  font-style: italic;
+  position: relative;
 }
 
 /* 마크다운 스타일링 */
