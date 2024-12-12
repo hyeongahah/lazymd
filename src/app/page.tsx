@@ -11,6 +11,7 @@ LazyMD는 복잡한 마크다운 문법을 손쉽게 작성하고, 실시간으�
 
 interface MenuButtonsProps {
   mounted: boolean;
+  markdownText: string;
   onSave: () => void;
   onLoad: () => void;
   onToggleTheme: () => void;
@@ -19,6 +20,7 @@ interface MenuButtonsProps {
 
 const MenuButtons = ({
   mounted,
+  markdownText,
   onSave,
   onLoad,
   onToggleTheme,
@@ -31,11 +33,44 @@ const MenuButtons = ({
     }
   };
 
+  const handleSaveFile = () => {
+    // 사용자에게 파일명 입력받기
+    const filename = window.prompt(
+      '저장할 파일명을 입력하세요 (.md)',
+      'LazyMD.md'
+    );
+
+    // 취소하거나 빈 파일명인 경우 중단
+    if (!filename) return;
+
+    // 파일명에 .md 확장자가 없으면 추가
+    const finalFilename = filename.endsWith('.md')
+      ? filename
+      : `${filename}.md`;
+
+    // 마크다운 텍스트를 Blob으로 변환
+    const blob = new Blob([markdownText], { type: 'text/markdown' });
+
+    // 다운로드 링크 생성
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = finalFilename;
+
+    // 링크 클릭 시뮬레이션
+    document.body.appendChild(link);
+    link.click();
+
+    // cleanup
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div className={styles.menuContent}>
-      <button type='button' onClick={onSave}>
+      <button type='button' onClick={handleSaveFile}>
         <span>💾</span>
-        저장
+        파일로 저장
       </button>
       <button type='button' onClick={onLoad}>
         <span>📂</span>
@@ -43,7 +78,7 @@ const MenuButtons = ({
       </button>
       <button type='button' onClick={onToggleTheme}>
         <span>{isDarkTheme ? '🌞' : '🌙'}</span>
-        테마 경
+        테마 변경
       </button>
       <button type='button' onClick={showIntro}>
         <span>ℹ️</span>
@@ -181,6 +216,7 @@ export default function Home() {
           )}
           <MenuButtons
             mounted={mounted}
+            markdownText={markdownText}
             onSave={handleSave}
             onLoad={handleLoad}
             onToggleTheme={handleToggleTheme}
