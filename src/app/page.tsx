@@ -3,7 +3,7 @@
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MarkdownIt from 'markdown-it';
-import { Undo2, Redo2, FileX } from 'lucide-react';
+import { Undo2, Redo2, FileX, Heading } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -263,31 +263,73 @@ export default function Home() {
 
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-    const selectedText = markdownText.substring(start, end);
 
-    // 마크다운 서식 제거
-    const cleanText = selectedText
-      .replace(/\*\*(.+?)\*\*/g, '$1') // 볼드 제거
-      .replace(/\*(.+?)\*/g, '$1') // 이탤릭 제거
-      .replace(/~~(.+?)~~/g, '$1') // 취소선 제거
-      .replace(/`(.+?)`/g, '$1') // 인라인 코드 제거
-      .replace(/\[(.+?)\]\(.+?\)/g, '$1') // 링크 제거
-      .replace(/#{1,6}\s/g, '') // 헤더 제거
-      .replace(/>\s(.+)/g, '$1') // 인용구 제거
-      .replace(/\n[-*+]\s/g, '\n'); // 리스트 제거
+    // 현재 줄의 전체 텍스트 가져오기
+    const lines = markdownText.split('\n');
+    let currentLine = '';
+    let lineStart = 0;
+    let lineEnd = 0;
 
-    const newText =
-      markdownText.substring(0, start) +
-      cleanText +
-      markdownText.substring(end);
+    // 현재 커서가 위치한 줄 찾기
+    for (let i = 0; i < lines.length; i++) {
+      lineEnd = lineStart + lines[i].length;
+      if (start >= lineStart && start <= lineEnd) {
+        currentLine = lines[i];
+        break;
+      }
+      lineStart = lineEnd + 1;
+    }
 
-    setMarkdownText(newText);
+    // 서식이 적용된 텍스트 찾기
+    let formatStart = lineStart;
+    let formatEnd = lineEnd;
 
-    // 커서 위치 유지
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start, start + cleanText.length);
-    }, 0);
+    // 헤더 검사
+    if (currentLine.match(/^#{1,6}\s/)) {
+      const headerText = currentLine.replace(/^#{1,6}\s+/, '');
+      setMarkdownText(
+        markdownText.substring(0, lineStart) +
+          headerText +
+          markdownText.substring(lineEnd)
+      );
+      return;
+    }
+
+    // 볼드체 검사
+    if (currentLine.includes('**')) {
+      const boldRegex = /\*\*([^*]+)\*\*/g;
+      let match;
+      while ((match = boldRegex.exec(currentLine)) !== null) {
+        const matchStart = lineStart + match.index;
+        const matchEnd = matchStart + match[0].length;
+        if (start >= matchStart && start <= matchEnd) {
+          setMarkdownText(
+            markdownText.substring(0, matchStart) +
+              match[1] +
+              markdownText.substring(matchEnd)
+          );
+          return;
+        }
+      }
+    }
+
+    // 이탤릭체 검사
+    if (currentLine.includes('*')) {
+      const italicRegex = /\*([^*]+)\*/g;
+      let match;
+      while ((match = italicRegex.exec(currentLine)) !== null) {
+        const matchStart = lineStart + match.index;
+        const matchEnd = matchStart + match[0].length;
+        if (start >= matchStart && start <= matchEnd) {
+          setMarkdownText(
+            markdownText.substring(0, matchStart) +
+              match[1] +
+              markdownText.substring(matchEnd)
+          );
+          return;
+        }
+      }
+    }
   }, [markdownText]);
 
   const mainContent = (
@@ -345,26 +387,6 @@ export default function Home() {
                       ? handleClearFormatting
                       : undefined
                   }
-                  title={
-                    index === 0
-                      ? 'Undo Editor (↶)'
-                      : index === 1
-                      ? 'Redo Editor (↷)'
-                      : index === 2
-                      ? 'Clear Text Formatting'
-                      : `Button ${index + 1}`
-                  }
-                  onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    document.documentElement.style.setProperty(
-                      '--tooltip-x',
-                      `${rect.left + rect.width / 2}px`
-                    );
-                    document.documentElement.style.setProperty(
-                      '--tooltip-y',
-                      `${rect.bottom}px`
-                    );
-                  }}
                   style={{
                     width: '40px',
                     height: '30px',
@@ -379,6 +401,34 @@ export default function Home() {
                     <Redo2 size={18} />
                   ) : index === 2 ? (
                     <FileX size={18} />
+                  ) : index === 3 ? (
+                    <div
+                      className={styles.headingButtonWrapper}
+                      onMouseEnter={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const dropdown = e.currentTarget.querySelector(
+                          `.${styles.headingDropdown}`
+                        );
+                        if (dropdown) {
+                          (dropdown as HTMLElement).style.top = `${
+                            rect.bottom + 5
+                          }px`;
+                          (
+                            dropdown as HTMLElement
+                          ).style.left = `${rect.left}px`;
+                        }
+                      }}
+                    >
+                      <Heading size={18} />
+                      <div className={styles.headingDropdown}>
+                        <button className={styles.headingOption}>H1</button>
+                        <button className={styles.headingOption}>H2</button>
+                        <button className={styles.headingOption}>H3</button>
+                        <button className={styles.headingOption}>H4</button>
+                        <button className={styles.headingOption}>H5</button>
+                        <button className={styles.headingOption}>H6</button>
+                      </div>
+                    </div>
                   ) : (
                     index + 1
                   )}

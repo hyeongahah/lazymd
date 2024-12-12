@@ -264,19 +264,7 @@
 }
 
 .toolbarButton:hover::after {
-  content: attr(title);
-  position: fixed;
-  transform: translate(-50%, 5px);
-  left: var(--tooltip-x);
-  top: var(--tooltip-y);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  z-index: 1000;
-  pointer-events: none;
+  display: none;
 }
 
 .toolbarDivider {
@@ -330,7 +318,7 @@
   position: relative;
 }
 
-/* 마크다운 스타일링 */
+/* 마크다운 스 */
 .preview > * {
   /* 모든 직계 자식 요소에 기본 스타일 적용 */
   line-height: var(--editor-line-height);
@@ -380,4 +368,55 @@
 .preview img {
   max-width: 100%;
   height: auto;
+}
+
+.toolbarButton:hover .headingDropdown {
+  display: flex;
+}
+
+.headingOption {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-color);
+  font-size: 0.8rem;
+  padding: 0;
+}
+
+.headingOption:hover {
+  background-color: var(--button-hover);
+}
+
+.headingButtonWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.headingDropdown {
+  position: fixed;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: none;
+  flex-direction: row;
+  gap: 4px;
+  min-width: 200px;
+  transform: translateX(-50%);
+}
+
+.headingButtonWrapper:hover .headingDropdown {
+  display: flex;
 }
