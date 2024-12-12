@@ -3,6 +3,7 @@
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MarkdownIt from 'markdown-it';
+import { Undo2 } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -152,6 +153,8 @@ export default function Home() {
     []
   );
   const [isTyping, setIsTyping] = useState(false);
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
 
   useEffect(() => {
     setMounted(true);
@@ -187,6 +190,15 @@ export default function Home() {
       }
     }, 0);
   }, [markdownText, md]);
+
+  useEffect(() => {
+    if (markdownText !== history[historyIndex]) {
+      const newHistory = history.slice(0, historyIndex + 1);
+      newHistory.push(markdownText);
+      setHistory(newHistory);
+      setHistoryIndex(newHistory.length - 1);
+    }
+  }, [markdownText]);
 
   const handleSave = useCallback(() => {
     if (mounted) {
@@ -228,6 +240,13 @@ export default function Home() {
       localStorage.setItem('theme', newTheme ? 'dark' : 'light');
     }
   }, [mounted, isDarkTheme]);
+
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      setHistoryIndex(historyIndex - 1);
+      setMarkdownText(history[historyIndex - 1]);
+    }
+  }, [historyIndex, history]);
 
   const mainContent = (
     <>
@@ -275,6 +294,7 @@ export default function Home() {
                 <button
                   key={index}
                   className={styles.toolbarButton}
+                  onClick={index === 0 ? handleUndo : undefined}
                   style={{
                     width: '40px',
                     height: '30px',
@@ -283,7 +303,7 @@ export default function Home() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index + 1}
+                  {index === 0 ? <Undo2 size={18} /> : index + 1}
                 </button>
               ))}
             </div>
