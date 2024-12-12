@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './page.module.css';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Toolbar from '@/components/Toolbar';
 import MarkdownIt from 'markdown-it';
 
@@ -16,6 +16,7 @@ interface MenuButtonsProps {
   onLoad: () => void;
   onToggleTheme: () => void;
   isDarkTheme: boolean;
+  setMarkdownText: (text: string) => void;
 }
 
 const MenuButtons = ({
@@ -25,7 +26,29 @@ const MenuButtons = ({
   onLoad,
   onToggleTheme,
   isDarkTheme,
+  setMarkdownText,
 }: MenuButtonsProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleLoadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.md')) {
+      alert('마크다운(.md) 파일만 불러올 수 있습니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setMarkdownText(content);
+    };
+    reader.readAsText(file);
+
+    event.target.value = '';
+  };
+
   const showIntro = () => {
     if (mounted) {
       console.log('LazyMD 소개 버튼 클릭됨');
@@ -68,11 +91,18 @@ const MenuButtons = ({
 
   return (
     <div className={styles.menuContent}>
+      <input
+        type='file'
+        ref={fileInputRef}
+        accept='.md'
+        style={{ display: 'none' }}
+        onChange={handleLoadFile}
+      />
       <button type='button' onClick={handleSaveFile}>
         <span>💾</span>
         파일로 저장
       </button>
-      <button type='button' onClick={onLoad}>
+      <button type='button' onClick={() => fileInputRef.current?.click()}>
         <span>📂</span>
         불러오기
       </button>
@@ -221,6 +251,7 @@ export default function Home() {
             onLoad={handleLoad}
             onToggleTheme={handleToggleTheme}
             isDarkTheme={isDarkTheme}
+            setMarkdownText={setMarkdownText}
           />
         </div>
         <div className={styles.editorContainer}>
