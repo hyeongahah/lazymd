@@ -3,7 +3,15 @@
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MarkdownIt from 'markdown-it';
-import { Undo2, Redo2, FileX, Heading, Bold, Italic } from 'lucide-react';
+import {
+  Undo2,
+  Redo2,
+  FileX,
+  Heading,
+  Bold,
+  Italic,
+  Strikethrough,
+} from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -157,6 +165,7 @@ export default function Home() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isCursorBold, setIsCursorBold] = useState(false);
   const [isCursorItalic, setIsCursorItalic] = useState(false);
+  const [isCursorStrike, setIsCursorStrike] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -439,6 +448,55 @@ export default function Home() {
     setMarkdownText(newText);
   }, [markdownText]);
 
+  const handleStrike = useCallback(() => {
+    const textarea = document.querySelector(
+      `.${styles.editor}`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    if (start === end) {
+      alert('취소선을 적용할 텍스트를 선택해주세요.');
+      return;
+    }
+
+    const beforeText = markdownText.substring(Math.max(0, start - 2), start);
+    const afterText = markdownText.substring(
+      end,
+      Math.min(markdownText.length, end + 2)
+    );
+    const selectedText = markdownText.substring(start, end);
+
+    const isStrike = beforeText === '~~' && afterText === '~~';
+
+    let newText;
+    if (isStrike) {
+      newText =
+        markdownText.substring(0, start - 2) +
+        selectedText +
+        markdownText.substring(end + 2);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start - 2, end - 2);
+      }, 0);
+    } else {
+      newText =
+        markdownText.substring(0, start) +
+        `~~${selectedText}~~` +
+        markdownText.substring(end);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 2, end + 2);
+      }, 0);
+    }
+
+    setMarkdownText(newText);
+  }, [markdownText]);
+
   const handleCursorChange = useCallback(() => {
     const textarea = document.querySelector(
       `.${styles.editor}`
@@ -492,8 +550,23 @@ export default function Home() {
       }
     }
 
+    // 취소선 패턴 찾기 (~~text~~)
+    const strikeRegex = /~~([^~]+)~~/g;
+    let strikeMatch;
+    let isStrike = false;
+
+    while ((strikeMatch = strikeRegex.exec(currentLine)) !== null) {
+      const matchStart = lineStart + strikeMatch.index;
+      const matchEnd = matchStart + strikeMatch[0].length;
+      if (start >= matchStart && start <= matchEnd) {
+        isStrike = true;
+        break;
+      }
+    }
+
     setIsCursorBold(isBold);
     setIsCursorItalic(isItalic);
+    setIsCursorStrike(isStrike);
   }, [markdownText]);
 
   useEffect(() => {
@@ -557,6 +630,8 @@ export default function Home() {
                       ? handleBold
                       : index === 5
                       ? handleItalic
+                      : index === 6
+                      ? handleStrike
                       : undefined
                   }
                   style={{
@@ -636,6 +711,24 @@ export default function Home() {
                       }}
                     >
                       <Italic size={18} />
+                    </div>
+                  ) : index === 6 ? (
+                    <div
+                      className={styles.toolbarButton}
+                      style={{
+                        width: '40px',
+                        height: '30px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isCursorStrike
+                          ? '#1E90FF'
+                          : 'var(--background-color)',
+                        color: isCursorStrike ? 'white' : 'var(--text-color)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Strikethrough size={18} />
                     </div>
                   ) : (
                     index + 1
