@@ -14,6 +14,15 @@ import {
   Underline,
   Pen,
 } from 'lucide-react';
+import { Undo } from '@/components/Util/Undo';
+import { Redo } from '@/components/Util/Redo';
+import { ClearFormatting } from '@/components/Util/ClearFormatting';
+import { HeadingDropdown } from '@/components/Util/HeadingDropdown';
+import { Bold as BoldComponent } from '@/components/Util/Bold';
+import { Italic as ItalicComponent } from '@/components/Util/Italic';
+import { Strike as StrikeComponent } from '@/components/Util/Strike';
+import { Underline as UnderlineComponent } from '@/components/Util/Underline';
+import { Highlight as HighlightComponent } from '@/components/Util/Highlight';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -137,54 +146,102 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-// 툴바 버튼 컴포넌트 분리
+interface ToolbarButtonProps {
+  index: number;
+  isCursorBold: boolean;
+  isCursorItalic: boolean;
+  isCursorStrike: boolean;
+  isCursorUnderline: boolean;
+  isCursorHighlight: boolean;
+  markdownText: string;
+  setMarkdownText: (text: string) => void;
+  history: string[];
+  historyIndex: number;
+  setHistoryIndex: (index: number) => void;
+}
+
 const ToolbarButton = ({
   index,
-  onClick,
   isCursorBold,
   isCursorItalic,
   isCursorStrike,
   isCursorUnderline,
   isCursorHighlight,
-}) => {
+  markdownText,
+  setMarkdownText,
+  history,
+  historyIndex,
+  setHistoryIndex,
+}: ToolbarButtonProps) => {
   const getIcon = () => {
     switch (index) {
       case 0:
-        return <Undo2 size={18} />;
+        return (
+          <Undo
+            historyIndex={historyIndex}
+            history={history}
+            setHistoryIndex={setHistoryIndex}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       case 1:
-        return <Redo2 size={18} />;
+        return (
+          <Redo
+            historyIndex={historyIndex}
+            history={history}
+            setHistoryIndex={setHistoryIndex}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       case 2:
-        return <FileX size={18} />;
+        return (
+          <ClearFormatting
+            markdownText={markdownText}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       case 3:
         return (
-          <div className={styles.headingButtonWrapper}>
-            <div className={styles.headingIcon}>H</div>
-            <div className={styles.headingDropdown}>
-              {[1, 2, 3, 4, 5, 6].map((level) => (
-                <button
-                  key={level}
-                  className={styles.headingOption}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // 헤딩 적용 로직 추가 예정
-                  }}
-                >
-                  H{level}
-                </button>
-              ))}
-            </div>
-          </div>
+          <HeadingDropdown
+            markdownText={markdownText}
+            setMarkdownText={setMarkdownText}
+          />
         );
       case 4:
-        return <Bold size={18} />;
+        return (
+          <BoldComponent
+            markdownText={markdownText}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       case 5:
-        return <Italic size={18} />;
+        return (
+          <ItalicComponent
+            markdownText={markdownText}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       case 6:
-        return <Strikethrough size={18} />;
+        return (
+          <StrikeComponent
+            markdownText={markdownText}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       case 7:
-        return <Underline size={18} />;
+        return (
+          <UnderlineComponent
+            markdownText={markdownText}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       case 8:
-        return <Pen size={18} />;
+        return (
+          <HighlightComponent
+            markdownText={markdownText}
+            setMarkdownText={setMarkdownText}
+          />
+        );
       default:
         return index + 1;
     }
@@ -218,7 +275,6 @@ const ToolbarButton = ({
   return (
     <div
       className={styles.toolbarButton}
-      onClick={onClick}
       style={{
         width: '40px',
         height: '30px',
@@ -364,353 +420,6 @@ export default function Home() {
     }
   }, [mounted, isDarkTheme]);
 
-  const handleUndo = useCallback(() => {
-    if (historyIndex > 0) {
-      setHistoryIndex(historyIndex - 1);
-      setMarkdownText(history[historyIndex - 1]);
-    }
-  }, [historyIndex, history]);
-
-  const handleRedo = useCallback(() => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex(historyIndex + 1);
-      setMarkdownText(history[historyIndex + 1]);
-    }
-  }, [historyIndex, history]);
-
-  const handleClearFormatting = useCallback(() => {
-    const textarea = document.querySelector(
-      `.${styles.editor}`
-    ) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-
-    // 현재 줄의 전체 텍스트 가져오기
-    const lines = markdownText.split('\n');
-    let currentLine = '';
-    let lineStart = 0;
-    let lineEnd = 0;
-
-    // 현재 커서가 위치한 줄 찾기
-    for (let i = 0; i < lines.length; i++) {
-      lineEnd = lineStart + lines[i].length;
-      if (start >= lineStart && start <= lineEnd) {
-        currentLine = lines[i];
-        break;
-      }
-      lineStart = lineEnd + 1;
-    }
-
-    // 서식이 적용된 텍스트 찾기
-    let formatStart = lineStart;
-    let formatEnd = lineEnd;
-
-    // 헤더 검사
-    if (currentLine.match(/^#{1,6}\s/)) {
-      const headerText = currentLine.replace(/^#{1,6}\s+/, '');
-      setMarkdownText(
-        markdownText.substring(0, lineStart) +
-          headerText +
-          markdownText.substring(lineEnd)
-      );
-      return;
-    }
-
-    // 볼드체 검사
-    if (currentLine.includes('**')) {
-      const boldRegex = /\*\*([^*]+)\*\*/g;
-      let match;
-      while ((match = boldRegex.exec(currentLine)) !== null) {
-        const matchStart = lineStart + match.index;
-        const matchEnd = matchStart + match[0].length;
-        if (start >= matchStart && start <= matchEnd) {
-          setMarkdownText(
-            markdownText.substring(0, matchStart) +
-              match[1] +
-              markdownText.substring(matchEnd)
-          );
-          return;
-        }
-      }
-    }
-
-    // 이탤릭체 검사
-    if (currentLine.includes('*')) {
-      const italicRegex = /\*([^*]+)\*/g;
-      let match;
-      while ((match = italicRegex.exec(currentLine)) !== null) {
-        const matchStart = lineStart + match.index;
-        const matchEnd = matchStart + match[0].length;
-        if (start >= matchStart && start <= matchEnd) {
-          setMarkdownText(
-            markdownText.substring(0, matchStart) +
-              match[1] +
-              markdownText.substring(matchEnd)
-          );
-          return;
-        }
-      }
-    }
-  }, [markdownText]);
-
-  const handleBold = useCallback(() => {
-    const textarea = document.querySelector(
-      `.${styles.editor}`
-    ) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-
-    // 텍스트가 선택되었는지 확인
-    if (start === end) {
-      alert('볼드체로 변경할 텍스트를 선택해주세요.');
-      return;
-    }
-
-    // 선택 영역 앞뒤의 문자를 포함하 확인
-    const beforeText = markdownText.substring(Math.max(0, start - 2), start);
-    const afterText = markdownText.substring(
-      end,
-      Math.min(markdownText.length, end + 2)
-    );
-    const selectedText = markdownText.substring(start, end);
-
-    // 현재 선택된 텍스트가 볼드체인지 확인
-    const isBold = beforeText === '**' && afterText === '**';
-
-    let newText;
-    if (isBold) {
-      // 볼드체 제거
-      newText =
-        markdownText.substring(0, start - 2) +
-        selectedText +
-        markdownText.substring(end + 2);
-
-      // 커서 위치 조정 (볼드체 마크다운 제거 고려)
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start - 2, end - 2);
-      }, 0);
-    } else {
-      // 볼드체 적용
-      newText =
-        markdownText.substring(0, start) +
-        `**${selectedText}**` +
-        markdownText.substring(end);
-
-      // 커서 위치 조정 (볼드체 마크다운 추가 고려)
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + 2, end + 2);
-      }, 0);
-    }
-
-    setMarkdownText(newText);
-  }, [markdownText]);
-
-  const handleItalic = useCallback(() => {
-    const textarea = document.querySelector(
-      `.${styles.editor}`
-    ) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-
-    if (start === end) {
-      alert('이탤릭체로 변경할 텍스트를 선택해주세요.');
-      return;
-    }
-
-    const beforeText = markdownText.substring(Math.max(0, start - 1), start);
-    const afterText = markdownText.substring(
-      end,
-      Math.min(markdownText.length, end + 1)
-    );
-    const selectedText = markdownText.substring(start, end);
-
-    const isItalic = beforeText === '*' && afterText === '*';
-
-    let newText;
-    if (isItalic) {
-      newText =
-        markdownText.substring(0, start - 1) +
-        selectedText +
-        markdownText.substring(end + 1);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start - 1, end - 1);
-      }, 0);
-    } else {
-      newText =
-        markdownText.substring(0, start) +
-        `*${selectedText}*` +
-        markdownText.substring(end);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + 1, end + 1);
-      }, 0);
-    }
-
-    setMarkdownText(newText);
-  }, [markdownText]);
-
-  const handleStrike = useCallback(() => {
-    const textarea = document.querySelector(
-      `.${styles.editor}`
-    ) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-
-    if (start === end) {
-      alert('취소선을 적용할 텍스트를 선택해주세요.');
-      return;
-    }
-
-    const beforeText = markdownText.substring(Math.max(0, start - 2), start);
-    const afterText = markdownText.substring(
-      end,
-      Math.min(markdownText.length, end + 2)
-    );
-    const selectedText = markdownText.substring(start, end);
-
-    const isStrike = beforeText === '~~' && afterText === '~~';
-
-    let newText;
-    if (isStrike) {
-      newText =
-        markdownText.substring(0, start - 2) +
-        selectedText +
-        markdownText.substring(end + 2);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start - 2, end - 2);
-      }, 0);
-    } else {
-      newText =
-        markdownText.substring(0, start) +
-        `~~${selectedText}~~` +
-        markdownText.substring(end);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + 2, end + 2);
-      }, 0);
-    }
-
-    setMarkdownText(newText);
-  }, [markdownText]);
-
-  const handleUnderline = useCallback(() => {
-    const textarea = document.querySelector(
-      `.${styles.editor}`
-    ) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-
-    if (start === end) {
-      alert('밑줄을 적용할 텍스트를 선택해주세요.');
-      return;
-    }
-
-    const beforeText = markdownText.substring(Math.max(0, start - 3), start);
-    const afterText = markdownText.substring(
-      end,
-      Math.min(markdownText.length, end + 4)
-    );
-    const selectedText = markdownText.substring(start, end);
-
-    const isUnderline = beforeText === '<u>' && afterText === '</u>';
-
-    let newText;
-    if (isUnderline) {
-      // 밑줄 제거
-      newText =
-        markdownText.substring(0, start - 3) +
-        selectedText +
-        markdownText.substring(end + 4);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start - 3, end - 3);
-      }, 0);
-    } else {
-      // 밑줄 적용
-      newText =
-        markdownText.substring(0, start) +
-        `<u>${selectedText}</u>` +
-        markdownText.substring(end);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + 3, end + 3);
-      }, 0);
-    }
-
-    setMarkdownText(newText);
-  }, [markdownText]);
-
-  const handleHighlight = useCallback(() => {
-    const textarea = document.querySelector(
-      `.${styles.editor}`
-    ) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-
-    if (start === end) {
-      alert('하이라이트를 적용할 텍스트를 선택해주세요.');
-      return;
-    }
-
-    const beforeText = markdownText.substring(Math.max(0, start - 6), start);
-    const afterText = markdownText.substring(
-      end,
-      Math.min(markdownText.length, end + 7)
-    );
-    const selectedText = markdownText.substring(start, end);
-
-    const isHighlight = beforeText === '<mark>' && afterText === '</mark>';
-
-    let newText;
-    if (isHighlight) {
-      // 하이라이트 제거
-      newText =
-        markdownText.substring(0, start - 6) +
-        selectedText +
-        markdownText.substring(end + 7);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start - 6, end - 6);
-      }, 0);
-    } else {
-      // 하이라이트 적용
-      newText =
-        markdownText.substring(0, start) +
-        `<mark>${selectedText}</mark>` +
-        markdownText.substring(end);
-
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + 6, end + 6);
-      }, 0);
-    }
-
-    setMarkdownText(newText);
-  }, [markdownText]);
-
   const handleCursorChange = useCallback(() => {
     const textarea = document.querySelector(
       `.${styles.editor}`
@@ -752,7 +461,7 @@ export default function Home() {
       });
     };
 
-    // 각 스타일의 상태를 독립적으로 업데이트
+    // 각 스타일의 태를 독립적으로 업데이트
     setIsCursorBold(isInRange(boldMatches));
     setIsCursorItalic(isInRange(italicMatches));
     setIsCursorStrike(isInRange(strikeMatches));
@@ -810,30 +519,16 @@ export default function Home() {
                 <ToolbarButton
                   key={index}
                   index={index}
-                  onClick={
-                    index === 0
-                      ? handleUndo
-                      : index === 1
-                      ? handleRedo
-                      : index === 2
-                      ? handleClearFormatting
-                      : index === 4
-                      ? handleBold
-                      : index === 5
-                      ? handleItalic
-                      : index === 6
-                      ? handleStrike
-                      : index === 7
-                      ? handleUnderline
-                      : index === 8
-                      ? handleHighlight
-                      : undefined
-                  }
                   isCursorBold={isCursorBold}
                   isCursorItalic={isCursorItalic}
                   isCursorStrike={isCursorStrike}
                   isCursorUnderline={isCursorUnderline}
                   isCursorHighlight={isCursorHighlight}
+                  markdownText={markdownText}
+                  setMarkdownText={setMarkdownText}
+                  history={history}
+                  historyIndex={historyIndex}
+                  setHistoryIndex={setHistoryIndex}
                 />
               ))}
             </div>
