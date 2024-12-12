@@ -3,7 +3,7 @@
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MarkdownIt from 'markdown-it';
-import { Undo2, Redo2, FileX, Heading } from 'lucide-react';
+import { Undo2, Redo2, FileX, Heading, Bold } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -155,6 +155,7 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isCursorBold, setIsCursorBold] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -332,6 +333,110 @@ export default function Home() {
     }
   }, [markdownText]);
 
+  const handleBold = useCallback(() => {
+    const textarea = document.querySelector(
+      `.${styles.editor}`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    // 텍스트가 선택되었는지 확인
+    if (start === end) {
+      alert('볼드체로 변경할 텍스트를 선택해주세요.');
+      return;
+    }
+
+    // 선택 영역 앞뒤의 문자를 포함하여 확인
+    const beforeText = markdownText.substring(Math.max(0, start - 2), start);
+    const afterText = markdownText.substring(
+      end,
+      Math.min(markdownText.length, end + 2)
+    );
+    const selectedText = markdownText.substring(start, end);
+
+    // 현재 선택된 텍스트가 볼드체인지 확인
+    const isBold = beforeText === '**' && afterText === '**';
+
+    let newText;
+    if (isBold) {
+      // 볼드체 제거
+      newText =
+        markdownText.substring(0, start - 2) +
+        selectedText +
+        markdownText.substring(end + 2);
+
+      // 커서 위치 조정 (볼드체 마크다운 제거 고려)
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start - 2, end - 2);
+      }, 0);
+    } else {
+      // 볼드체 적용
+      newText =
+        markdownText.substring(0, start) +
+        `**${selectedText}**` +
+        markdownText.substring(end);
+
+      // 커서 위치 조정 (볼드체 마크다운 추가 고려)
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 2, end + 2);
+      }, 0);
+    }
+
+    setMarkdownText(newText);
+  }, [markdownText]);
+
+  const handleCursorChange = useCallback(() => {
+    const textarea = document.querySelector(
+      `.${styles.editor}`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    // 현재 줄의 전��� 텍스트 가져오기
+    const lines = markdownText.split('\n');
+    let currentLine = '';
+    let lineStart = 0;
+    let lineEnd = 0;
+
+    // 현재 커서가 위치한 줄 찾기
+    for (let i = 0; i < lines.length; i++) {
+      lineEnd = lineStart + lines[i].length;
+      if (start >= lineStart && start <= lineEnd) {
+        currentLine = lines[i];
+        break;
+      }
+      lineStart = lineEnd + 1;
+    }
+
+    // 볼드체 패턴 찾기
+    const boldRegex = /\*\*([^*]+)\*\*/g;
+    let match;
+    let isBold = false;
+
+    while ((match = boldRegex.exec(currentLine)) !== null) {
+      const matchStart = lineStart + match.index;
+      const matchEnd = matchStart + match[0].length;
+
+      // 커서가 볼드체 영역 안에 있는지 확인
+      if (start >= matchStart && start <= matchEnd) {
+        isBold = true;
+        break;
+      }
+    }
+
+    setIsCursorBold(isBold);
+  }, [markdownText]);
+
+  useEffect(() => {
+    handleCursorChange();
+  }, [handleCursorChange, markdownText]);
+
   const mainContent = (
     <>
       <main className={styles.main}>
@@ -385,6 +490,8 @@ export default function Home() {
                       ? handleRedo
                       : index === 2
                       ? handleClearFormatting
+                      : index === 4
+                      ? handleBold
                       : undefined
                   }
                   style={{
@@ -429,6 +536,23 @@ export default function Home() {
                         <button className={styles.headingOption}>H6</button>
                       </div>
                     </div>
+                  ) : index === 4 ? (
+                    <button
+                      className={styles.toolbarButton}
+                      style={{
+                        width: '40px',
+                        height: '30px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isCursorBold
+                          ? '#1E90FF'
+                          : 'var(--background-color)',
+                        color: isCursorBold ? 'white' : 'var(--text-color)',
+                      }}
+                    >
+                      <Bold size={18} />
+                    </button>
                   ) : (
                     index + 1
                   )}
@@ -475,6 +599,7 @@ export default function Home() {
                   preview.scrollTop = preview.scrollHeight;
                 }
               }}
+              onSelect={handleCursorChange}
               onScroll={(e) => {
                 const lineNumbers = document.querySelector(
                   `.${styles.lineNumbers}`
