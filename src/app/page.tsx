@@ -3,7 +3,7 @@
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MarkdownIt from 'markdown-it';
-import { Undo2, Redo2 } from 'lucide-react';
+import { Undo2, Redo2, FileX } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -255,6 +255,41 @@ export default function Home() {
     }
   }, [historyIndex, history]);
 
+  const handleClearFormatting = useCallback(() => {
+    const textarea = document.querySelector(
+      `.${styles.editor}`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = markdownText.substring(start, end);
+
+    // 마크다운 서식 제거
+    const cleanText = selectedText
+      .replace(/\*\*(.+?)\*\*/g, '$1') // 볼드 제거
+      .replace(/\*(.+?)\*/g, '$1') // 이탤릭 제거
+      .replace(/~~(.+?)~~/g, '$1') // 취소선 제거
+      .replace(/`(.+?)`/g, '$1') // 인라인 코드 제거
+      .replace(/\[(.+?)\]\(.+?\)/g, '$1') // 링크 제거
+      .replace(/#{1,6}\s/g, '') // 헤더 제거
+      .replace(/>\s(.+)/g, '$1') // 인용구 제거
+      .replace(/\n[-*+]\s/g, '\n'); // 리스트 제거
+
+    const newText =
+      markdownText.substring(0, start) +
+      cleanText +
+      markdownText.substring(end);
+
+    setMarkdownText(newText);
+
+    // 커서 위치 유지
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start, start + cleanText.length);
+    }, 0);
+  }, [markdownText]);
+
   const mainContent = (
     <>
       <main className={styles.main}>
@@ -306,6 +341,8 @@ export default function Home() {
                       ? handleUndo
                       : index === 1
                       ? handleRedo
+                      : index === 2
+                      ? handleClearFormatting
                       : undefined
                   }
                   style={{
@@ -320,6 +357,8 @@ export default function Home() {
                     <Undo2 size={18} />
                   ) : index === 1 ? (
                     <Redo2 size={18} />
+                  ) : index === 2 ? (
+                    <FileX size={18} />
                   ) : (
                     index + 1
                   )}
