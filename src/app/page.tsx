@@ -12,6 +12,7 @@ import {
   Italic,
   Strikethrough,
   Underline,
+  Pen,
 } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
@@ -168,6 +169,7 @@ export default function Home() {
   const [isCursorItalic, setIsCursorItalic] = useState(false);
   const [isCursorStrike, setIsCursorStrike] = useState(false);
   const [isCursorUnderline, setIsCursorUnderline] = useState(false);
+  const [isCursorHighlight, setIsCursorHighlight] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -550,6 +552,57 @@ export default function Home() {
     setMarkdownText(newText);
   }, [markdownText]);
 
+  const handleHighlight = useCallback(() => {
+    const textarea = document.querySelector(
+      `.${styles.editor}`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    if (start === end) {
+      alert('하이라이트를 적용할 텍스트를 선택해주세요.');
+      return;
+    }
+
+    const beforeText = markdownText.substring(Math.max(0, start - 6), start);
+    const afterText = markdownText.substring(
+      end,
+      Math.min(markdownText.length, end + 7)
+    );
+    const selectedText = markdownText.substring(start, end);
+
+    const isHighlight = beforeText === '<mark>' && afterText === '</mark>';
+
+    let newText;
+    if (isHighlight) {
+      // 하이라이트 제거
+      newText =
+        markdownText.substring(0, start - 6) +
+        selectedText +
+        markdownText.substring(end + 7);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start - 6, end - 6);
+      }, 0);
+    } else {
+      // 하이라이트 적용
+      newText =
+        markdownText.substring(0, start) +
+        `<mark>${selectedText}</mark>` +
+        markdownText.substring(end);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 6, end + 6);
+      }, 0);
+    }
+
+    setMarkdownText(newText);
+  }, [markdownText]);
+
   const handleCursorChange = useCallback(() => {
     const textarea = document.querySelector(
       `.${styles.editor}`
@@ -631,10 +684,25 @@ export default function Home() {
       }
     }
 
+    // 하이라이트 패턴 찾기 (<mark>text</mark>)
+    const highlightRegex = /<mark>([^<]+)<\/mark>/g;
+    let highlightMatch;
+    let isHighlight = false;
+
+    while ((highlightMatch = highlightRegex.exec(currentLine)) !== null) {
+      const matchStart = lineStart + highlightMatch.index;
+      const matchEnd = matchStart + highlightMatch[0].length;
+      if (start >= matchStart && start <= matchEnd) {
+        isHighlight = true;
+        break;
+      }
+    }
+
     setIsCursorBold(isBold);
     setIsCursorItalic(isItalic);
     setIsCursorStrike(isStrike);
     setIsCursorUnderline(isUnderline);
+    setIsCursorHighlight(isHighlight);
   }, [markdownText]);
 
   useEffect(() => {
@@ -702,6 +770,8 @@ export default function Home() {
                       ? handleStrike
                       : index === 7
                       ? handleUnderline
+                      : index === 8
+                      ? handleHighlight
                       : undefined
                   }
                   style={{
@@ -720,12 +790,15 @@ export default function Home() {
                         ? '#1E90FF'
                         : index === 7 && isCursorUnderline
                         ? '#1E90FF'
+                        : index === 8 && isCursorHighlight
+                        ? '#1E90FF'
                         : 'var(--background-color)',
                     color:
                       (index === 4 && isCursorBold) ||
                       (index === 5 && isCursorItalic) ||
                       (index === 6 && isCursorStrike) ||
-                      (index === 7 && isCursorUnderline)
+                      (index === 7 && isCursorUnderline) ||
+                      (index === 8 && isCursorHighlight)
                         ? 'white'
                         : 'var(--text-color)',
                   }}
@@ -756,6 +829,26 @@ export default function Home() {
                     <Strikethrough size={18} />
                   ) : index === 7 ? (
                     <Underline size={18} />
+                  ) : index === 8 ? (
+                    <div
+                      className={styles.toolbarButton}
+                      style={{
+                        width: '40px',
+                        height: '30px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isCursorHighlight
+                          ? '#1E90FF'
+                          : 'var(--background-color)',
+                        color: isCursorHighlight
+                          ? 'white'
+                          : 'var(--text-color)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Pen size={18} />
+                    </div>
                   ) : (
                     index + 1
                   )}
