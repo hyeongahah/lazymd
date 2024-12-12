@@ -212,10 +212,10 @@
   align-items: center;
   gap: 4px;
   padding: 0 40px;
-  overflow-x: hidden;
   scroll-behavior: smooth;
   width: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 .toolbarScrollButton {
@@ -231,7 +231,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  z-index: 2;
 }
 
 .toolbarScrollLeft {
@@ -260,7 +260,10 @@
 }
 
 .toolbarButton:hover {
-  background-color: #f1f1f1;
+  background-color: var(--button-hover);
+  color: #000;
+  border-color: #1e90ff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .toolbarButton:hover::after {
@@ -370,8 +373,65 @@
   height: auto;
 }
 
-.toolbarButton:hover .headingDropdown {
+.headingButtonWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 30px;
+}
+
+.headingIcon {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.headingDropdown {
+  position: fixed;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px;
+  display: none;
+  z-index: 9999;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  margin-top: 2px;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.headingButtonWrapper::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -80%;
+  width: 200%;
+  height: 10px;
+  background: transparent;
+}
+
+.headingDropdown::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+}
+
+.headingButtonWrapper:hover .headingDropdown {
   display: flex;
+  flex-direction: row;
+  gap: 4px;
+  opacity: 1;
+  pointer-events: auto;
+  left: calc(50% - 240px);
 }
 
 .headingOption {
@@ -387,36 +447,12 @@
   color: var(--text-color);
   font-size: 0.8rem;
   padding: 0;
+  flex: 1;
 }
 
 .headingOption:hover {
   background-color: var(--button-hover);
-}
-
-.headingButtonWrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.headingDropdown {
-  position: fixed;
-  background-color: var(--background-color);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  padding: 4px;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  display: none;
-  flex-direction: row;
-  gap: 4px;
-  min-width: 200px;
-  transform: translateX(-50%);
-}
-
-.headingButtonWrapper:hover .headingDropdown {
-  display: flex;
+  color: #000;
+  border-color: #1e90ff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

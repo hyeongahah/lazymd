@@ -137,6 +137,114 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
+// 툴바 버튼 컴포넌트 분리
+const ToolbarButton = ({
+  index,
+  onClick,
+  isCursorBold,
+  isCursorItalic,
+  isCursorStrike,
+  isCursorUnderline,
+  isCursorHighlight,
+}) => {
+  const getIcon = () => {
+    switch (index) {
+      case 0:
+        return <Undo2 size={18} />;
+      case 1:
+        return <Redo2 size={18} />;
+      case 2:
+        return <FileX size={18} />;
+      case 3:
+        return (
+          <div className={styles.headingButtonWrapper}>
+            <div className={styles.headingIcon}>H</div>
+            <div className={styles.headingDropdown}>
+              {[1, 2, 3, 4, 5, 6].map((level) => (
+                <button
+                  key={level}
+                  className={styles.headingOption}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // 헤딩 적용 로직 추가 예정
+                  }}
+                >
+                  H{level}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      case 4:
+        return <Bold size={18} />;
+      case 5:
+        return <Italic size={18} />;
+      case 6:
+        return <Strikethrough size={18} />;
+      case 7:
+        return <Underline size={18} />;
+      case 8:
+        return <Pen size={18} />;
+      default:
+        return index + 1;
+    }
+  };
+
+  const getBackgroundColor = () => {
+    if (
+      (index === 4 && isCursorBold) ||
+      (index === 5 && isCursorItalic) ||
+      (index === 6 && isCursorStrike) ||
+      (index === 7 && isCursorUnderline) ||
+      (index === 8 && isCursorHighlight)
+    ) {
+      return '#1E90FF';
+    }
+    return 'var(--background-color)';
+  };
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    const button = e.currentTarget;
+    const dropdown = button.querySelector(`.${styles.headingDropdown}`);
+    if (dropdown) {
+      const rect = button.getBoundingClientRect();
+      const dropdownElement = dropdown as HTMLElement;
+      dropdownElement.style.top = `${rect.bottom + 5}px`; // 버튼 아래 5px 간격
+      dropdownElement.style.left = `${rect.left}px`;
+      dropdownElement.style.display = 'flex';
+    }
+  };
+
+  return (
+    <div
+      className={styles.toolbarButton}
+      onClick={onClick}
+      style={{
+        width: '40px',
+        height: '30px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        backgroundColor: getBackgroundColor(),
+        color:
+          getBackgroundColor() === '#1E90FF' ? 'white' : 'var(--text-color)',
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={(e) => {
+        const dropdown = e.currentTarget.querySelector(
+          `.${styles.headingDropdown}`
+        );
+        if (dropdown) {
+          (dropdown as HTMLElement).style.display = 'none';
+        }
+      }}
+    >
+      {getIcon()}
+    </div>
+  );
+};
+
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -362,7 +470,7 @@ export default function Home() {
       return;
     }
 
-    // 선택 영역 앞뒤의 문자를 포함하여 확인
+    // 선택 영역 앞뒤의 문자를 포함하 확인
     const beforeText = markdownText.substring(Math.max(0, start - 2), start);
     const afterText = markdownText.substring(
       end,
@@ -609,100 +717,47 @@ export default function Home() {
     ) as HTMLTextAreaElement;
     if (!textarea) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
+    const cursorPosition = textarea.selectionStart;
 
-    // 현재 줄의 전체 텍스트 가져오기
-    const lines = markdownText.split('\n');
-    let currentLine = '';
-    let lineStart = 0;
-    let lineEnd = 0;
-
-    // 현재 커서가 위치한 줄 찾기
-    for (let i = 0; i < lines.length; i++) {
-      lineEnd = lineStart + lines[i].length;
-      if (start >= lineStart && start <= lineEnd) {
-        currentLine = lines[i];
-        break;
+    // 각 패턴에 대한 시작과 끝 위치를 모두 찾기
+    const findAllMatches = (regex: RegExp, text: string) => {
+      const matches = [];
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        matches.push({
+          start: match.index,
+          end: match.index + match[0].length,
+        });
       }
-      lineStart = lineEnd + 1;
-    }
+      return matches;
+    };
 
-    // 볼드체 패턴 찾기 (**text**)
-    const boldRegex = /\*\*([^*]+)\*\*/g;
-    let match;
-    let isBold = false;
+    // 전체 텍스트에서 패턴 찾기 (줄 단위가 아닌 전체 텍스트에서 검색)
+    const boldMatches = findAllMatches(/\*\*([^*]+)\*\*/g, markdownText);
+    const italicMatches = findAllMatches(
+      /(?:\*\*)?\*([^*]+)\*(?!\*)|(?<=\*\*)\*([^*]+)\*(?=\*\*)/g,
+      markdownText
+    );
+    const strikeMatches = findAllMatches(/~~([^~]+)~~/g, markdownText);
+    const underlineMatches = findAllMatches(/<u>([^<]+)<\/u>/g, markdownText);
+    const highlightMatches = findAllMatches(
+      /<mark>([^<]+)<\/mark>/g,
+      markdownText
+    );
 
-    while ((match = boldRegex.exec(currentLine)) !== null) {
-      const matchStart = lineStart + match.index;
-      const matchEnd = matchStart + match[0].length;
-      if (start >= matchStart && start <= matchEnd) {
-        isBold = true;
-        break;
-      }
-    }
+    // 커서 위치가 각 패턴 범위 안에 있는지 확인
+    const isInRange = (matches: Array<{ start: number; end: number }>) => {
+      return matches.some(({ start, end }) => {
+        return cursorPosition >= start && cursorPosition <= end;
+      });
+    };
 
-    // 이탤릭체 패턴 찾기 (*text*, 볼드체와 겹치지 않도록)
-    const italicRegex = /(?<!\*)\*([^*]+)\*(?!\*)/g;
-    let italicMatch;
-    let isItalic = false;
-
-    while ((italicMatch = italicRegex.exec(currentLine)) !== null) {
-      const matchStart = lineStart + italicMatch.index;
-      const matchEnd = matchStart + italicMatch[0].length;
-      if (start >= matchStart && start <= matchEnd) {
-        isItalic = true;
-        break;
-      }
-    }
-
-    // 취소선 패턴 찾기 (~~text~~)
-    const strikeRegex = /~~([^~]+)~~/g;
-    let strikeMatch;
-    let isStrike = false;
-
-    while ((strikeMatch = strikeRegex.exec(currentLine)) !== null) {
-      const matchStart = lineStart + strikeMatch.index;
-      const matchEnd = matchStart + strikeMatch[0].length;
-      if (start >= matchStart && start <= matchEnd) {
-        isStrike = true;
-        break;
-      }
-    }
-
-    // 밑줄 패턴 찾기 (<u>text</u>)
-    const underlineRegex = /<u>([^<]+)<\/u>/g;
-    let underlineMatch;
-    let isUnderline = false;
-
-    while ((underlineMatch = underlineRegex.exec(currentLine)) !== null) {
-      const matchStart = lineStart + underlineMatch.index;
-      const matchEnd = matchStart + underlineMatch[0].length;
-      if (start >= matchStart && start <= matchEnd) {
-        isUnderline = true;
-        break;
-      }
-    }
-
-    // 하이라이트 패턴 찾기 (<mark>text</mark>)
-    const highlightRegex = /<mark>([^<]+)<\/mark>/g;
-    let highlightMatch;
-    let isHighlight = false;
-
-    while ((highlightMatch = highlightRegex.exec(currentLine)) !== null) {
-      const matchStart = lineStart + highlightMatch.index;
-      const matchEnd = matchStart + highlightMatch[0].length;
-      if (start >= matchStart && start <= matchEnd) {
-        isHighlight = true;
-        break;
-      }
-    }
-
-    setIsCursorBold(isBold);
-    setIsCursorItalic(isItalic);
-    setIsCursorStrike(isStrike);
-    setIsCursorUnderline(isUnderline);
-    setIsCursorHighlight(isHighlight);
+    // 각 스타일의 상태를 독립적으로 업데이트
+    setIsCursorBold(isInRange(boldMatches));
+    setIsCursorItalic(isInRange(italicMatches));
+    setIsCursorStrike(isInRange(strikeMatches));
+    setIsCursorUnderline(isInRange(underlineMatches));
+    setIsCursorHighlight(isInRange(highlightMatches));
   }, [markdownText]);
 
   useEffect(() => {
@@ -752,9 +807,9 @@ export default function Home() {
 
             <div className={styles.toolbarContent}>
               {Array.from({ length: 20 }).map((_, index) => (
-                <div
+                <ToolbarButton
                   key={index}
-                  className={styles.toolbarButton}
+                  index={index}
                   onClick={
                     index === 0
                       ? handleUndo
@@ -774,85 +829,12 @@ export default function Home() {
                       ? handleHighlight
                       : undefined
                   }
-                  style={{
-                    width: '40px',
-                    height: '30px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    backgroundColor:
-                      index === 4 && isCursorBold
-                        ? '#1E90FF'
-                        : index === 5 && isCursorItalic
-                        ? '#1E90FF'
-                        : index === 6 && isCursorStrike
-                        ? '#1E90FF'
-                        : index === 7 && isCursorUnderline
-                        ? '#1E90FF'
-                        : index === 8 && isCursorHighlight
-                        ? '#1E90FF'
-                        : 'var(--background-color)',
-                    color:
-                      (index === 4 && isCursorBold) ||
-                      (index === 5 && isCursorItalic) ||
-                      (index === 6 && isCursorStrike) ||
-                      (index === 7 && isCursorUnderline) ||
-                      (index === 8 && isCursorHighlight)
-                        ? 'white'
-                        : 'var(--text-color)',
-                  }}
-                >
-                  {index === 0 ? (
-                    <Undo2 size={18} />
-                  ) : index === 1 ? (
-                    <Redo2 size={18} />
-                  ) : index === 2 ? (
-                    <FileX size={18} />
-                  ) : index === 3 ? (
-                    <div className={styles.headingButtonWrapper}>
-                      <Heading size={18} />
-                      <div className={styles.headingDropdown}>
-                        <div className={styles.headingOption}>H1</div>
-                        <div className={styles.headingOption}>H2</div>
-                        <div className={styles.headingOption}>H3</div>
-                        <div className={styles.headingOption}>H4</div>
-                        <div className={styles.headingOption}>H5</div>
-                        <div className={styles.headingOption}>H6</div>
-                      </div>
-                    </div>
-                  ) : index === 4 ? (
-                    <Bold size={18} />
-                  ) : index === 5 ? (
-                    <Italic size={18} />
-                  ) : index === 6 ? (
-                    <Strikethrough size={18} />
-                  ) : index === 7 ? (
-                    <Underline size={18} />
-                  ) : index === 8 ? (
-                    <div
-                      className={styles.toolbarButton}
-                      style={{
-                        width: '40px',
-                        height: '30px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: isCursorHighlight
-                          ? '#1E90FF'
-                          : 'var(--background-color)',
-                        color: isCursorHighlight
-                          ? 'white'
-                          : 'var(--text-color)',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Pen size={18} />
-                    </div>
-                  ) : (
-                    index + 1
-                  )}
-                </div>
+                  isCursorBold={isCursorBold}
+                  isCursorItalic={isCursorItalic}
+                  isCursorStrike={isCursorStrike}
+                  isCursorUnderline={isCursorUnderline}
+                  isCursorHighlight={isCursorHighlight}
+                />
               ))}
             </div>
 
