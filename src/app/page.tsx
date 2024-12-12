@@ -3,7 +3,7 @@
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MarkdownIt from 'markdown-it';
-import { Undo2, Redo2, FileX, Heading, Bold } from 'lucide-react';
+import { Undo2, Redo2, FileX, Heading, Bold, Italic } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -156,6 +156,7 @@ export default function Home() {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isCursorBold, setIsCursorBold] = useState(false);
+  const [isCursorItalic, setIsCursorItalic] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -389,6 +390,55 @@ export default function Home() {
     setMarkdownText(newText);
   }, [markdownText]);
 
+  const handleItalic = useCallback(() => {
+    const textarea = document.querySelector(
+      `.${styles.editor}`
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    if (start === end) {
+      alert('이탤릭체로 변경할 텍스트를 선택해주세요.');
+      return;
+    }
+
+    const beforeText = markdownText.substring(Math.max(0, start - 1), start);
+    const afterText = markdownText.substring(
+      end,
+      Math.min(markdownText.length, end + 1)
+    );
+    const selectedText = markdownText.substring(start, end);
+
+    const isItalic = beforeText === '*' && afterText === '*';
+
+    let newText;
+    if (isItalic) {
+      newText =
+        markdownText.substring(0, start - 1) +
+        selectedText +
+        markdownText.substring(end + 1);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start - 1, end - 1);
+      }, 0);
+    } else {
+      newText =
+        markdownText.substring(0, start) +
+        `*${selectedText}*` +
+        markdownText.substring(end);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + 1, end + 1);
+      }, 0);
+    }
+
+    setMarkdownText(newText);
+  }, [markdownText]);
+
   const handleCursorChange = useCallback(() => {
     const textarea = document.querySelector(
       `.${styles.editor}`
@@ -398,7 +448,7 @@ export default function Home() {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
 
-    // 현재 줄의 전��� 텍스트 가져오기
+    // 현재 줄의 전체 텍스트 가져오기
     const lines = markdownText.split('\n');
     let currentLine = '';
     let lineStart = 0;
@@ -414,7 +464,7 @@ export default function Home() {
       lineStart = lineEnd + 1;
     }
 
-    // 볼드체 패턴 찾기
+    // 볼드체 패턴 찾기 (**text**)
     const boldRegex = /\*\*([^*]+)\*\*/g;
     let match;
     let isBold = false;
@@ -422,15 +472,28 @@ export default function Home() {
     while ((match = boldRegex.exec(currentLine)) !== null) {
       const matchStart = lineStart + match.index;
       const matchEnd = matchStart + match[0].length;
-
-      // 커서가 볼드체 영역 안에 있는지 확인
       if (start >= matchStart && start <= matchEnd) {
         isBold = true;
         break;
       }
     }
 
+    // 이탤릭체 패턴 찾기 (*text*, 볼드체와 겹치지 않도록)
+    const italicRegex = /(?<!\*)\*([^*]+)\*(?!\*)/g;
+    let italicMatch;
+    let isItalic = false;
+
+    while ((italicMatch = italicRegex.exec(currentLine)) !== null) {
+      const matchStart = lineStart + italicMatch.index;
+      const matchEnd = matchStart + italicMatch[0].length;
+      if (start >= matchStart && start <= matchEnd) {
+        isItalic = true;
+        break;
+      }
+    }
+
     setIsCursorBold(isBold);
+    setIsCursorItalic(isItalic);
   }, [markdownText]);
 
   useEffect(() => {
@@ -492,6 +555,8 @@ export default function Home() {
                       ? handleClearFormatting
                       : index === 4
                       ? handleBold
+                      : index === 5
+                      ? handleItalic
                       : undefined
                   }
                   style={{
@@ -537,7 +602,7 @@ export default function Home() {
                       </div>
                     </div>
                   ) : index === 4 ? (
-                    <button
+                    <div
                       className={styles.toolbarButton}
                       style={{
                         width: '40px',
@@ -549,10 +614,29 @@ export default function Home() {
                           ? '#1E90FF'
                           : 'var(--background-color)',
                         color: isCursorBold ? 'white' : 'var(--text-color)',
+                        cursor: 'pointer',
                       }}
                     >
                       <Bold size={18} />
-                    </button>
+                    </div>
+                  ) : index === 5 ? (
+                    <div
+                      className={styles.toolbarButton}
+                      style={{
+                        width: '40px',
+                        height: '30px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isCursorItalic
+                          ? '#1E90FF'
+                          : 'var(--background-color)',
+                        color: isCursorItalic ? 'white' : 'var(--text-color)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Italic size={18} />
+                    </div>
                   ) : (
                     index + 1
                   )}
