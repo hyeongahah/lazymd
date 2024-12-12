@@ -1,8 +1,9 @@
 'use client';
 
 import styles from './page.module.css';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Toolbar from '@/components/Toolbar';
+import MarkdownIt from 'markdown-it';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -42,7 +43,7 @@ const MenuButtons = ({
       </button>
       <button type='button' onClick={onToggleTheme}>
         <span>{isDarkTheme ? '🌞' : '🌙'}</span>
-        테마 변경
+        테마 경
       </button>
       <button type='button' onClick={showIntro}>
         <span>ℹ️</span>
@@ -66,6 +67,15 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [markdownText, setMarkdownText] = useState('');
   const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [htmlContent, setHtmlContent] = useState('');
+  const md = useMemo(
+    () =>
+      new MarkdownIt({
+        breaks: true,
+        html: true,
+      }),
+    []
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -84,6 +94,11 @@ export default function Home() {
       document.documentElement.setAttribute('data-theme', 'light');
     }
   }, []);
+
+  useEffect(() => {
+    const html = md.render(markdownText);
+    setHtmlContent(html);
+  }, [markdownText, md]);
 
   const handleSave = useCallback(() => {
     if (mounted) {
@@ -158,7 +173,11 @@ export default function Home() {
           />
         </div>
         <div className={styles.previewContainer}>
-          <div className={styles.preview}>프리뷰 영역</div>
+          <div className={styles.previewToolbar}>마크다운 미리보기</div>
+          <div
+            className={styles.preview}
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
         </div>
       </main>
     </>
