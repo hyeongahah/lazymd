@@ -63,9 +63,9 @@
   padding: var(--editor-padding);
   background-color: var(--background-color);
   color: var(--text-color);
-  white-space: pre-wrap;
-  word-break: break-all;
-  overflow-y: hidden;
+  white-space: pre;
+  word-break: normal;
+  overflow: auto;
 }
 
 .preview {
@@ -75,12 +75,13 @@
   background-color: var(--background-color);
   color: var(--text-color);
   padding: var(--editor-padding);
-  overflow-y: auto;
+  overflow: auto;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   font-family: var(--editor-font-family);
   font-size: var(--editor-font-size);
   line-height: var(--editor-line-height);
+  white-space: pre-wrap;
 }
 
 .previewContainer {
@@ -325,25 +326,29 @@
 }
 
 /* 마크다운 스타일링 */
-.preview h1 {
-  font-size: 2em;
-  margin: 0.5em 0;
-  line-height: 1.4;
+.preview > * {
+  /* 모든 직계 자식 요소에 기본 스타일 적용 */
+  line-height: var(--editor-line-height);
+  margin: 0;
+  padding: 0;
 }
-.preview h2 {
-  font-size: 1.5em;
-  margin: 0.5em 0;
-  line-height: 1.4;
-}
-.preview h3 {
-  font-size: 1.3em;
-  margin: 0.5em 0;
-  line-height: 1.4;
-}
+
 .preview p {
   margin: 0;
+  padding: 0;
   min-height: var(--editor-line-height);
+  line-height: var(--editor-line-height);
+  white-space: pre-wrap;
 }
+
+/* 마크다운 요소들에만 다른 스타일 적용 */
+.preview h1,
+.preview h2,
+.preview h3 {
+  margin: 0.5em 0;
+  line-height: 1.4;
+}
+
 .preview code {
   background-color: var(--menu-background);
   padding: 0.2em 0.4em;

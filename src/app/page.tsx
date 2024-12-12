@@ -71,8 +71,19 @@ export default function Home() {
   const md = useMemo(
     () =>
       new MarkdownIt({
-        breaks: true,
+        breaks: false,
         html: true,
+        linkify: true,
+      }).use((md) => {
+        const defaultRender =
+          md.renderer.rules.softbreak ||
+          function (tokens, idx, options) {
+            return options.xhtmlOut ? '<br />' : '\n';
+          };
+
+        md.renderer.rules.softbreak = function (tokens, idx, options) {
+          return '<br />';
+        };
       }),
     []
   );
@@ -97,12 +108,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const processedText = markdownText
-      .split('\n')
-      .map((line) => (line.trim() === '' ? '&nbsp;' : line))
-      .join('\n');
-
-    const html = md.render(processedText);
+    const html = md.render(markdownText);
     setHtmlContent(html);
 
     setTimeout(() => {
