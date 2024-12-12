@@ -1,7 +1,8 @@
 'use client';
 
 import styles from './page.module.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Toolbar from '@/components/Toolbar';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -9,9 +10,19 @@ LazyMD는 복잡한 마크다운 문법을 손쉽게 작성하고, 실시간으�
 
 interface MenuButtonsProps {
   mounted: boolean;
+  onSave: () => void;
+  onLoad: () => void;
+  onToggleTheme: () => void;
+  isDarkTheme: boolean;
 }
 
-const MenuButtons = ({ mounted }: MenuButtonsProps) => {
+const MenuButtons = ({
+  mounted,
+  onSave,
+  onLoad,
+  onToggleTheme,
+  isDarkTheme,
+}: MenuButtonsProps) => {
   const showIntro = () => {
     if (mounted) {
       console.log('LazyMD 소개 버튼 클릭됨');
@@ -21,16 +32,16 @@ const MenuButtons = ({ mounted }: MenuButtonsProps) => {
 
   return (
     <div className={styles.menuContent}>
-      <button type='button'>
+      <button type='button' onClick={onSave}>
         <span>💾</span>
         저장
       </button>
-      <button type='button'>
+      <button type='button' onClick={onLoad}>
         <span>📂</span>
         불러오기
       </button>
-      <button type='button'>
-        <span>🎨</span>
+      <button type='button' onClick={onToggleTheme}>
+        <span>{isDarkTheme ? '🌞' : '🌙'}</span>
         테마 변경
       </button>
       <button type='button' onClick={showIntro}>
@@ -53,17 +64,70 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [markdownText, setMarkdownText] = useState('');
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     setIsMenuOpen(true);
+
+    const savedMarkdown = localStorage.getItem('markdown_data');
+    if (savedMarkdown) {
+      setMarkdownText(savedMarkdown);
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkTheme(true);
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
   }, []);
 
-  const content = (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1>LazyMD</h1>
-      </header>
+  const handleSave = useCallback(() => {
+    if (mounted) {
+      try {
+        localStorage.setItem('markdown_data', markdownText);
+        alert('저장되었습니다.');
+      } catch (error) {
+        console.error('저장 중 오류 발생:', error);
+        alert('저장에 실패했습니다.');
+      }
+    }
+  }, [mounted, markdownText]);
+
+  const handleLoad = useCallback(() => {
+    if (mounted) {
+      try {
+        const savedMarkdown = localStorage.getItem('markdown_data');
+        if (savedMarkdown) {
+          setMarkdownText(savedMarkdown);
+          alert('불러오기가 완료되었습니다.');
+        } else {
+          alert('저장된 내용이 없습니다.');
+        }
+      } catch (error) {
+        console.error('불러오기 중 오류 발생:', error);
+        alert('불러오기에 실패했습니다.');
+      }
+    }
+  }, [mounted]);
+
+  const handleToggleTheme = useCallback(() => {
+    if (mounted) {
+      const newTheme = !isDarkTheme;
+      setIsDarkTheme(newTheme);
+      document.documentElement.setAttribute(
+        'data-theme',
+        newTheme ? 'dark' : 'light'
+      );
+      localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    }
+  }, [mounted, isDarkTheme]);
+
+  const mainContent = (
+    <>
       <main className={styles.main}>
         <div
           className={`${styles.leftMenu} ${!isMenuOpen ? styles.closed : ''}`}
@@ -76,25 +140,28 @@ export default function Home() {
               {isMenuOpen ? '◀' : '▶'}
             </button>
           )}
-          <div className={styles.menuContent}>
-            <button>저장</button>
-            <button>불러오기</button>
-            <button>테마 변경</button>
-            <button>LazyMD 소개</button>
-          </div>
+          <MenuButtons
+            mounted={mounted}
+            onSave={handleSave}
+            onLoad={handleLoad}
+            onToggleTheme={handleToggleTheme}
+            isDarkTheme={isDarkTheme}
+          />
         </div>
         <div className={styles.editorContainer}>
           <Toolbar />
           <textarea
             className={styles.editor}
             placeholder='마크다운을 입력하세요...'
+            value={markdownText}
+            onChange={(e) => setMarkdownText(e.target.value)}
           />
         </div>
         <div className={styles.previewContainer}>
           <div className={styles.preview}>프리뷰 영역</div>
         </div>
       </main>
-    </div>
+    </>
   );
 
   return <Layout>{mainContent}</Layout>;
