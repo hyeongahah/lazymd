@@ -41,33 +41,21 @@
   overflow: hidden;
 }
 
-.editorContainer {
+.editorContainer,
+.previewContainer {
   flex: 1;
   padding: 1rem;
   overflow: hidden;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-color);
-}
-
-.editor {
-  flex: 1;
-  width: 100%;
-  resize: none;
-  border: none;
-  outline: none;
-  font-family: var(--editor-font-family);
-  font-size: var(--editor-font-size);
-  line-height: var(--editor-line-height);
-  padding: var(--editor-padding);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin: 0 10px;
   background-color: var(--background-color);
-  color: var(--text-color);
-  white-space: pre;
-  word-break: normal;
-  overflow: auto;
 }
 
+.editor,
 .preview {
   flex: 1;
   width: 100%;
@@ -84,13 +72,9 @@
   white-space: pre-wrap;
 }
 
-.previewContainer {
-  flex: 1;
-  padding: 1rem;
-  overflow: hidden;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
+.editor {
+  resize: none;
+  outline: none;
 }
 
 .leftMenu {
@@ -164,7 +148,13 @@
   margin-top: 60px;
 }
 
-.menuContent button {
+.menuButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menuButton {
   padding: 0.8vh 0.8vw;
   width: auto;
   min-width: 0;
@@ -183,10 +173,9 @@
   color: var(--text-color);
 }
 
-.menuContent button:hover {
+.menuButton:hover {
   background-color: var(--button-hover);
   transform: translateX(5px);
-  color: #000;
 }
 
 /* 메뉴가 닫혔을 때 메뉴 내용 숨기기 */
@@ -211,11 +200,25 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 0 40px;
+  padding: 0 36px;
   scroll-behavior: smooth;
   width: 100%;
   position: relative;
   overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 36px,
+    black calc(100% - 36px),
+    transparent calc(100% - 36px)
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 36px,
+    black calc(100% - 36px),
+    transparent calc(100% - 36px)
+  );
 }
 
 .toolbarScrollButton {
@@ -239,11 +242,11 @@
 }
 
 .toolbarScrollRight {
-  right: 5px;
+  right: 8px;
 }
 
 .toolbarButton {
-  padding: 0.5rem;
+  padding: 0.4rem;
   border: 1px solid var(--border-color);
   background-color: var(--background-color);
   border-radius: 4px;
@@ -321,7 +324,7 @@
   position: relative;
 }
 
-/* 마크다운 스 */
+/* 크다운 스 */
 .preview > * {
   /* 모든 직계 자식 요소에 기본 스타일 적용 */
   line-height: var(--editor-line-height);
@@ -335,6 +338,13 @@
   min-height: var(--editor-line-height);
   line-height: var(--editor-line-height);
   white-space: pre-wrap;
+}
+
+/* 빈 줄을 위한 스타일 추가 */
+.preview p:empty::before {
+  content: '\00a0'; /* 공백 문자 추가 */
+  display: inline-block;
+  min-height: var(--editor-line-height);
 }
 
 /* 마크다운 요소들에만 다른 스타일 적용 */
@@ -455,4 +465,41 @@
   color: #000;
   border-color: #1e90ff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.saveMessage {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  animation: fadeInOut 3s ease;
+  z-index: 1000;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.preview .empty-line {
+  min-height: var(--editor-line-height);
+  line-height: var(--editor-line-height);
+}
+
+.preview .empty-line::before {
+  content: '\00a0';
+  white-space: pre;
 }
