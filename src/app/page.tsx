@@ -14,15 +14,15 @@ import {
   Underline,
   Pen,
 } from 'lucide-react';
-import { Undo } from '@/components/Util/Undo';
-import { Redo } from '@/components/Util/Redo';
+import { Undo } from '@/features/mdTool/Undo';
+import { Redo } from '@/features/mdTool/Redo';
 import { ClearFormatting } from '@/components/Util/ClearFormatting';
-import { HeadingDropdown } from '@/components/Util/HeadingDropdown';
-import { Bold as BoldComponent } from '@/components/Util/Bold';
-import { Italic as ItalicComponent } from '@/components/Util/Italic';
-import { Strike as StrikeComponent } from '@/components/Util/Strike';
-import { Underline as UnderlineComponent } from '@/components/Util/Underline';
-import { Highlight as HighlightComponent } from '@/components/Util/Highlight';
+import { HeadingDropdown } from '@/features/mdTool/HeadingDropdown';
+import { Bold as BoldComponent } from '@/features/mdTool/Bold';
+import { Italic as ItalicComponent } from '@/features/mdTool/Italic';
+import { Strike as StrikeComponent } from '@/features/mdTool/Strike';
+import { Underline as UnderlineComponent } from '@/features/mdTool/Underline';
+import { Highlight as HighlightComponent } from '@/features/mdTool/Highlight';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
