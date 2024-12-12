@@ -3,7 +3,7 @@
 import styles from './page.module.css';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import MarkdownIt from 'markdown-it';
-import { Undo2 } from 'lucide-react';
+import { Undo2, Redo2 } from 'lucide-react';
 
 const LAZY_MD_INTRO = `마크다운 작성의 새로운 기준!
 
@@ -248,6 +248,13 @@ export default function Home() {
     }
   }, [historyIndex, history]);
 
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      setHistoryIndex(historyIndex + 1);
+      setMarkdownText(history[historyIndex + 1]);
+    }
+  }, [historyIndex, history]);
+
   const mainContent = (
     <>
       <main className={styles.main}>
@@ -294,7 +301,13 @@ export default function Home() {
                 <button
                   key={index}
                   className={styles.toolbarButton}
-                  onClick={index === 0 ? handleUndo : undefined}
+                  onClick={
+                    index === 0
+                      ? handleUndo
+                      : index === 1
+                      ? handleRedo
+                      : undefined
+                  }
                   style={{
                     width: '40px',
                     height: '30px',
@@ -303,7 +316,13 @@ export default function Home() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index === 0 ? <Undo2 size={18} /> : index + 1}
+                  {index === 0 ? (
+                    <Undo2 size={18} />
+                  ) : index === 1 ? (
+                    <Redo2 size={18} />
+                  ) : (
+                    index + 1
+                  )}
                 </button>
               ))}
             </div>
