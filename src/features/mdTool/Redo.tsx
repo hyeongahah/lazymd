@@ -1,16 +1,10 @@
-import { useMarkdown } from '@/hooks/useMarkdown';
+import { RotateCw } from 'lucide-react';
 import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 
 export function Redo() {
-  const { text, setText } = useMarkdown();
-
-  const handleClick = () => {
-    document.execCommand('redo');
-  };
-
   return (
-    <ToolbarButton onClick={handleClick} title='다시 실행'>
-      ↪
+    <ToolbarButton onClick={() => {}} title='Redo'>
+      <RotateCw size={18} />
     </ToolbarButton>
   );
 }

@@ -1,26 +1,10 @@
-import { useMarkdown } from '@/hooks/useMarkdown';
+import { Italic as ItalicIcon } from 'lucide-react';
 import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 
 export function Italic() {
-  const { text, setText } = useMarkdown();
-
-  const handleClick = () => {
-    const textarea = document.querySelector('textarea');
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = text.substring(start, end);
-
-    const newText =
-      text.substring(0, start) + `_${selectedText}_` + text.substring(end);
-
-    setText(newText);
-  };
-
   return (
-    <ToolbarButton onClick={handleClick} title='Italic'>
-      <em>I</em>
+    <ToolbarButton onClick={() => {}} title='Italic'>
+      <ItalicIcon size={18} />
     </ToolbarButton>
   );
 }
