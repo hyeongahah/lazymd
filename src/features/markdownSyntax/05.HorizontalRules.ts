@@ -19,7 +19,8 @@ export const horizontalRules = async (content: string): Promise<string> => {
             type: 'element',
             tagName: 'hr',
             properties: {
-              className: ['md-hr'],
+              className: ['md-hr', 'horizontal-rule'],
+              'data-type': node.value || '---',
             },
             children: [],
           }),

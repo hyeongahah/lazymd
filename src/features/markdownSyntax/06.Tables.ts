@@ -29,16 +29,18 @@ export const markdownTable = async (content: string): Promise<string> => {
             tagName: 'tr',
             properties: {
               className: ['md-table-row'],
+              'data-row-type': node.isHeader ? 'header' : 'data',
             },
             children: node.children,
           }),
 
           tableCell: (handler: Handler, node: TableNode) => ({
             type: 'element',
-            tagName: 'td',
+            tagName: node.isHeader ? 'th' : 'td',
             properties: {
               className: ['md-table-cell'],
               style: node.align ? `text-align:${node.align}` : undefined,
+              'data-align': node.align || 'left',
             },
             children: node.children,
           }),
