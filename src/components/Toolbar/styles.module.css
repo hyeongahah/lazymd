@@ -1,0 +1,54 @@
+.toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.toolbarContent {
+  flex: 1;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.toolbarContent::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollButton {
+  position: sticky;
+  background: var(--background-color);
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+  z-index: 1;
+}
+
+.scrollLeft {
+  left: 0;
+}
+
+.scrollRight {
+  right: 0;
+}
+
+.toolbarButton {
+  padding: 0.5rem;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.toolbarButton:hover {
+  background-color: var(--border-color);
+}

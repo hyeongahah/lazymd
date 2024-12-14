@@ -1,0 +1,57 @@
+.uploadButton,
+.downloadButton {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.uploadButton:hover,
+.downloadButton:hover {
+  background-color: var(--border-color);
+}
+
+.themeButton,
+.introButton {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.themeButton:hover,
+.introButton:hover {
+  background-color: var(--border-color);
+}
+
+.introText {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.introText h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.introText p {
+  margin: 0.5rem 0;
+}
