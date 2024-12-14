@@ -1,0 +1,15 @@
+:root {
+  /* 기본 색상 */
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --danger: #dc3545;
+
+  /* 배경 색상 */
+  --background-primary: #ffffff;
+  --background-secondary: #f8f9fa;
+
+  /* 텍스트 색상 */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+}

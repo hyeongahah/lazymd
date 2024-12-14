@@ -1,16 +1,26 @@
-import React, { useCallback } from 'react';
-import { Bold as BoldIcon } from 'lucide-react';
-import { applyFormat } from '@/components/Util/formatUtils';
-import { FormatProps } from '@/components/Util/types';
+import { useMarkdown } from '@/hooks/useMarkdown';
+import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 
-export const Bold = ({ markdownText, setMarkdownText }: FormatProps) => {
-  const handleBold = useCallback(() => {
-    applyFormat(markdownText, setMarkdownText, {
-      prefix: '**',
-      suffix: '**',
-      alertMessage: '볼드체를 적용할 텍스트를 선택해주세요.',
-    });
-  }, [markdownText]);
+export function Bold() {
+  const { text, setText } = useMarkdown();
 
-  return <BoldIcon size={18} onClick={handleBold} />;
-};
+  const handleClick = () => {
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = text.substring(start, end);
+
+    const newText =
+      text.substring(0, start) + `**${selectedText}**` + text.substring(end);
+
+    setText(newText);
+  };
+
+  return (
+    <ToolbarButton onClick={handleClick} title='Bold'>
+      <strong>B</strong>
+    </ToolbarButton>
+  );
+}

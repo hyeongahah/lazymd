@@ -22,10 +22,16 @@ interface FormatState {
   isHighlight: boolean;
 }
 
-// 유틸리티 함수들
-export const getTextArea = () =>
-  document.querySelector(`.${styles.editor}`) as HTMLTextAreaElement;
+// 정규식 패턴
+export const patterns: FormatPatterns = {
+  bold: /\*\*([^*]+)\*\*/g,
+  italic: /(?:\*\*)?_([^_]+)_(?!\*)|(?<=\*\*)_([^_]+)_(?=\*\*)/g,
+  strike: /~~([^~]+)~~/g,
+  underline: /<u>([^<]+)<\/u>/g,
+  highlight: /==([^=]+)==/g,
+};
 
+// 유틸리티 함수들
 export const findAllMatches = (regex: RegExp, text: string): TextMatch[] => {
   const matches: TextMatch[] = [];
   let match;
@@ -47,40 +53,54 @@ export const isInRange = (
   });
 };
 
-// 정규식 패턴
-export const patterns: FormatPatterns = {
-  bold: /\*\*([^*]+)\*\*/g,
-  italic: /(?:\*\*)?\*([^*]+)\*(?!\*)|(?<=\*\*)\*([^*]+)\*(?=\*\*)/g,
-  strike: /~~([^~]+)~~/g,
-  underline: /<u>([^<]+)<\/u>/g,
-  highlight: /<mark>([^<]*)<\/mark>/g,
-};
-
 // 커서 위치의 포맷 상태 확인
 export const checkFormatAtCursor = (
-  markdownText: string,
+  text: string,
   cursorPosition: number
 ): FormatState => {
   return {
-    isBold: isInRange(
-      findAllMatches(patterns.bold, markdownText),
-      cursorPosition
-    ),
-    isItalic: isInRange(
-      findAllMatches(patterns.italic, markdownText),
-      cursorPosition
-    ),
-    isStrike: isInRange(
-      findAllMatches(patterns.strike, markdownText),
-      cursorPosition
-    ),
+    isBold: isInRange(findAllMatches(patterns.bold, text), cursorPosition),
+    isItalic: isInRange(findAllMatches(patterns.italic, text), cursorPosition),
+    isStrike: isInRange(findAllMatches(patterns.strike, text), cursorPosition),
     isUnderline: isInRange(
-      findAllMatches(patterns.underline, markdownText),
+      findAllMatches(patterns.underline, text),
       cursorPosition
     ),
     isHighlight: isInRange(
-      findAllMatches(patterns.highlight, markdownText),
+      findAllMatches(patterns.highlight, text),
       cursorPosition
     ),
   };
 };
+
+// 라인 관련 유틸리티
+export function countLines(text: string): number {
+  return text.split('\n').length;
+}
+
+export function getLineNumber(text: string, position: number): number {
+  const textBeforeCursor = text.substring(0, position);
+  return textBeforeCursor.split('\n').length;
+}
+
+export function getLineStartPosition(text: string, lineNumber: number): number {
+  const lines = text.split('\n');
+  let position = 0;
+
+  for (let i = 0; i < lineNumber - 1; i++) {
+    position += lines[i].length + 1;
+  }
+
+  return position;
+}
+
+export function getLineEndPosition(text: string, lineNumber: number): number {
+  const lines = text.split('\n');
+  let position = 0;
+
+  for (let i = 0; i < lineNumber; i++) {
+    position += lines[i].length + 1;
+  }
+
+  return position - 1;
+}

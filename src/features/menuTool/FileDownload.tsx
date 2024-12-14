@@ -1,35 +1,35 @@
-import React, { useCallback } from 'react';
-import styles from '@/app/page.module.css';
-import { Download } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import styles from '@/pages/page.module.css';
 
 interface FileDownloadProps {
-  markdownText: string;
+  text: string;
 }
 
-export const FileDownload = ({ markdownText }: FileDownloadProps) => {
-  const handleFileDownload = useCallback(() => {
-    const filename = prompt('파일 이름을 입력하세요 (.md)', 'markdown.md');
-    if (!filename) return;
+export const FileDownload = ({ text }: FileDownloadProps) => {
+  const [isPromptOpen, setIsPromptOpen] = useState(false);
 
+  const handleDownload = useCallback(() => {
+    const filename = prompt('Enter file name:', 'LazyMD.md');
+
+    if (!filename) return; // 취소하거나 빈 값인 경우
+
+    // 파일명에 .md 확장자가 없으면 추가
     const finalFilename = filename.endsWith('.md')
       ? filename
       : `${filename}.md`;
 
-    const blob = new Blob([markdownText], { type: 'text/markdown' });
+    const blob = new Blob([text], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = finalFilename;
-    document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }, [markdownText]);
+  }, [text]);
 
   return (
-    <button className={styles.menuButton} onClick={handleFileDownload}>
-      <Download size={18} />
-      파일로 저장
+    <button className={styles.menuButton} onClick={handleDownload}>
+      <span>💾</span> Save File
     </button>
   );
 };

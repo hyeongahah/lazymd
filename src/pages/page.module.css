@@ -1,0 +1,485 @@
+:root[data-theme='light'] {
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --border-color: #eaeaea;
+  --menu-background: #f8f9fa;
+  --button-hover: #f1f1f1;
+}
+
+:root[data-theme='dark'] {
+  --background-color: #1a1a1a;
+  --text-color: #ffffff;
+  --border-color: #404040;
+  --menu-background: #2d2d2d;
+  --button-hover: #404040;
+}
+
+:root {
+  --editor-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --editor-font-size: 16px;
+  --editor-line-height: 1.6;
+  --editor-padding: 1rem;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.header {
+  height: 60px;
+  padding: 0;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  position: relative;
+}
+
+.headerLeft {
+  width: 60px;
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-right: none;
+}
+
+.headerRight {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.centerPage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  min-width: 300px;
+}
+
+.rightPage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+}
+
+.editor,
+.preview {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: var(--editor-padding);
+  overflow: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+  white-space: pre-wrap;
+}
+
+.editor {
+  resize: none;
+  outline: none;
+}
+
+.toggleButton {
+  position: static;
+  height: 30px;
+  min-width: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.toggleButton:hover {
+  background-color: var(--button-hover);
+}
+
+.toggleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.toggleText {
+  font-size: 0.9rem;
+}
+
+.menuContent {
+  flex: 1;
+  padding: 1rem;
+  margin-top: 60px;
+  transition: opacity 0.3s ease;
+  overflow: hidden;
+}
+
+.menuButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.menuButton {
+  padding: 0.8vh 1rem;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  color: var(--text-color);
+}
+
+.menuButton:hover {
+  background-color: var(--button-hover);
+  transform: translateX(5px);
+}
+
+.closed .menuContent {
+  display: none;
+}
+
+.toolbar {
+  height: 40px;
+  min-height: 40px;
+  background-color: var(--menu-background);
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 1rem;
+}
+
+.toolbarContent {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.toolbarButton {
+  padding: 0.4rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.toolbarButton:hover {
+  background-color: var(--button-hover);
+  border-color: #1e90ff;
+}
+
+.toolbarButton:hover::after {
+  display: none;
+}
+
+.toolbarDivider {
+  width: 1px;
+  height: 60%;
+  background-color: var(--border-color);
+  margin: 0 0.5rem;
+}
+
+.preview .empty-line {
+  min-height: var(--editor-line-height);
+  line-height: var(--editor-line-height);
+}
+
+.preview .empty-line::before {
+  content: '\00a0';
+  white-space: pre;
+}
+
+/* 반응형 미디어 쿼리 */
+@media (max-width: 1200px) {
+  .leftPage {
+    width: 160px;
+    min-width: 160px;
+  }
+
+  .centerPage,
+  .rightPage {
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 992px) {
+  .main {
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .leftPage {
+    display: none;
+    width: 0;
+    min-width: 0;
+  }
+
+  .leftPage:not(.closed) {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menuContent {
+    width: 200px;
+    max-height: 80vh;
+    margin: 0;
+    padding: 1.5rem;
+    background-color: var(--menu-background);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .menuButtons {
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+
+  .closeButton {
+    width: 100%;
+    padding: 0.8vh 1rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    border-radius: 6px;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+  }
+
+  .closeButton:hover {
+    background-color: var(--button-hover);
+  }
+
+  .centerPage,
+  .rightPage {
+    width: 100%;
+    min-width: 100%;
+    height: 50vh;
+  }
+
+  .toggleButton {
+    position: static;
+    margin-right: 1rem;
+    height: 25px;
+    min-width: 25px;
+    border-radius: 4px;
+  }
+
+  .headerLeft {
+    width: 50px;
+    min-width: 50px;
+    border-right: none;
+  }
+
+  .toggleButton {
+    position: static;
+    margin: 0;
+  }
+
+  .header {
+    height: 50px;
+  }
+
+  .logo {
+    height: 25px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: 50px;
+  }
+
+  .headerLeft,
+  .headerRight {
+    padding: 0 0.8rem;
+  }
+
+  .toggleButton {
+    height: 25px;
+    min-width: 25px;
+  }
+
+  .menuContent {
+    width: 200px;
+    padding: 1.2rem;
+  }
+
+  .headerLeft {
+    width: 45px;
+    min-width: 45px;
+  }
+}
+
+@media (max-width: 576px) {
+  .leftPage .menuContent {
+    width: 200px;
+  }
+
+  .menuButton {
+    font-size: 0.85rem;
+    padding: 0.6vh 1rem;
+  }
+}
+
+/* 메뉴 버튼 아이콘 스타일 */
+.menuButton span {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  min-width: 20px;
+  font-size: 0.9rem;
+}
+
+/* 왼쪽 페이지 스타일 */
+.leftPage {
+  width: 200px;
+  min-width: 200px;
+  border-right: 1px solid var(--border-color);
+  background-color: var(--menu-background);
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 왼쪽 페이지가 닫혔을 때 */
+.leftPage.closed {
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+}
+
+/* 토글 버튼 스타일 */
+.toggleButton {
+  position: static;
+  height: 30px;
+  min-width: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.toggleButton:hover {
+  background-color: var(--button-hover);
+}
+
+/* 토글 버튼 아이콘 */
+.toggleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+/* 토글 버튼 텍스트 */
+.toggleText {
+  font-size: 0.9rem;
+}
+
+/* 메뉴가 닫혔을 때의 스타일 */
+.leftPage.closed .menuContent {
+  opacity: 0;
+  width: 0;
+  padding: 0;
+}
+
+.leftPage.closed .toggleButton {
+  left: 5px;
+  width: 30px;
+  padding: 0;
+  justify-content: center;
+}
+
+.leftPage.closed .toggleText {
+  display: none;
+}
+
+/* 모달 오버레이 스타일 */
+.modalOverlay {
+  display: none;
+}

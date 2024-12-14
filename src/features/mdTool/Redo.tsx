@@ -1,25 +1,16 @@
-import { useCallback } from 'react';
-import { Redo2 } from 'lucide-react';
+import { useMarkdown } from '@/hooks/useMarkdown';
+import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 
-interface RedoProps {
-  historyIndex: number;
-  history: string[];
-  setHistoryIndex: (index: number) => void;
-  setMarkdownText: (text: string) => void;
+export function Redo() {
+  const { text, setText } = useMarkdown();
+
+  const handleClick = () => {
+    document.execCommand('redo');
+  };
+
+  return (
+    <ToolbarButton onClick={handleClick} title='다시 실행'>
+      ↪
+    </ToolbarButton>
+  );
 }
-
-export const Redo = ({
-  historyIndex,
-  history,
-  setHistoryIndex,
-  setMarkdownText,
-}: RedoProps) => {
-  const handleRedo = useCallback(() => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex(historyIndex + 1);
-      setMarkdownText(history[historyIndex + 1]);
-    }
-  }, [historyIndex, history]);
-
-  return <Redo2 size={18} onClick={handleRedo} />;
-};

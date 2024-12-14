@@ -1,0 +1,20 @@
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--background-color);
+}
+
+.editor {
+  flex: 1;
+  width: 100%;
+  padding: var(--editor-padding);
+  border: none;
+  resize: none;
+  outline: none;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

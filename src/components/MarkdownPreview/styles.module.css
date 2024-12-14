@@ -1,0 +1,80 @@
+.previewContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+}
+
+.previewToolbar {
+  height: 40px;
+  min-height: 40px;
+  background-color: var(--menu-background);
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.preview {
+  flex: 1;
+  padding: var(--editor-padding);
+  color: var(--text-color);
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+  overflow: auto;
+}
+
+/* 기본 텍스트 스타일 */
+.preview p {
+  margin: 0;
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+}
+
+/* 제목 스타일 */
+.preview h1,
+.preview h2,
+.preview h3,
+.preview h4,
+.preview h5,
+.preview h6 {
+  margin: 1.5em 0 0.5em;
+  line-height: 1.2;
+}
+
+.preview h1 {
+  font-size: calc(var(--editor-font-size) * 2);
+}
+.preview h2 {
+  font-size: calc(var(--editor-font-size) * 1.5);
+}
+.preview h3 {
+  font-size: calc(var(--editor-font-size) * 1.25);
+}
+.preview h4 {
+  font-size: calc(var(--editor-font-size) * 1.1);
+}
+.preview h5 {
+  font-size: var(--editor-font-size);
+}
+.preview h6 {
+  font-size: var(--editor-font-size);
+}
+
+.preview code {
+  background-color: var(--menu-background);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+.preview pre {
+  background-color: var(--menu-background);
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+}

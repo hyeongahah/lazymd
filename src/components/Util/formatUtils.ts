@@ -1,50 +1,46 @@
-import styles from '@/app/page.module.css';
+import { FormatOptions } from './types';
 
-interface FormatOptions {
-  prefix: string;
-  suffix: string;
-  alertMessage: string;
-}
-
-export const applyFormat = (
-  markdownText: string,
-  setMarkdownText: (text: string) => void,
+export function applyFormat(
+  text: string,
+  setText: (text: string) => void,
   options: FormatOptions
-) => {
-  const textarea = document.querySelector(
-    `.${styles.editor}`
-  ) as HTMLTextAreaElement;
+) {
+  const textarea = document.querySelector('textarea');
   if (!textarea) return;
 
   const start = textarea.selectionStart;
   const end = textarea.selectionEnd;
+  const selectedText = text.substring(start, end);
 
-  if (start === end) {
+  if (start === end && options.alertMessage) {
     alert(options.alertMessage);
     return;
   }
 
-  const beforeText = markdownText.substring(
+  // 이미 해당 서식이 적용되어 있는지 확인
+  const beforeText = text.substring(
     Math.max(0, start - options.prefix.length),
     start
   );
-  const afterText = markdownText.substring(
+  const afterText = text.substring(
     end,
-    Math.min(markdownText.length, end + options.suffix.length)
+    Math.min(text.length, end + options.suffix.length)
   );
-  const selectedText = markdownText.substring(start, end);
 
-  const isFormatted =
+  const hasFormat =
     beforeText === options.prefix && afterText === options.suffix;
 
   let newText;
-  if (isFormatted) {
-    // 포맷 제거
+  if (hasFormat) {
+    // 서식 제거
     newText =
-      markdownText.substring(0, start - options.prefix.length) +
+      text.substring(0, start - options.prefix.length) +
       selectedText +
-      markdownText.substring(end + options.suffix.length);
+      text.substring(end + options.suffix.length);
 
+    setText(newText);
+
+    // 커서 위치 조정
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(
@@ -53,12 +49,17 @@ export const applyFormat = (
       );
     }, 0);
   } else {
-    // 포맷 적용
+    // 서식 적용
     newText =
-      markdownText.substring(0, start) +
-      `${options.prefix}${selectedText}${options.suffix}` +
-      markdownText.substring(end);
+      text.substring(0, start) +
+      options.prefix +
+      selectedText +
+      options.suffix +
+      text.substring(end);
 
+    setText(newText);
+
+    // 커서 위치 조정
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(
@@ -67,6 +68,4 @@ export const applyFormat = (
       );
     }, 0);
   }
-
-  setMarkdownText(newText);
-};
+}

@@ -1,0 +1,28 @@
+/* 레이아웃 관련 스타일 */
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.header {
+  height: 60px;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}

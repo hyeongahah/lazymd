@@ -1,49 +1,26 @@
-import React, { useCallback, useRef } from 'react';
-import styles from '@/app/page.module.css';
-import { Upload } from 'lucide-react';
+import { useMarkdown } from '@/hooks/useMarkdown';
+import styles from '@/pages/page.module.css';
 
-interface FileUploadProps {
-  setMarkdownText: (text: string) => void;
-}
+export function FileUpload() {
+  const { setText } = useMarkdown();
 
-export const FileUpload = ({ setMarkdownText }: FileUploadProps) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handleFileUpload = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        setMarkdownText(content);
-      };
-      reader.readAsText(file);
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    },
-    [setMarkdownText]
-  );
+    const text = await file.text();
+    setText(text);
+  };
 
   return (
-    <>
+    <label className={styles.menuButton}>
+      <span>📤</span> Import File
       <input
         type='file'
         accept='.md,.markdown,text/markdown'
-        onChange={handleFileUpload}
-        ref={fileInputRef}
+        onChange={handleUpload}
         style={{ display: 'none' }}
       />
-      <button
-        className={styles.menuButton}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <Upload size={18} />
-        파일 불러오기
-      </button>
-    </>
+    </label>
   );
-};
+}

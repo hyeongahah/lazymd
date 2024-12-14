@@ -1,0 +1,14 @@
+/* 버튼 관련 공통 스타일 */
+.button-base {
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}

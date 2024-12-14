@@ -1,0 +1,44 @@
+/* 툴바 관련 스타일 */
+.toolbar {
+  height: 40px;
+  min-height: 40px;
+  background-color: var(--menu-background);
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 1rem;
+}
+
+.toolbarContent {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.toolbarButton {
+  padding: 0.4rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.toolbarDivider {
+  width: 1px;
+  height: 60%;
+  background-color: var(--border-color);
+  margin: 0 0.5rem;
+}

@@ -1,52 +1,33 @@
-import React from 'react';
-import styles from '@/app/page.module.css';
+import { useState } from 'react';
+import { useMarkdown } from '@/hooks/useMarkdown';
+import styles from '@/pages/page.module.css';
+import { FileUpload } from './FileUpload';
+import { FileDownload } from './FileDownload';
 import { MenuButtons } from './MenuButtons';
 import { LazyMdIntro } from './LazyMdIntro';
 
-interface LeftMenuProps {
-  mounted: boolean;
-  isMenuOpen: boolean;
-  setIsMenuOpen: (isOpen: boolean) => void;
-  markdownText: string;
-  isDarkTheme: boolean;
-  setMarkdownText: (text: string) => void;
-  setIsDarkTheme: (isDark: boolean) => void;
-  onLoad: () => void;
-  onToggleTheme: () => void;
-}
+export function LeftMenu() {
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
+  const { text } = useMarkdown();
 
-export const LeftMenu = ({
-  mounted,
-  isMenuOpen,
-  setIsMenuOpen,
-  markdownText,
-  isDarkTheme,
-  setMarkdownText,
-  setIsDarkTheme,
-  onLoad,
-  onToggleTheme,
-}: LeftMenuProps) => {
   return (
-    <div className={`${styles.leftMenu} ${!isMenuOpen ? styles.closed : ''}`}>
-      {mounted && (
-        <button
-          className={styles.toggleButton}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? '◀' : '▶'}
-        </button>
-      )}
+    <div className={`${styles.leftPage} ${!isMenuOpen ? styles.closed : ''}`}>
+      <button
+        className={styles.toggleButton}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        title={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
+      >
+        <span className={styles.toggleIcon}>{isMenuOpen ? '◀' : '▶'}</span>
+        {isMenuOpen && <span className={styles.toggleText}>메뉴 닫기</span>}
+      </button>
       <div className={styles.menuContent}>
-        <MenuButtons
-          mounted={mounted}
-          markdownText={markdownText}
-          isDarkTheme={isDarkTheme}
-          setMarkdownText={setMarkdownText}
-          onLoad={onLoad}
-          onToggleTheme={onToggleTheme}
-        />
-        <LazyMdIntro setMarkdownText={setMarkdownText} />
+        <div className={styles.menuButtons}>
+          <FileUpload />
+          <FileDownload text={text} />
+          <MenuButtons />
+          <LazyMdIntro />
+        </div>
       </div>
     </div>
   );
-};
+}
