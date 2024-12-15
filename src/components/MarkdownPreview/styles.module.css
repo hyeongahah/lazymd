@@ -78,3 +78,101 @@
   border-radius: 4px;
   overflow-x: auto;
 }
+
+/* 리스트 스타일 */
+.preview ul,
+.preview ol {
+  margin: 0;
+  padding-left: 1.5em;
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+}
+
+.preview li {
+  margin: 0;
+  padding: 0;
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+}
+
+/* 중첩된 리스트 스타일 */
+.preview .nested-list {
+  margin: 0;
+  padding-left: 1.5em;
+}
+
+.preview .unordered-list li {
+  list-style-type: disc;
+}
+
+.preview .unordered-list .nested-list li {
+  list-style-type: circle;
+}
+
+.preview .unordered-list .nested-list .nested-list li {
+  list-style-type: square;
+}
+
+/* 순서 있는 리스트 스타일 */
+.preview .ordered-list {
+  counter-reset: item;
+}
+
+.preview .ordered-list li {
+  list-style-type: decimal;
+}
+
+.preview .ordered-list .nested-list {
+  margin: 0;
+  padding-left: 1.5em;
+  counter-reset: subitem;
+}
+
+.preview .ordered-list .nested-list li {
+  list-style-type: lower-alpha;
+}
+
+.preview .ordered-list .nested-list .nested-list li {
+  list-style-type: lower-roman;
+}
+
+/* 체크박스 스타일 */
+.preview .task-list {
+  list-style: none;
+  padding-left: 1.5em;
+}
+
+.preview .task-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.preview .task-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid var(--text-color);
+  border-radius: 3px;
+  margin: 0;
+  cursor: not-allowed;
+  position: relative;
+  background-color: transparent;
+  flex-shrink: 0;
+}
+
+.preview .task-checkbox:checked {
+  background-color: var(--text-color);
+}
+
+.preview .task-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--background-color);
+  font-size: 0.8em;
+}
