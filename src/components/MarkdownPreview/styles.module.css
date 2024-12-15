@@ -101,15 +101,15 @@
   padding-left: 1.5em;
 }
 
-.preview .unordered-list li {
+.preview .unordered-list {
   list-style-type: disc;
 }
 
-.preview .unordered-list .nested-list li {
+.preview .unordered-list .nested-list {
   list-style-type: circle;
 }
 
-.preview .unordered-list .nested-list .nested-list li {
+.preview .unordered-list .nested-list .nested-list {
   list-style-type: square;
 }
 

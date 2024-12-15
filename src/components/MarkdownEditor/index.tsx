@@ -185,6 +185,11 @@ export function MarkdownEditor() {
       return;
     }
 
+    // 탭 키의 기본 동작을 먼저 막음
+    if (e.key === 'Tab') {
+      e.preventDefault();
+    }
+
     if (e.key === 'Tab' || e.key === 'Enter') {
       const { selectionStart } = e.currentTarget;
       const currentLine =
@@ -198,12 +203,19 @@ export function MarkdownEditor() {
       if (handleUnorderedList(currentLine, selectionStart, e.key === 'Tab'))
         return;
 
-      // 리스트가 아닌 경우에는 기본 엔터 동작 허용
+      // 리스트가 아닌 경우의 처리
       if (e.key === 'Enter') {
-        return; // preventDefault()를 호출하지 않음
-      }
+        return; // 엔터는 기본 동작 허용
+      } else if (e.key === 'Tab') {
+        // 일반 텍스트에서 탭 키를 누르면 2칸 들여쓰기
+        const newValue =
+          markdownText.substring(0, selectionStart) +
+          '  ' +
+          markdownText.substring(selectionStart);
 
-      e.preventDefault(); // 탭 키의 경우에만 기본 동작 방지
+        setMarkdownText(newValue);
+        updateCursorPosition(selectionStart + 2);
+      }
     }
   };
 

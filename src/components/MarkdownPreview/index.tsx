@@ -1,7 +1,7 @@
 import { useMarkdown } from '@/hooks/useMarkdown';
 import { useEffect, useState } from 'react';
 import styles from './styles.module.css';
-import { basicSyntax } from '@/features/markdownSyntax/01.BasicSyntax';
+import { basicSyntax } from '@/features/markdownSyntax';
 
 export function MarkdownPreview() {
   const { markdownText } = useMarkdown();

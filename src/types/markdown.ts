@@ -74,3 +74,11 @@ export interface CodeNode extends BasicNode {
   meta?: string;
   value: string;
 }
+
+export interface ListNode extends ElementNode {
+  children: ElementNode[];
+}
+
+export interface OrderedListNode extends ListNode {
+  ordered: boolean;
+}
