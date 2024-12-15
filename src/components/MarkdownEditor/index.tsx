@@ -3,10 +3,10 @@ import { Toolbar } from '@/components/Toolbar/ToolbarButton';
 import styles from './styles.module.css';
 
 export function MarkdownEditor() {
-  const { text, setText } = useMarkdown();
+  const { markdownText, setMarkdownText } = useMarkdown();
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
+    setMarkdownText(e.target.value);
   };
 
   return (
@@ -14,7 +14,7 @@ export function MarkdownEditor() {
       <Toolbar />
       <textarea
         className={styles.editor}
-        value={text}
+        value={markdownText}
         onChange={handleChange}
         placeholder='Write markdown here...'
         spellCheck={false}

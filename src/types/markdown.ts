@@ -1,102 +1,68 @@
 import type { Handler } from 'mdast-util-to-hast';
 import { Node } from 'unist';
 
-export type CustomHandler<T extends Node> = (
-  h: Handler,
-  node: T
-) => {
+// 기본 노드 타입
+export interface BasicNode extends Node {
   type: string;
-  tagName: string;
-  properties: Record<string, unknown>;
-  children?: unknown[];
-};
+  depth?: number; // 헤더 레벨 (1-6)
+  ordered?: boolean; // 순서 있는 리스트
+  checked?: boolean; // 체크박스
+  spread?: boolean; // 리스트 아이템 간격
+  value?: string; // 텍스트 내용
+  children?: BasicNode[];
+  lang?: string; // 코드 블록 언어
+  meta?: string; // 코드 블록 메타데이터
+  url?: string; // 링크, 이미지 URL
+  title?: string; // 링크, 이미지 타이틀
+  alt?: string; // 이미지 대체 텍스트
+  align?: Array<'left' | 'center' | 'right' | null>; // 테이블 정렬
+}
 
+// Rehype 옵션 타입
 export interface RehypeOptions<T extends Node> {
   allowDangerousHtml: boolean;
+  allowDangerousCharacters?: boolean;
   handlers: {
-    [key: string]: CustomHandler<T>;
+    [key: string]: (
+      h: Handler,
+      node: T
+    ) => {
+      type: string;
+      tagName?: string;
+      properties?: Record<string, unknown>;
+      value?: string;
+      children?: unknown[];
+    };
   };
 }
 
-export interface BasicNode extends Node {
-  depth?: number;
-  ordered?: boolean;
-  checked?: boolean;
-  value?: string;
-  children?: BasicNode[];
-  properties?: Record<string, unknown>;
+// 테이블 관련 타입
+export interface TableNode extends BasicNode {
+  type: 'table';
+  align?: Array<'left' | 'center' | 'right' | null>;
+  children: TableRowNode[];
 }
 
-export interface CodeNode extends Node {
-  value?: string;
+export interface TableRowNode extends BasicNode {
+  type: 'tableRow';
+  children: TableCellNode[];
+}
+
+export interface TableCellNode extends BasicNode {
+  type: 'tableCell';
+  children: BasicNode[];
+}
+
+// 수학 수식 관련 타입
+export interface MathNode extends BasicNode {
+  type: 'math' | 'inlineMath';
+  value: string;
+}
+
+// 코드 블록 관련 타입
+export interface CodeNode extends BasicNode {
+  type: 'code';
   lang?: string;
-}
-
-export interface LinkNode extends Node {
-  url?: string;
-  title?: string;
-  children?: Node[];
-}
-
-export interface ImageNode extends Node {
-  url?: string;
-  title?: string;
-  alt?: string;
-}
-
-export interface TableNode extends Node {
-  align?: string[];
-  children?: Node[];
-}
-
-export interface EscapeNode extends Node {
+  meta?: string;
   value: string;
 }
-
-export interface HtmlNode extends Node {
-  value: string;
-  type: 'html';
-}
-
-export interface ExtendedNode extends Node {
-  value?: string;
-  children?: ExtendedNode[];
-  data?: {
-    hName?: string;
-    hProperties?: Record<string, unknown>;
-  };
-}
-
-export interface MiscNode extends Node {
-  value?: string;
-  children?: MiscNode[];
-  checked?: boolean;
-  lang?: string;
-  data?: {
-    hProperties?: Record<string, unknown>;
-  };
-}
-
-export interface ListItemNode extends Node {
-  checked?: boolean;
-  value?: string;
-  children?: Node[];
-  spread?: boolean;
-}
-
-export interface DynamicNode extends Node {
-  value?: string;
-  children?: DynamicNode[];
-  identifier?: string;
-  data?: {
-    hProperties?: Record<string, unknown>;
-    props?: Record<string, unknown>;
-    options?: Record<string, unknown>;
-  };
-}
-
-export interface YamlNode extends Node {
-  value: string;
-}
-
-// ... 다른 노드 타입들도 여기에 추가
