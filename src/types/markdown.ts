@@ -24,6 +24,7 @@ export interface BasicNode extends Node {
   checked?: boolean;
   value?: string;
   children?: BasicNode[];
+  properties?: Record<string, unknown>;
 }
 
 export interface CodeNode extends Node {
@@ -54,6 +55,7 @@ export interface EscapeNode extends Node {
 
 export interface HtmlNode extends Node {
   value: string;
+  type: 'html';
 }
 
 export interface ExtendedNode extends Node {
@@ -68,16 +70,28 @@ export interface ExtendedNode extends Node {
 export interface MiscNode extends Node {
   value?: string;
   children?: MiscNode[];
+  checked?: boolean;
+  lang?: string;
   data?: {
     hProperties?: Record<string, unknown>;
   };
 }
 
+export interface ListItemNode extends Node {
+  checked?: boolean;
+  value?: string;
+  children?: Node[];
+  spread?: boolean;
+}
+
 export interface DynamicNode extends Node {
   value?: string;
   children?: DynamicNode[];
+  identifier?: string;
   data?: {
     hProperties?: Record<string, unknown>;
+    props?: Record<string, unknown>;
+    options?: Record<string, unknown>;
   };
 }
 

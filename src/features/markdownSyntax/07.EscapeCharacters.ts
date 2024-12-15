@@ -19,7 +19,7 @@ export const escapeCharacters = async (content: string): Promise<string> => {
             const escapedContent = node.value.replace(
               /\\([\\`*{}[\]()#+\-.!_>])/g,
               (_, char) =>
-                `<span class="escaped-char" data-original="\${char}">${char}</span>`
+                `<span class="escaped-char" data-original="${char}">${char}</span>`
             );
             return {
               type: 'raw',

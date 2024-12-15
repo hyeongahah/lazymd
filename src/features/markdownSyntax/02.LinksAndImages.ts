@@ -4,12 +4,51 @@ import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
 import { Handler } from 'mdast-util-to-hast';
-import { LinkNode, ImageNode, RehypeOptions } from '@/types/markdown';
+import {
+  LinkNode,
+  ImageNode,
+  ReferenceNode,
+  RehypeOptions,
+} from '@/types/markdown';
+import { visit } from 'unist-util-visit';
+
+interface ReferenceMap extends Map<string, ReferenceNode> {
+  get(key: string): ReferenceNode | undefined;
+}
 
 export const linksAndImages = async (content: string): Promise<string> => {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
+    .use(() => (tree) => {
+      const references: ReferenceMap = new Map();
+
+      // 먼저 모든 참조 정의를 수집
+      visit(tree, 'definition', (node: ReferenceNode) => {
+        references.set(node.identifier, {
+          type: 'definition',
+          url: node.url,
+          title: node.title,
+          identifier: node.identifier,
+        });
+      });
+
+      // 참조 링크와 이미지 처리
+      visit(
+        tree,
+        ['linkReference', 'imageReference'],
+        (node: LinkNode | ImageNode) => {
+          const reference = references.get(node.identifier || '');
+          if (reference) {
+            node.type = node.type === 'linkReference' ? 'link' : 'image';
+            node.url = reference.url;
+            node.title = reference.title;
+          }
+        }
+      );
+
+      return tree;
+    })
     .use(
       remarkRehype as any,
       {

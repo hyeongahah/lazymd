@@ -40,7 +40,8 @@ export const basicSyntax = async (content: string): Promise<string> => {
             type: 'element',
             tagName: 'li',
             properties: {
-              className: [node.checked !== undefined ? 'task-list-item' : ''],
+              className: ['task-list-item'],
+              'data-task': node.checked ? 'checked' : 'unchecked',
             },
             children: [
               node.checked !== undefined
@@ -51,6 +52,7 @@ export const basicSyntax = async (content: string): Promise<string> => {
                       type: 'checkbox',
                       checked: node.checked,
                       disabled: true,
+                      className: ['task-list-item-checkbox'],
                     },
                     children: [],
                   }
