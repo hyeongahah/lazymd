@@ -26,15 +26,24 @@ const parseListItems = (
     if (!pattern.test(line.trim())) return;
 
     const level = getIndentLevel(line);
+    // 순서 있는 리스트의 마커 스타일 결정
+    const listMarker =
+      line.match(/^(\s*)([0-9]+|[IVXLCDM]+|[A-Z]|[a-z])\./)?.[2] || '';
+
     const item: ElementNode = {
       type: 'element' as const,
       tagName: 'li',
-      properties: { className: ['list-item'] },
+      properties: {
+        className: ['list-item'],
+        'data-marker': listMarker, // 마커 스타일 저장
+      },
       children: [
         {
           type: 'text' as const,
           value: ordered
-            ? line.replace(/^\s*\d+\.\s+/, '').trim()
+            ? line
+                .replace(/^\s*(?:[0-9]+|[IVXLCDM]+|[A-Z]|[a-z])\.\s+/, '')
+                .trim()
             : line.replace(/^\s*[-*+]\s+/, '').trim(),
         },
       ],
@@ -44,11 +53,12 @@ const parseListItems = (
       // 하위 리스트 생성
       const subList: ElementNode = {
         type: 'element' as const,
-        tagName: ordered ? 'ol' : 'ul', // 리스트 타입에 따라 태그 선택
+        tagName: ordered ? 'ol' : 'ul',
         properties: {
           className: [
             ordered ? 'ordered-list' : 'unordered-list',
             'nested-list',
+            `level-${level}`, // 레벨 정보 추가
           ],
         },
         children: [],
@@ -86,13 +96,83 @@ const parseUnorderedList = (content: string): ElementNode => ({
   children: parseListItems(content, /^[-*+]\s+/),
 });
 
+interface OrderedListNode extends ElementNode {
+  children: ElementNode[];
+}
+
 // 8. Ordered List: `1.`, `2.`
-const parseOrderedList = (content: string): ElementNode => ({
-  type: 'element' as const,
-  tagName: 'ol',
-  properties: { className: ['ordered-list'] },
-  children: parseListItems(content, /^\d+\.\s+/, true), // ordered = true 전달
-});
+const parseOrderedList = (content: string): ElementNode => {
+  const lines = content.split('\n');
+  const root: OrderedListNode = {
+    type: 'element' as const,
+    tagName: 'ol',
+    properties: { className: ['ordered-list'] },
+    children: [],
+  };
+
+  let currentList: OrderedListNode = root;
+  let currentLevel = 0;
+  let listStack: OrderedListNode[] = [root];
+
+  lines.forEach((line) => {
+    const indentMatch = line.match(/^(\s*)/);
+    const level = indentMatch ? Math.floor(indentMatch[1].length / 2) : 0;
+    const itemMatch = line.match(
+      /^(\s*)([0-9]+|[IVXLCDM]+|[A-Z]|[a-z])\.\s*(.*)$/
+    );
+
+    if (itemMatch) {
+      const [, , marker, text] = itemMatch;
+
+      if (level > currentLevel) {
+        // 새로운 하위 리스트 생성
+        const newList: OrderedListNode = {
+          type: 'element' as const,
+          tagName: 'ol',
+          properties: {
+            className: [
+              'ordered-list',
+              'nested-list',
+              `level-${level}`, // 레벨 정보 추가
+            ],
+          },
+          children: [],
+        };
+
+        // 현재 리스트의 마지막 아이템에 새 리스트 추가
+        const lastItem = currentList.children[currentList.children.length - 1];
+        if (lastItem) {
+          lastItem.children = [...(lastItem.children || []), newList];
+        }
+
+        listStack.push(newList);
+        currentList = newList;
+      } else if (level < currentLevel) {
+        // 상위 리스트로 이동
+        for (let i = 0; i < currentLevel - level; i++) {
+          listStack.pop();
+        }
+        currentList = listStack[listStack.length - 1];
+      }
+
+      // 리스트 아이템 추가
+      const item: ElementNode = {
+        type: 'element' as const,
+        tagName: 'li',
+        properties: {
+          className: ['list-item'],
+          'data-level': level.toString(), // 레벨 정보 추가
+        },
+        children: [{ type: 'text' as const, value: text.trim() }],
+      };
+
+      currentList.children.push(item);
+      currentLevel = level;
+    }
+  });
+
+  return root;
+};
 
 // 9. Task List: `[ ]`, `[x]`
 const parseTaskList = (content: string): ElementNode => {
