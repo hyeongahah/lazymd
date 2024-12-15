@@ -23,17 +23,25 @@ export interface RehypeOptions<T extends Node> {
   allowDangerousHtml: boolean;
   allowDangerousCharacters?: boolean;
   handlers: {
-    [key: string]: (
-      h: Handler,
-      node: T
-    ) => {
-      type: string;
-      tagName?: string;
-      properties?: Record<string, unknown>;
-      value?: string;
-      children?: unknown[];
-    };
+    [key: string]: (h: Handler, node: T) => ElementNode;
   };
+}
+
+// HTML 요소 노드 타입 정의
+export interface ElementNode {
+  type: 'element';
+  tagName: string;
+  properties: {
+    className?: string[];
+    [key: string]: unknown;
+  };
+  children?: (ElementNode | TextNode)[];
+}
+
+// 텍스트 노드 타입 정의
+export interface TextNode {
+  type: 'text';
+  value: string;
 }
 
 // 테이블 관련 타입

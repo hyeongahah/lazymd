@@ -2,10 +2,10 @@ import { useMarkdown } from '@/hooks/useMarkdown';
 import styles from '@/pages/page.module.css';
 
 export function LazyMdIntro() {
-  const { setText } = useMarkdown();
+  const { setMarkdownText } = useMarkdown();
 
   const handleClick = () => {
-    setText(`# Welcome to LazyMD
+    setMarkdownText(`# Welcome to LazyMD
 
 LazyMD is a markdown editor.
 
