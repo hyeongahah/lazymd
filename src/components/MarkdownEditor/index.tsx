@@ -141,22 +141,39 @@ export function MarkdownEditor() {
     if (!unorderedMatch) return false;
 
     const [, indent, marker, text] = unorderedMatch;
+    const indentLevel = indent.length / 2; // 들여쓰기 레벨 계산
+
+    // 들여쓰기 레벨에 따른 마커 결정
+    const getMarkerForLevel = (level: number): string => {
+      switch (level) {
+        case 0:
+          return '-'; // 최상위 레벨
+        case 1:
+          return '*'; // 첫 번째 들여쓰기
+        case 2:
+          return '+'; // 두 번째 들여쓰기
+        default:
+          return '-'; // 그 이상은 다시 '-'부터
+      }
+    };
 
     if (isTab) {
-      // 탭 키 처리: 들여쓰기만
+      // 탭 키 처리: 들여쓰기와 마커 변경
       const newIndent = indent + '  ';
+      const newIndentLevel = (indent.length + 2) / 2;
+      const newMarker = getMarkerForLevel(newIndentLevel);
       const lineStart = selectionStart - currentLine.length;
       const newValue =
         markdownText.substring(0, lineStart) +
         newIndent +
-        marker +
+        newMarker +
         ' ' +
         text +
         markdownText.substring(selectionStart);
 
       setMarkdownText(newValue);
       updateCursorPosition(
-        lineStart + newIndent.length + marker.length + 1 + text.length
+        lineStart + newIndent.length + newMarker.length + 1 + text.length
       );
     } else {
       // 엔터 키 처리
@@ -167,8 +184,9 @@ export function MarkdownEditor() {
         setMarkdownText(newValue);
         updateCursorPosition(lineStart + 1);
       } else {
-        // 같은 마커로 계속
-        const insertion = `\n${indent}${marker} `;
+        // 현재 들여쓰기 레벨의 마커 유지
+        const currentMarker = getMarkerForLevel(indentLevel);
+        const insertion = `\n${indent}${currentMarker} `;
         const newValue =
           markdownText.substring(0, selectionStart) +
           insertion +
@@ -209,7 +227,7 @@ export function MarkdownEditor() {
       if (e.key === 'Enter') {
         return; // 엔터는 기본 동작 허용
       } else if (e.key === 'Tab') {
-        // 일반 텍스트에서 탭 키를 누르면 2칸 들여쓰기
+        // 일반 텍스트에서 탭 키를 누르�� 2칸 들여쓰기
         const newValue =
           markdownText.substring(0, selectionStart) +
           '  ' +
