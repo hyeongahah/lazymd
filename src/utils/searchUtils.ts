@@ -40,17 +40,22 @@ export const getAutocompleteSuggestions = (query: string): SyntaxItem[] => {
     );
   }
 
+  // 한글 숫자 매칭 (예: "제3" -> "제목 3")
+  const koreanNumberMatch = lowerQuery.match(/^제(\d+)$/);
+  if (koreanNumberMatch) {
+    const level = koreanNumberMatch[1];
+    return markdownSyntax.filter((item) => item.nameKo === `제목 ${level}`);
+  }
+
   return markdownSyntax
     .filter(
       (item) =>
         item.nameKo.toLowerCase().includes(lowerQuery) ||
         item.nameEn.toLowerCase().includes(lowerQuery) ||
-        // 약어 매칭 (예: "hl" -> "Header Level")
         (lowerQuery === 'hl' &&
           item.nameEn.toLowerCase().startsWith('header level'))
     )
     .sort((a, b) => {
-      // 정확한 시작 매치를 우선순위로
       const aStartsWithEn = a.nameEn.toLowerCase().startsWith(lowerQuery);
       const bStartsWithEn = b.nameEn.toLowerCase().startsWith(lowerQuery);
       const aStartsWithKo = a.nameKo.toLowerCase().startsWith(lowerQuery);

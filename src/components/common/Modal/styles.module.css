@@ -14,16 +14,51 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--background-color);
-  border-radius: 8px;
+  border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
+  max-width: 700px;
+  max-height: 80vh;
   z-index: 1001;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(30, 144, 255, 0.3) transparent;
+}
+
+.modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal::-webkit-scrollbar-thumb {
+  background-color: rgba(30, 144, 255, 0.3);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.modal::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(30, 144, 255, 0.5);
+}
+
+/* 다크 모드 */
+:root[data-theme='dark'] .modal {
+  scrollbar-color: rgba(30, 144, 255, 0.4) transparent;
+}
+
+:root[data-theme='dark'] .modal::-webkit-scrollbar-thumb {
+  background-color: rgba(30, 144, 255, 0.4);
+}
+
+:root[data-theme='dark'] .modal::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(30, 144, 255, 0.6);
 }
 
 .content {
-  padding: 2rem;
+  padding: 1.5rem;
   overflow-y: auto;
-  max-height: calc(90vh - 4rem);
+  max-height: calc(80vh - 3rem);
 }

@@ -220,7 +220,7 @@ export const markdownSyntax: SyntaxItem[] = [
   // Miscellaneous Features
   {
     id: 'highlight',
-    nameKo: '형광펜',
+    nameKo: '형광펜(하이라이트)',
     nameEn: 'Highlight Text',
     description: '텍스트에 형광펜 효과를 줍니다.',
     syntax: '==텍스트==',

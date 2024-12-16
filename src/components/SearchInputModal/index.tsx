@@ -16,6 +16,7 @@ export function SearchInputModal() {
     if (query.trim()) {
       const results = getAutocompleteSuggestions(query);
       setSuggestions(results);
+      console.log('Autocomplete suggestions:', results);
     } else {
       setSuggestions([]);
     }

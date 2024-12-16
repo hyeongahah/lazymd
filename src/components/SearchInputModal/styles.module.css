@@ -1,10 +1,12 @@
 .modal {
   width: 400px !important;
+  overflow: visible !important;
 }
 
 .searchSection {
+  position: relative;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .searchInput {
@@ -25,12 +27,13 @@
 .buttonSection {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .searchButton,
 .closeButton {
-  padding: 0.8rem 1.5rem;
+  padding: 0.8rem 2rem;
   border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
@@ -55,4 +58,70 @@
 
 .closeButton:hover {
   background-color: var(--button-hover);
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  padding: 0;
+  list-style: none;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 9999;
+}
+
+.suggestions::before {
+  display: none;
+}
+
+.suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestions::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.suggestions::-webkit-scrollbar-thumb {
+  background-color: rgba(30, 144, 255, 0.3);
+  border-radius: 3px;
+}
+
+.suggestions::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(30, 144, 255, 0.5);
+}
+
+.suggestion {
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.suggestion:last-child {
+  border-bottom: none;
+}
+
+.suggestion:hover,
+.suggestion.selected {
+  background-color: var(--button-hover);
+}
+
+.suggestion .nameEn {
+  font-weight: bold;
+}
+
+.suggestion .nameKo {
+  color: var(--text-secondary);
+  font-size: 0.9em;
 }
