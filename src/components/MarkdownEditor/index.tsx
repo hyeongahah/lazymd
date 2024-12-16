@@ -1,6 +1,6 @@
 import { useMarkdown } from '@/hooks/useMarkdown';
 import { Toolbar } from '@/components/Toolbar/ToolbarButton';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import styles from './styles.module.css';
 import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
 import { getCurrentLine } from '@/utils/editorUtils';
@@ -12,12 +12,21 @@ import {
   handleOrderedList,
   handleTaskList,
 } from '@/features/markdownSyntax';
+import { autoSave, loadAutoSavedContent } from '@/utils/autoSaveUtils';
 
 export function MarkdownEditor() {
   const { markdownText, setMarkdownText } = useMarkdown();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { undoManager } = useUndo();
   const isComposing = useRef(false);
+
+  // 컴포넌트 마운트 시 저장된 내용 불러오기
+  useEffect(() => {
+    const savedContent = loadAutoSavedContent();
+    if (savedContent) {
+      setMarkdownText(savedContent);
+    }
+  }, []);
 
   // 키 이벤트 핸들러
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -73,6 +82,9 @@ export function MarkdownEditor() {
     const newText = e.target.value;
     setMarkdownText(newText);
     undoManager.saveState(newText, e.target.selectionStart);
+
+    // 자동 저장 트리거
+    autoSave(newText);
   };
 
   // 한글 입력 관련 핸들러
