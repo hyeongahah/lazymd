@@ -1,6 +1,9 @@
 import { ReactNode, useRef } from 'react';
 import styles from './styles.module.css';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { UndoButton } from '@/features/markdownSyntax/09simpleEdit/31undo';
+import { RedoButton } from '@/features/markdownSyntax/09simpleEdit/32redo';
+import { ClearFormattingButton } from '@/features/markdownSyntax/09simpleEdit/33clearFormatting';
 
 interface ToolbarProps {
   children: ReactNode;
