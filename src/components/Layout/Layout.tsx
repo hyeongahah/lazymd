@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import styles from '@/pages/page.module.css';
 import { useMenuStore } from '@/store/menuStore';
+import { useSearchStore } from '@/store/searchStore';
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,6 +9,17 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { isOpen, toggle } = useMenuStore();
+  const { isSearchOpen, toggleSearch } = useSearchStore();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 992);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -27,9 +39,7 @@ export function Layout({ children }: LayoutProps) {
         <div className={styles.headerSyntaxSearch}>
           <button
             className={styles.toggleButton}
-            onClick={() => {
-              /* 문법 검색 토글 기능 추가 예정 */
-            }}
+            onClick={toggleSearch}
             title='Syntax Search'
           >
             <span className={styles.toggleIcon}>🔍</span>
@@ -37,6 +47,24 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </header>
       {children}
+      {isSearchOpen && (
+        <>
+          <div className={styles.modalOverlay} onClick={toggleSearch} />
+          <div className={styles.searchModal}>
+            <div className={styles.searchContent}>
+              <input
+                type='text'
+                className={styles.searchInput}
+                placeholder='Search syntax...'
+                autoFocus
+              />
+              <button className={styles.closeButton} onClick={toggleSearch}>
+                Close
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
