@@ -3,11 +3,15 @@ import { Toolbar } from '@/components/Toolbar/ToolbarButton';
 import { useRef } from 'react';
 import styles from './styles.module.css';
 import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
-import { handleUnorderedList } from '@/features/markdownSyntax/01basicSyntax/07UnorderedList';
-import { handleOrderedList } from '@/features/markdownSyntax/01basicSyntax/08OrderedList';
 import { getCurrentLine } from '@/utils/editorUtils';
 import { handleNormalIndent, handleComposition } from '@/utils/editorUtils';
 import { handleUndoKeyPress } from '@/features/markdownSyntax/09simpleEdit/31undo';
+import {
+  handleHeaders,
+  handleUnorderedList,
+  handleOrderedList,
+  handleTaskList,
+} from '@/features/markdownSyntax';
 
 export function MarkdownEditor() {
   const { markdownText, setMarkdownText } = useMarkdown();
@@ -53,7 +57,7 @@ export function MarkdownEditor() {
       )
         return;
 
-      // 일반 텍스트 들여쓰기 처리
+      // 반 텍스트 들여쓰기 처리
       if (e.key === 'Tab') {
         handleNormalIndent(
           textareaRef.current!,

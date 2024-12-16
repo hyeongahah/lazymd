@@ -33,9 +33,9 @@ export interface ElementNode {
   tagName: string;
   properties: {
     className?: string[];
-    [key: string]: unknown;
+    [key: string]: any;
   };
-  children?: (ElementNode | TextNode)[];
+  children: (ElementNode | TextNode)[];
 }
 
 // 텍스트 노드 타입 정의

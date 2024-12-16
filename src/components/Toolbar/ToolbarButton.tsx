@@ -24,12 +24,14 @@ export function ToolbarButton({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        width: '30px',
+        height: '30px',
         padding: '4px',
         margin: '0 2px',
         borderRadius: '4px',
         cursor: 'pointer',
-        isolation: 'isolate', // 새로운 쌓임 맥락 생성
-        zIndex: 1, // hover 효과가 다른 버튼에 영향을 주지 않도록
+        isolation: 'isolate',
+        zIndex: 1,
       }}
     >
       {children}
