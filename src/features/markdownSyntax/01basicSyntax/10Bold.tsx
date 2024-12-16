@@ -32,6 +32,24 @@ const isBoldText = (
   return { isBold: false, boldStart: -1, boldEnd: -1 };
 };
 
+// Bold 파싱 함수
+export const parseBold = (text: string) => {
+  if (text.includes('**')) {
+    return {
+      type: 'element',
+      tagName: 'strong',
+      properties: {},
+      children: [
+        {
+          type: 'text',
+          value: text.replace(/\*\*/g, ''),
+        },
+      ],
+    };
+  }
+  return null;
+};
+
 // Bold 처리 핸들러
 export const handleBold = (
   textareaRef: HTMLTextAreaElement,

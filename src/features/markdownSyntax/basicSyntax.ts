@@ -6,6 +6,7 @@ import { parseHeaders } from './01basicSyntax/01-06Headers';
 import { parseUnorderedList } from './01basicSyntax/07UnorderedList';
 import { parseOrderedList } from './01basicSyntax/08OrderedList';
 import { parseTaskList } from './01basicSyntax/09TaskList';
+import { parseInlineStyles } from '@/utils/parseUtils';
 
 export const basicSyntax = async (content: string): Promise<string> => {
   const processor = unified()
@@ -27,12 +28,15 @@ export const basicSyntax = async (content: string): Promise<string> => {
           if (/^[-*+]\s+/.test(trimmedBlock))
             return parseUnorderedList(trimmedBlock);
 
-          // 기본 문단 처리만 여기서
+          // 기본 문단 처리 + 인라인 스타일 처리
           return {
             type: 'element',
             tagName: 'p',
             properties: {},
-            children: [{ type: 'text', value: trimmedBlock }],
+            children: trimmedBlock
+              .split(/(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*.*?\*)/)
+              .map(parseInlineStyles)
+              .filter(Boolean),
           };
         }),
       };
