@@ -27,6 +27,44 @@
   font-size: var(--editor-font-size);
   line-height: var(--editor-line-height);
   overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.preview::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.preview::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 4px;
+}
+
+.preview::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.preview::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* 다크 모드 */
+[data-theme='dark'] .preview {
+  scrollbar-color: var(--scrollbar-thumb-dark) var(--scrollbar-track-dark);
+}
+
+[data-theme='dark'] .preview::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-dark);
+}
+
+[data-theme='dark'] .preview::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-dark);
+}
+
+[data-theme='dark'] .preview::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-dark);
 }
 
 /* 기본 텍스트 스타일 */

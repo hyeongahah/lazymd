@@ -12,4 +12,57 @@
   /* 텍스트 색상 */
   --text-primary: #333333;
   --text-secondary: #666666;
+
+  /* 스크롤바 색상 - 라이트 모드 */
+  --scrollbar-track-light: #f1f1f1;
+  --scrollbar-thumb-light: #c1c1c1;
+  --scrollbar-thumb-hover-light: #a8a8a8;
+
+  /* 스크롤바 색상 - 다크 모드 */
+  --scrollbar-track-dark: #2d2d2d;
+  --scrollbar-thumb-dark: #666666;
+  --scrollbar-thumb-hover-dark: #808080;
+}
+
+/* 전역 스크롤바 스타일 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-light) var(--scrollbar-track-light);
+}
+
+/* Webkit 브라우저용 스크롤바 스타일 */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-light);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-light);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-light);
+}
+
+/* 다크 모드일 때 스크롤바 스타일 */
+[data-theme='dark'] * {
+  scrollbar-color: var(--scrollbar-thumb-dark) var(--scrollbar-track-dark);
+}
+
+[data-theme='dark'] *::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-dark);
+}
+
+[data-theme='dark'] *::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-dark);
+}
+
+[data-theme='dark'] *::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-dark);
 }

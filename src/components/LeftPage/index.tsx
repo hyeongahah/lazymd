@@ -38,7 +38,7 @@ export function LeftPage() {
         </div>
         {isMobile && (
           <button className={styles.closeButton} onClick={toggle}>
-            닫기
+            Close
           </button>
         )}
       </div>

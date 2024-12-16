@@ -17,4 +17,42 @@
   line-height: var(--editor-line-height);
   background-color: var(--background-color);
   color: var(--text-color);
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.editor::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.editor::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 4px;
+}
+
+.editor::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+.editor::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* 다크 모드 */
+[data-theme='dark'] .editor {
+  scrollbar-color: var(--scrollbar-thumb-dark) var(--scrollbar-track-dark);
+}
+
+[data-theme='dark'] .editor::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-dark);
+}
+
+[data-theme='dark'] .editor::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-dark);
+}
+
+[data-theme='dark'] .editor::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-dark);
 }
