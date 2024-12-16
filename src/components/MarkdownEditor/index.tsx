@@ -1,6 +1,6 @@
 import { useMarkdown } from '@/hooks/useMarkdown';
 import { Toolbar } from '@/components/Toolbar/ToolbarButton';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import styles from './styles.module.css';
 import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
 import { getCurrentLine } from '@/utils/editorUtils';
@@ -19,6 +19,7 @@ export function MarkdownEditor() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { undoManager } = useUndo();
   const isComposing = useRef(false);
+  const [currentLine, setCurrentLine] = useState(1);
 
   // 컴포넌트 마운트 시 저장된 내용 불러오기
   useEffect(() => {
@@ -91,20 +92,48 @@ export function MarkdownEditor() {
   const handleCompositionStart = () => handleComposition(isComposing, true);
   const handleCompositionEnd = () => handleComposition(isComposing, false);
 
+  // 커서 위치 변경 감지 핸들러 추가
+  const handleCursorChange = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget;
+    const cursorPosition = textarea.selectionStart;
+    const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+    const currentLineNumber = textBeforeCursor.split('\n').length;
+    setCurrentLine(currentLineNumber);
+  };
+
   return (
     <div className={styles.editorContainer}>
       <Toolbar undoManager={undoManager} textareaRef={textareaRef} />
-      <textarea
-        ref={textareaRef}
-        className={styles.editor}
-        value={markdownText}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onCompositionStart={handleCompositionStart}
-        onCompositionEnd={handleCompositionEnd}
-        placeholder='Write markdown here...'
-        spellCheck={false}
-      />
+      <div className={styles.editorContent}>
+        <div className={styles.lineNumbers}>
+          {markdownText.split('\n').map((_, index) => (
+            <div
+              key={index}
+              className={`${styles.lineNumber} ${
+                currentLine === index + 1 ? styles.active : ''
+              }`}
+            >
+              {index + 1}
+            </div>
+          ))}
+        </div>
+        <div className={styles.editorWrapper}>
+          <textarea
+            ref={textareaRef}
+            className={styles.editor}
+            value={markdownText}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
+            placeholder='Write markdown here...'
+            spellCheck={false}
+            onSelect={handleCursorChange} // 커서 변경 감지
+            onClick={handleCursorChange} // 클릭으로 인한 커서 변경 감지
+            onKeyUp={handleCursorChange} // 키보드로 인한 커서 변경 감지
+          />
+        </div>
+      </div>
     </div>
   );
 }

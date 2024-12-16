@@ -5,16 +5,55 @@
   background-color: var(--background-color);
 }
 
-.editor {
+.editorContent {
   flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.lineNumbers {
+  flex: 0 0 50px;
+  background-color: var(--background-secondary);
+  padding: 0;
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.lineNumber {
+  text-align: right;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transition: background-color 0.2s;
+}
+
+.lineNumber.active {
+  background-color: var(--menu-background);
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.editorWrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor {
   width: 100%;
-  padding: var(--editor-padding);
+  height: 100%;
+  padding: 0 1rem;
   border: none;
   resize: none;
   outline: none;
-  font-family: var(--editor-font-family);
-  font-size: var(--editor-font-size);
-  line-height: var(--editor-line-height);
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.5rem;
   background-color: var(--background-color);
   color: var(--text-color);
   scrollbar-width: thin;

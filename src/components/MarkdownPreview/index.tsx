@@ -1,3 +1,4 @@
+import React from 'react';
 import { useMarkdown } from '@/hooks/useMarkdown';
 import { useEffect, useState } from 'react';
 import { useScrollSync } from '@/hooks/useScrollSync';
@@ -25,13 +26,17 @@ export function MarkdownPreview() {
   return (
     <div className={styles.previewContainer}>
       <div className={styles.previewToolbar}>
-        <span>미리보기</span>
+        <div className={styles.toolbarContent}>{/* 툴바 내용 */}</div>
       </div>
-      <div
-        ref={previewRef}
-        className={styles.preview}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <div className={styles.previewContent}>
+        <div className={styles.previewWrapper}>
+          <div
+            ref={previewRef}
+            className={styles.preview}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
