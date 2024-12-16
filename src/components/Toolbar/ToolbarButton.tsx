@@ -13,6 +13,7 @@ import {
 } from '@/features/markdownSyntax/09simpleEdit/33clearFormatting';
 import { HeadingDropdownButton } from '@/features/markdownSyntax/09simpleEdit/34headingDropdown';
 import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
+import { BoldButton } from '@/features/markdownSyntax/01basicSyntax/10Bold';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -119,6 +120,8 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                   textareaRef={textareaRef}
                   setMarkdownText={setMarkdownText}
                 />
+              ) : buttonNumber === 5 ? (
+                <BoldButton />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}
