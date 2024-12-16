@@ -31,19 +31,24 @@ export const getAutocompleteSuggestions = (query: string): SyntaxItem[] => {
 
   const lowerQuery = query.toLowerCase().trim();
 
-  // 검색 과정 디버깅을 위한 로그
-  console.log('Search query:', lowerQuery);
+  // 특수 검색 패턴 처리 (예: "hl2" -> "Header Level 2")
+  const headerLevelMatch = lowerQuery.match(/^hl(\d)$/);
+  if (headerLevelMatch) {
+    const level = headerLevelMatch[1];
+    return markdownSyntax.filter(
+      (item) => item.nameEn.toLowerCase() === `header level ${level}`
+    );
+  }
 
-  const results = markdownSyntax.filter(
-    (item) =>
-      item.nameKo.toLowerCase().includes(lowerQuery) ||
-      item.nameEn.toLowerCase().includes(lowerQuery)
-  );
-
-  // 필터링 결과 확인
-  console.log('Search results:', results);
-
-  return results
+  return markdownSyntax
+    .filter(
+      (item) =>
+        item.nameKo.toLowerCase().includes(lowerQuery) ||
+        item.nameEn.toLowerCase().includes(lowerQuery) ||
+        // 약어 매칭 (예: "hl" -> "Header Level")
+        (lowerQuery === 'hl' &&
+          item.nameEn.toLowerCase().startsWith('header level'))
+    )
     .sort((a, b) => {
       // 정확한 시작 매치를 우선순위로
       const aStartsWithEn = a.nameEn.toLowerCase().startsWith(lowerQuery);
@@ -58,5 +63,5 @@ export const getAutocompleteSuggestions = (query: string): SyntaxItem[] => {
 
       return 0;
     })
-    .slice(0, 5); // 최대 5개까지만 표시
+    .slice(0, 5);
 };
