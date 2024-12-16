@@ -1,7 +1,9 @@
-import { ReactNode, useRef, useEffect } from 'react';
+import { ReactNode, useRef } from 'react';
 import styles from '@/pages/page.module.css';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
+import { RedoManager } from '@/features/markdownSyntax/09simpleEdit/32redo';
+import { useMarkdown } from '@/hooks/useMarkdown';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -46,10 +48,18 @@ interface ToolbarProps {
 
 export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const { setMarkdownText } = useMarkdown();
+  const redoManager = new RedoManager(setMarkdownText);
 
   const handleUndo = () => {
     if (textareaRef.current) {
       undoManager.undo(textareaRef.current);
+    }
+  };
+
+  const handleRedo = () => {
+    if (textareaRef.current) {
+      redoManager.redo(textareaRef.current);
     }
   };
 
@@ -77,16 +87,31 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
         <ChevronLeft size={18} />
       </button>
       <div className={styles.toolbarContent} ref={contentRef}>
-        {/* 1번부터 20번까지의 버튼 */}
         {Array.from({ length: 20 }, (_, i) => {
-          const buttonNumber = i + 1; // 1부터 20까지의 번호
+          const buttonNumber = i + 1;
           return (
             <div key={buttonNumber} className={styles.toolbarItem}>
               <ToolbarButton
-                onClick={buttonNumber === 1 ? handleUndo : () => {}}
-                title={buttonNumber === 1 ? 'Undo (Ctrl+Z)' : undefined}
+                onClick={
+                  buttonNumber === 1
+                    ? handleUndo
+                    : buttonNumber === 2
+                    ? handleRedo
+                    : () => {}
+                }
+                title={
+                  buttonNumber === 1
+                    ? 'Undo (Ctrl+Z)'
+                    : buttonNumber === 2
+                    ? 'Redo (Ctrl+Y)'
+                    : undefined
+                }
               >
-                {buttonNumber === 1 ? '↶' : buttonNumber}
+                {buttonNumber === 1
+                  ? '↶'
+                  : buttonNumber === 2
+                  ? '↷'
+                  : buttonNumber}
               </ToolbarButton>
             </div>
           );

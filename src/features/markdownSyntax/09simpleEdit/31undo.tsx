@@ -11,6 +11,7 @@ interface UndoState {
 
 interface UndoStore {
   undoStack: UndoState[];
+  redoStack: UndoState[];
   currentLine: string;
   pushState: (state: UndoState) => void;
   setCurrentLine: (line: string) => void;
@@ -34,8 +35,9 @@ export function UndoButton({
   );
 }
 
-const useUndoStore = create<UndoStore>((set) => ({
+export const useUndoStore = create<UndoStore>((set) => ({
   undoStack: [{ content: '', cursorPosition: 0 }],
+  redoStack: [],
   currentLine: '',
   pushState: (state) =>
     set((store) => {
@@ -66,8 +68,8 @@ export class UndoManager {
     const currentLine = lines[lines.length - 1];
     const previousLines = lines.slice(0, -1).join('\n');
 
-    // 엔터키가 눌렸을 때
-    if (content.endsWith('\n')) {
+    // 첫 줄이거나 엔터키가 눌렸을 때
+    if (!store.undoStack.length || content.endsWith('\n')) {
       store.pushState({ content, cursorPosition });
     } else {
       // 현재 작성 중인 줄 업데이트
@@ -79,7 +81,7 @@ export class UndoManager {
     if (!textArea) return;
 
     const store = useUndoStore.getState();
-    const { undoStack, currentLine } = store;
+    const { undoStack, currentLine, redoStack } = store;
 
     // 스택이 비어있으면 리턴
     if (undoStack.length <= 1) return;
@@ -94,17 +96,21 @@ export class UndoManager {
     }
 
     // 이전 상태로 복원
-    const newStack = [...undoStack];
-    newStack.pop(); // 현재 상태 제거
-    const previousState = newStack[newStack.length - 1];
+    const newUndoStack = [...undoStack];
+    const currentState = newUndoStack.pop(); // 현재 상태 제거
+    const previousState = newUndoStack[newUndoStack.length - 1];
 
-    if (previousState) {
+    if (previousState && currentState) {
       this.setMarkdownText(previousState.content);
       textArea.selectionStart = previousState.cursorPosition;
       textArea.selectionEnd = previousState.cursorPosition;
       textArea.focus();
 
-      useUndoStore.setState({ undoStack: newStack });
+      // 현재 상태를 redo 스택에 저장
+      useUndoStore.setState({
+        undoStack: newUndoStack,
+        redoStack: [...redoStack, currentState],
+      });
     }
   }
 
