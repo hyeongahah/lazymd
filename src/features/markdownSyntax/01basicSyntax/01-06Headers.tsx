@@ -2,6 +2,8 @@ import { ElementNode } from '@/types/markdown';
 import { Heading } from 'lucide-react';
 import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 import React from 'react';
+import { getCurrentLine } from '@/utils/editorUtils';
+import { updateCursorPosition } from '@/utils/editorUtils';
 
 // 헤더 파싱 로직
 export const parseHeaders = (text: string): ElementNode => {
@@ -22,36 +24,41 @@ export const getHeaderMarker = (level: number): string => {
 
 // 헤더 처리 로직
 export const handleHeaders = (
-  currentLine: string,
-  selectionStart: number,
+  level: number,
   markdownText: string,
+  selectionStart: number,
   setMarkdownText: (text: string) => void,
   textArea: HTMLTextAreaElement
-): boolean => {
+): void => {
+  // 현재 라인 가져오기
+  const currentLine = getCurrentLine(markdownText, selectionStart);
+
+  // 이미 헤더가 있는지 확인
   const headerMatch = currentLine.match(/^(#{1,6})\s(.*)$/);
-  if (!headerMatch) return false;
+  if (headerMatch) {
+    // 기존 헤더 제거하고 새 헤더 추가
+    const [, , text] = headerMatch;
+    const newHeader = `${'#'.repeat(level)} ${text}`;
+    const newText = markdownText.replace(currentLine, newHeader);
+    setMarkdownText(newText);
 
-  const [, hashes, text] = headerMatch;
-  const level = hashes.length;
-
-  if (!text.trim()) {
-    const lineStart = selectionStart - currentLine.length;
-    const newValue = markdownText.slice(0, lineStart) + '\n';
-    setMarkdownText(newValue);
-    textArea.value = newValue;
-    textArea.selectionStart = lineStart + 1;
+    // 포커스 설정 및 커서 위치 조정
+    textArea.focus();
+    const newPosition = selectionStart + (level - headerMatch[1].length);
+    updateCursorPosition(textArea, newPosition);
   } else {
-    const insertion = `\n${getHeaderMarker(level)}`;
-    const newValue =
-      markdownText.slice(0, selectionStart) +
-      insertion +
-      markdownText.slice(selectionStart);
+    // 새 헤더 추가
+    const prefix = '#'.repeat(level) + ' ';
+    const text = currentLine.trim();
+    const newHeader = prefix + text;
+    const newText = markdownText.replace(currentLine, newHeader);
+    setMarkdownText(newText);
 
-    setMarkdownText(newValue);
-    textArea.value = newValue;
-    textArea.selectionStart = selectionStart + insertion.length;
+    // 포커스 설정 및 커서 위치 조정
+    textArea.focus();
+    const newPosition = selectionStart + prefix.length;
+    updateCursorPosition(textArea, newPosition);
   }
-  return true;
 };
 
 // 헤더 버튼 컴포넌트

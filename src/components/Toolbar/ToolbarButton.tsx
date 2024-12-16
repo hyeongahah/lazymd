@@ -113,7 +113,11 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                   }}
                 />
               ) : buttonNumber === 4 ? (
-                <HeadingDropdownButton onClick={() => {}} />
+                <HeadingDropdownButton
+                  onClick={() => {}}
+                  textareaRef={textareaRef}
+                  setMarkdownText={setMarkdownText}
+                />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}

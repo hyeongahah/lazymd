@@ -3,8 +3,19 @@ import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 import React, { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styles from './styles.module.css';
+import { handleHeaders } from '@/features/markdownSyntax';
 
-export function HeadingDropdownButton({ onClick }: { onClick: () => void }) {
+interface HeadingDropdownButtonProps {
+  onClick: () => void;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  setMarkdownText: (text: string) => void;
+}
+
+export function HeadingDropdownButton({
+  onClick,
+  textareaRef,
+  setMarkdownText,
+}: HeadingDropdownButtonProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -15,13 +26,26 @@ export function HeadingDropdownButton({ onClick }: { onClick: () => void }) {
       if (dropdownRef.current) {
         const dropdownWidth = 30 * 6 + 4 * 5 + 12;
         const left = rect.left + rect.width / 2 - dropdownWidth / 2;
-        const top = rect.bottom + 2;
+        const top = rect.bottom + 1;
 
         dropdownRef.current.style.left = `${left}px`;
         dropdownRef.current.style.top = `${top}px`;
       }
     }
   }, [showDropdown]);
+
+  const handleHeadingClick = (level: number) => {
+    if (textareaRef.current) {
+      handleHeaders(
+        level,
+        textareaRef.current.value,
+        textareaRef.current.selectionStart,
+        setMarkdownText,
+        textareaRef.current
+      );
+      setShowDropdown(false);
+    }
+  };
 
   return (
     <>
@@ -46,7 +70,7 @@ export function HeadingDropdownButton({ onClick }: { onClick: () => void }) {
               <button
                 key={i + 1}
                 className={styles.headingOption}
-                onClick={() => {}}
+                onClick={() => handleHeadingClick(i + 1)}
                 title={`Heading ${i + 1}`}
               >
                 H{i + 1}
