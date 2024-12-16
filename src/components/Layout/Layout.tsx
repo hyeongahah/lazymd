@@ -12,7 +12,7 @@ export function Layout({ children }: LayoutProps) {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.headerLeft}>
+        <div className={styles.headerMenuToggle}>
           <button
             className={styles.toggleButton}
             onClick={toggle}
@@ -21,8 +21,19 @@ export function Layout({ children }: LayoutProps) {
             <span className={styles.toggleIcon}>{isOpen ? '◀' : '▶'}</span>
           </button>
         </div>
-        <div className={styles.headerRight}>
+        <div className={styles.headerLogo}>
           <div className={styles.logo}>LazyMD</div>
+        </div>
+        <div className={styles.headerSyntaxSearch}>
+          <button
+            className={styles.toggleButton}
+            onClick={() => {
+              /* 문법 검색 토글 기능 추가 예정 */
+            }}
+            title='Syntax Search'
+          >
+            <span className={styles.toggleIcon}>🔍</span>
+          </button>
         </div>
       </header>
       {children}

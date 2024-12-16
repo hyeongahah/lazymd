@@ -39,7 +39,7 @@
   position: relative;
 }
 
-.headerLeft {
+.headerMenuToggle {
   width: 60px;
   min-width: 60px;
   display: flex;
@@ -49,19 +49,21 @@
   border-right: none;
 }
 
-.headerRight {
+.headerLogo {
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 1rem;
 }
 
-.logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.5rem;
-  font-weight: bold;
+.headerSyntaxSearch {
+  width: 60px;
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .main {
@@ -344,15 +346,14 @@
     border-radius: 4px;
   }
 
-  .headerLeft {
+  .headerMenuToggle {
     width: 50px;
     min-width: 50px;
-    border-right: none;
   }
 
-  .toggleButton {
-    position: static;
-    margin: 0;
+  .headerSyntaxSearch {
+    width: 50px;
+    min-width: 50px;
   }
 
   .header {
@@ -371,9 +372,20 @@
     height: 50px;
   }
 
-  .headerLeft,
-  .headerRight {
+  .headerMenuToggle,
+  .headerLogo,
+  .headerSyntaxSearch {
     padding: 0 0.8rem;
+  }
+
+  .headerMenuToggle {
+    width: 45px;
+    min-width: 45px;
+  }
+
+  .headerSyntaxSearch {
+    width: 45px;
+    min-width: 45px;
   }
 
   .toggleButton {
@@ -386,7 +398,17 @@
     padding: 1.2rem;
   }
 
-  .headerLeft {
+  .headerMenuToggle {
+    width: 45px;
+    min-width: 45px;
+  }
+
+  .headerLogo {
+    width: 45px;
+    min-width: 45px;
+  }
+
+  .headerSyntaxSearch {
     width: 45px;
     min-width: 45px;
   }
@@ -537,7 +559,7 @@
   display: flex;
 }
 
-/* 헤딩 옵�� 버튼 */
+/* 헤딩 옵션 버튼 */
 .headingOption {
   width: 30px;
   height: 30px;
