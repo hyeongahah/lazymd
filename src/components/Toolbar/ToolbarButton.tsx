@@ -11,6 +11,7 @@ import {
   ClearFormattingButton,
   handleClearFormatting,
 } from '@/features/markdownSyntax/09simpleEdit/33clearFormatting';
+import { HeadingDropdownButton } from '@/features/markdownSyntax/09simpleEdit/34headingDropdown';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -111,6 +112,8 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                     }
                   }}
                 />
+              ) : buttonNumber === 4 ? (
+                <HeadingDropdownButton onClick={() => {}} />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}
