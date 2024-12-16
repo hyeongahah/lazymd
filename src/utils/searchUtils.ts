@@ -1,9 +1,6 @@
 import { SyntaxItem } from '@/types/syntax';
 import { markdownSyntax } from '@/data/markdownSyntax';
 
-// 데이터 로드 확인을 위한 로그 추가
-console.log('Loaded markdown syntax:', markdownSyntax);
-
 export const searchSyntax = (query: string): SyntaxItem[] => {
   const lowerQuery = query.toLowerCase().trim();
 
