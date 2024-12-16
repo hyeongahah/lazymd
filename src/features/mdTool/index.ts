@@ -1,9 +1,0 @@
-export { Bold } from './Bold';
-export { Italic } from './Italic';
-export { Strike } from './Strike';
-export { Underline } from './Underline';
-export { Highlight } from './Highlight';
-export { HeadingDropdown } from './HeadingDropdown';
-export { ClearFormatting } from './ClearFormatting';
-export { Undo } from './Undo';
-export { Redo } from './Redo';

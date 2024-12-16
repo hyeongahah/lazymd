@@ -1,4 +1,11 @@
 import { ElementNode, TextNode } from '@/types/markdown';
+import { updateCursorPosition } from '@/utils/editorUtils';
+import {
+  calculateIndentLevel,
+  handleListIndentation,
+  getOrderedListMarker,
+  handleListEnterKey,
+} from '@/utils/listUtils';
 
 interface ListNode extends ElementNode {
   children: (ElementNode | TextNode)[];
@@ -131,7 +138,7 @@ export const handleOrderedList = (
   isTab: boolean,
   markdownText: string,
   setMarkdownText: (text: string) => void,
-  updateCursorPosition: (position: number) => void
+  textArea: HTMLTextAreaElement
 ): boolean => {
   const orderedMatch = currentLine.match(
     /^(\s*)([0-9]+|[IVXLCDM]+|[A-Z]|[a-z])\.\s*(.*)$/
@@ -139,41 +146,33 @@ export const handleOrderedList = (
   if (!orderedMatch) return false;
 
   const [, indent, marker, text] = orderedMatch;
-  const indentLevel = indent.length / 2;
+  const indentLevel = calculateIndentLevel(indent);
 
   if (isTab) {
-    const newIndent = '  '.repeat(indentLevel + 1);
-    const newMarker = getListMarker(indentLevel + 1, 1);
-
-    const lineStart = selectionStart - currentLine.length;
-    const newValue =
-      markdownText.substring(0, lineStart) +
-      newIndent +
-      newMarker +
-      text +
-      markdownText.substring(selectionStart);
-
-    setMarkdownText(newValue);
-    updateCursorPosition(
-      lineStart + newIndent.length + newMarker.length + text.length
+    const currentIndex = parseInt(marker) || 1;
+    handleListIndentation(
+      indent,
+      text,
+      selectionStart,
+      markdownText,
+      indentLevel,
+      (level) => getOrderedListMarker(level, currentIndex),
+      setMarkdownText,
+      textArea
     );
   } else {
-    if (!text.trim()) {
-      const lineStart = selectionStart - currentLine.length;
-      const newValue = markdownText.slice(0, lineStart) + '\n';
-      setMarkdownText(newValue);
-      updateCursorPosition(lineStart + 1);
-    } else {
-      const nextMarker = getListMarker(indentLevel, getNextIndex(marker));
-      const insertion = `\n${indent}${nextMarker}`;
-      const newValue =
-        markdownText.slice(0, selectionStart) +
-        insertion +
-        markdownText.slice(selectionStart);
-
-      setMarkdownText(newValue);
-      updateCursorPosition(selectionStart + insertion.length);
-    }
+    handleListEnterKey(
+      indent,
+      text,
+      selectionStart,
+      markdownText,
+      getOrderedListMarker,
+      indentLevel,
+      marker,
+      getNextIndex,
+      setMarkdownText,
+      textArea
+    );
   }
   return true;
 };

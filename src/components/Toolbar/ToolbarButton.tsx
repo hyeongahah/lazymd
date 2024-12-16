@@ -15,7 +15,23 @@ export function ToolbarButton({
   title,
 }: ToolbarButtonProps) {
   return (
-    <button className={styles.toolbarButton} onClick={onClick} title={title}>
+    <button
+      className={styles.toolbarButton}
+      onClick={onClick}
+      title={title}
+      style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '4px',
+        margin: '0 2px',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        isolation: 'isolate', // 새로운 쌓임 맥락 생성
+        zIndex: 1, // hover 효과가 다른 버튼에 영향을 주지 않도록
+      }}
+    >
       {children}
     </button>
   );

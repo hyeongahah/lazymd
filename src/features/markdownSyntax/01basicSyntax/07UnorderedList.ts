@@ -1,4 +1,10 @@
 import { ElementNode, TextNode } from '@/types/markdown';
+import { updateCursorPosition } from '@/utils/editorUtils';
+import {
+  getMarkerForLevel,
+  calculateIndentLevel,
+  handleListIndentation,
+} from '@/utils/listUtils';
 
 interface ListNode extends ElementNode {
   children: (ElementNode | TextNode)[];
@@ -70,43 +76,45 @@ export const handleUnorderedList = (
   isTab: boolean,
   markdownText: string,
   setMarkdownText: (text: string) => void,
-  updateCursorPosition: (position: number) => void
+  textArea: HTMLTextAreaElement
 ): boolean => {
   const unorderedMatch = currentLine.match(/^(\s*)([-*+])\s*(.*)$/);
   if (!unorderedMatch) return false;
 
-  const [, indent, marker, text] = unorderedMatch;
+  const [, indent, , text] = unorderedMatch;
+  const indentLevel = calculateIndentLevel(indent);
 
   if (isTab) {
-    const newIndent = indent + '  ';
-    const lineStart = selectionStart - currentLine.length;
-    const newValue =
-      markdownText.substring(0, lineStart) +
-      newIndent +
-      marker +
-      ' ' +
-      text +
-      markdownText.substring(selectionStart);
-
-    setMarkdownText(newValue);
-    updateCursorPosition(
-      lineStart + newIndent.length + marker.length + 1 + text.length
+    // 탭 키 처리: 들여쓰기와 마커 변경
+    handleListIndentation(
+      indent,
+      text,
+      selectionStart,
+      markdownText,
+      indentLevel,
+      getMarkerForLevel,
+      setMarkdownText,
+      textArea
     );
   } else {
+    // 엔터 키 처리
     if (!text.trim()) {
+      // 빈 항목이면 리스트 종료
       const lineStart = selectionStart - currentLine.length;
       const newValue = markdownText.substring(0, lineStart) + '\n';
       setMarkdownText(newValue);
-      updateCursorPosition(lineStart + 1);
+      updateCursorPosition(textArea, lineStart + 1);
     } else {
-      const insertion = `\n${indent}${marker} `;
+      // 현재 들여쓰기 레벨의 마커 유지
+      const currentMarker = getMarkerForLevel(indentLevel);
+      const insertion = `\n${indent}${currentMarker} `;
       const newValue =
         markdownText.substring(0, selectionStart) +
         insertion +
         markdownText.substring(selectionStart);
 
       setMarkdownText(newValue);
-      updateCursorPosition(selectionStart + insertion.length);
+      updateCursorPosition(textArea, selectionStart + insertion.length);
     }
   }
   return true;

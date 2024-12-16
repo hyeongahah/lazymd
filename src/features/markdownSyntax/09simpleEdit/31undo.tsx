@@ -1,5 +1,8 @@
 import { create } from 'zustand';
 import { useMarkdown } from '@/hooks/useMarkdown';
+import { RotateCcw } from 'lucide-react';
+import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
+import React from 'react';
 
 interface UndoState {
   content: string;
@@ -8,9 +11,27 @@ interface UndoState {
 
 interface UndoStore {
   undoStack: UndoState[];
-  currentLine: string; // 현재 작성 중인 줄
+  currentLine: string;
   pushState: (state: UndoState) => void;
   setCurrentLine: (line: string) => void;
+}
+
+// Undo 버튼 컴포넌트
+export function UndoButton({
+  undoManager,
+  textareaRef,
+}: {
+  undoManager: UndoManager;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+}) {
+  return (
+    <ToolbarButton
+      onClick={() => undoManager.undo(textareaRef.current)}
+      title='Undo (Ctrl+Z)'
+    >
+      <RotateCcw size={18} />
+    </ToolbarButton>
+  );
 }
 
 const useUndoStore = create<UndoStore>((set) => ({
@@ -18,14 +39,12 @@ const useUndoStore = create<UndoStore>((set) => ({
   currentLine: '',
   pushState: (state) =>
     set((store) => {
-      // 엔터키가 눌렸을 때만 스택에 저장
       if (state.content.endsWith('\n')) {
         return {
           undoStack: [...store.undoStack, state],
           currentLine: '',
         };
       }
-      // 엔터키가 아닌 경우 현재 줄 업데이트
       return {
         ...store,
         currentLine: state.content,
@@ -33,6 +52,8 @@ const useUndoStore = create<UndoStore>((set) => ({
     }),
   setCurrentLine: (line) => set({ currentLine: line }),
 }));
+
+// ... 기존 UndoManager, useUndo 코드 ...
 
 export class UndoManager {
   constructor(private setMarkdownText: (text: string) => void) {}
