@@ -2,10 +2,12 @@ import { useMarkdown } from '@/hooks/useMarkdown';
 import { Toolbar } from '@/components/Toolbar/ToolbarButton';
 import { useRef } from 'react';
 import styles from './styles.module.css';
+import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
 
 export function MarkdownEditor() {
   const { markdownText, setMarkdownText } = useMarkdown();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { undoManager } = useUndo();
   const isComposing = useRef(false);
 
   const updateCursorPosition = (position: number) => {
@@ -217,10 +219,18 @@ export function MarkdownEditor() {
         updateCursorPosition(selectionStart + 2);
       }
     }
+
+    // Ctrl + Z: Undo
+    if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+      e.preventDefault();
+      undoManager.undo(textareaRef.current);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMarkdownText(e.target.value);
+    const newText = e.target.value;
+    setMarkdownText(newText);
+    undoManager.saveState(newText, e.target.selectionStart);
   };
 
   // 한글 입력 시작
@@ -235,7 +245,7 @@ export function MarkdownEditor() {
 
   return (
     <div className={styles.editorContainer}>
-      <Toolbar />
+      <Toolbar undoManager={undoManager} textareaRef={textareaRef} />
       <textarea
         ref={textareaRef}
         className={styles.editor}
