@@ -2,6 +2,8 @@ import { ReactNode, useEffect, useState } from 'react';
 import styles from '@/pages/page.module.css';
 import { useMenuStore } from '@/store/menuStore';
 import { useSearchStore } from '@/store/searchStore';
+import { SearchInputModal } from '@/components/SearchInputModal';
+import { SearchResultModal } from '@/components/SearchResultModal';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,7 +11,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { isOpen, toggle } = useMenuStore();
-  const { isSearchOpen, toggleSearch } = useSearchStore();
+  const { isSearchModalOpen, searchResult, openSearchModal } = useSearchStore();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -39,32 +41,16 @@ export function Layout({ children }: LayoutProps) {
         <div className={styles.headerSyntaxSearch}>
           <button
             className={styles.toggleButton}
-            onClick={toggleSearch}
-            title='Syntax Search'
+            onClick={openSearchModal}
+            title='Search Syntax'
           >
             <span className={styles.toggleIcon}>🔍</span>
           </button>
         </div>
       </header>
       {children}
-      {isSearchOpen && (
-        <>
-          <div className={styles.modalOverlay} onClick={toggleSearch} />
-          <div className={styles.searchModal}>
-            <div className={styles.searchContent}>
-              <input
-                type='text'
-                className={styles.searchInput}
-                placeholder='Search syntax...'
-                autoFocus
-              />
-              <button className={styles.closeButton} onClick={toggleSearch}>
-                Close
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+      {isSearchModalOpen && <SearchInputModal />}
+      {searchResult && <SearchResultModal />}
     </div>
   );
 }

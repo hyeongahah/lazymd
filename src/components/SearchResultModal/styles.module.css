@@ -1,0 +1,98 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.koreanName {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.category {
+  padding: 0.4rem 0.8rem;
+  background-color: var(--menu-background);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section h3 {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.syntax {
+  background-color: var(--menu-background);
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.example {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.sourceCode,
+.preview {
+  background-color: var(--menu-background);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.sourceCode h4,
+.preview h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.applyButton,
+.closeButton {
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.applyButton {
+  background-color: #1e90ff;
+  color: white;
+  border-color: #1e90ff;
+}
+
+.applyButton:hover {
+  background-color: #1a7fd1;
+}
+
+.closeButton {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.closeButton:hover {
+  background-color: var(--button-hover);
+}
