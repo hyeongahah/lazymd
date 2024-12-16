@@ -12,6 +12,7 @@ import {
   handleClearFormatting,
 } from '@/features/markdownSyntax/09simpleEdit/33clearFormatting';
 import { HeadingDropdownButton } from '@/features/markdownSyntax/09simpleEdit/34headingDropdown';
+import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
 
 interface ToolbarButtonProps {
   onClick: () => void;

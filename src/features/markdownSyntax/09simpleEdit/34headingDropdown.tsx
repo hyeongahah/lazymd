@@ -7,7 +7,7 @@ import { handleHeaders } from '@/features/markdownSyntax';
 
 interface HeadingDropdownButtonProps {
   onClick: () => void;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.MutableRefObject<HTMLTextAreaElement | null>;
   setMarkdownText: (text: string) => void;
 }
 

@@ -17,14 +17,13 @@ interface UndoStore {
   setCurrentLine: (line: string) => void;
 }
 
+interface UndoButtonProps {
+  undoManager: ReturnType<typeof useUndo>['undoManager'];
+  textareaRef: React.MutableRefObject<HTMLTextAreaElement | null>;
+}
+
 // Undo 버튼 컴포넌트
-export function UndoButton({
-  undoManager,
-  textareaRef,
-}: {
-  undoManager: UndoManager;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
-}) {
+export function UndoButton({ undoManager, textareaRef }: UndoButtonProps) {
   return (
     <ToolbarButton
       onClick={() => undoManager.undo(textareaRef.current)}

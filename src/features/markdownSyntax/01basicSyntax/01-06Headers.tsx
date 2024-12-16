@@ -28,8 +28,10 @@ export const handleHeaders = (
   markdownText: string,
   selectionStart: number,
   setMarkdownText: (text: string) => void,
-  textArea: HTMLTextAreaElement
+  textArea: HTMLTextAreaElement | null
 ): void => {
+  if (!textArea) return;
+
   // 현재 라인 가져오기
   const currentLine = getCurrentLine(markdownText, selectionStart);
 
