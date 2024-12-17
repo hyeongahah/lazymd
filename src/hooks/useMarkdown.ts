@@ -15,3 +15,9 @@ export const useMarkdown = create<MarkdownState>((set) => ({
         typeof text === 'function' ? text(state.markdownText) : text,
     })),
 }));
+
+const handleTextChange = (newText: string) => {
+  setUndoStack([...undoStack, markdownText]);
+  setRedoStack([]);
+  setMarkdownText(newText);
+};
