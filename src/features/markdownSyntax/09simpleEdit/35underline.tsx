@@ -2,7 +2,33 @@ import { Underline } from 'lucide-react';
 import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 import { useMarkdown } from '@/hooks/useMarkdown';
 
-// 언더라인 처리 핸들러
+// 현재 선택 영역이 밑줄인지 확인하는 함수
+const isUnderlineText = (
+  text: string,
+  start: number,
+  end: number
+): { isUnderline: boolean; underlineStart: number; underlineEnd: number } => {
+  let textBefore = text.substring(0, start);
+  let textAfter = text.substring(end);
+
+  let startIndex = textBefore.lastIndexOf('<u>');
+  let endIndex = textAfter.indexOf('</u>');
+
+  if (startIndex !== -1 && endIndex !== -1) {
+    const underlineStart = startIndex;
+    const underlineEnd = end + endIndex + 4; // </u> 길이 포함
+
+    return {
+      isUnderline: true,
+      underlineStart,
+      underlineEnd,
+    };
+  }
+
+  return { isUnderline: false, underlineStart: -1, underlineEnd: -1 };
+};
+
+// 밑줄 처리 핸들러
 export const handleUnderline = (
   textareaRef: HTMLTextAreaElement,
   markdownText: string,
@@ -12,32 +38,30 @@ export const handleUnderline = (
   const end = textareaRef.selectionEnd;
   const selectedText = markdownText.substring(start, end);
 
-  // 현재 선택 영역이 이미 언더라인인지 확인
-  const textBefore = markdownText.substring(0, start);
-  const textAfter = markdownText.substring(end);
-  const underlineRegex = /<u>(.*?)<\/u>/;
-  const isUnderline = underlineRegex.test(selectedText);
+  const { isUnderline, underlineStart, underlineEnd } = isUnderlineText(
+    markdownText,
+    start,
+    end
+  );
 
   if (isUnderline) {
-    // 언더라인 제거
-    const plainText = selectedText.replace(/<\/?u>/g, '');
-    const newText =
-      markdownText.substring(0, start) +
-      plainText +
-      markdownText.substring(end);
-    setMarkdownText(newText);
+    // 밑줄 제거
+    const textWithoutUnderline =
+      markdownText.substring(0, underlineStart) +
+      markdownText.substring(underlineStart + 3, underlineEnd - 4) +
+      markdownText.substring(underlineEnd);
+    setMarkdownText(textWithoutUnderline);
 
-    // 커서 위치 조정
     setTimeout(() => {
-      textareaRef.selectionStart = start;
-      textareaRef.selectionEnd = start + plainText.length;
+      textareaRef.selectionStart = underlineStart;
+      textareaRef.selectionEnd = underlineEnd - 7; // <u></u> 길이만큼 뺌
       textareaRef.focus();
     }, 0);
     return;
   }
 
-  // 선택된 텍스트가 있는 경우
   if (start !== end) {
+    // 선택된 텍스트에 밑줄 적용
     const underlineText = `<u>${selectedText}</u>`;
     const newText =
       markdownText.substring(0, start) +
@@ -45,25 +69,23 @@ export const handleUnderline = (
       markdownText.substring(end);
     setMarkdownText(newText);
 
-    // 선택 영역 유지
     setTimeout(() => {
-      textareaRef.selectionStart = start;
-      textareaRef.selectionEnd = end + 7; // <u></u> 태그 길이만큼 조정
+      textareaRef.selectionStart = start + 3;
+      textareaRef.selectionEnd = end + 3;
       textareaRef.focus();
     }, 0);
   } else {
-    // 선택된 텍스트가 없는 경우
-    const underlineTemplate = '<u>텍스트</u>';
+    // 기본 템플릿 삽입
+    const underlineTemplate = '<u>밑줄테스트</u>';
     const newText =
       markdownText.substring(0, start) +
       underlineTemplate +
       markdownText.substring(end);
     setMarkdownText(newText);
 
-    // '텍스트' 부분을 자동으로 선택
     setTimeout(() => {
       textareaRef.selectionStart = start + 3;
-      textareaRef.selectionEnd = start + 6;
+      textareaRef.selectionEnd = start + 8;
       textareaRef.focus();
     }, 0);
   }
