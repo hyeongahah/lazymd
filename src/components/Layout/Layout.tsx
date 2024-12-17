@@ -23,6 +23,18 @@ export function Layout({ children }: LayoutProps) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'F1') {
+        e.preventDefault(); // 브라우저 기본 F1 동작 방지
+        openSearchModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [openSearchModal]);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -42,7 +54,7 @@ export function Layout({ children }: LayoutProps) {
           <button
             className={styles.toggleButton}
             onClick={openSearchModal}
-            title='Search Syntax'
+            title='Search Syntax (F1)'
           >
             <span className={styles.toggleIcon}>🔍</span>
           </button>
