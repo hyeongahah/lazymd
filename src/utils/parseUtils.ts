@@ -19,6 +19,12 @@ export const parseInlineStyles = (text: string): string => {
   // 인라인 코드 추가
   text = text.replace(/`(.*?)`/g, '<code>$1</code>');
 
+  // 인라인 링크 추가 ([text](url) 형식)
+  text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+
+  // URL 링크 추가 (<url> 형식)
+  text = text.replace(/<(https?:\/\/[^\s>]+)>/g, '<a href="$1">$1</a>');
+
   return text;
 };
 
