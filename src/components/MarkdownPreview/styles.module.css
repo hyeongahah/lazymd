@@ -39,6 +39,12 @@
   overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: normal;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .preview::-webkit-scrollbar {
@@ -163,118 +169,43 @@
   list-style-type: square;
 }
 
-/* 순서 있는 리스트 스타일 */
-.preview .ordered-list {
-  list-style-type: decimal;
-}
-
-.preview .ordered-list.level-1 {
-  list-style-type: upper-roman;
-}
-
-.preview .ordered-list.level-2 {
-  list-style-type: upper-alpha;
-}
-
-.preview .ordered-list.level-3 {
-  list-style-type: lower-roman;
-}
-
-.preview .ordered-list.level-4 {
-  list-style-type: lower-alpha;
-}
-
-.preview .ordered-list,
-.preview .ordered-list .nested-list {
-  margin: 0;
-  padding-left: 1.5em;
-}
-
-/* 체크박스 스타일 */
-.preview .task-list {
-  list-style: none;
-  padding-left: 1.5em;
-}
-
-.preview .task-list-item {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  position: relative;
-}
-
-.preview .task-checkbox {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 1.2em;
-  height: 1.2em;
-  border: 2px solid var(--text-color);
-  border-radius: 3px;
-  margin: 0;
-  cursor: not-allowed;
-  position: relative;
-  background-color: transparent;
-  flex-shrink: 0;
-}
-
-.preview .task-checkbox:checked {
-  background-color: var(--text-color);
-}
-
-.preview .task-checkbox:checked::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--background-color);
-  font-size: 0.8em;
-}
-
-.preview ol.nested-list {
-  list-style-type: upper-roman;
-}
-
-.preview ol.nested-list ol.nested-list {
-  list-style-type: upper-alpha;
-}
-
-.preview ol.nested-list ol.nested-list ol.nested-list {
-  list-style-type: lower-roman;
-}
-
-.preview ol.nested-list ol.nested-list ol.nested-list ol.nested-list {
-  list-style-type: lower-alpha;
-}
-
 /* 순서 있는 리스트 기본 스타일 */
 .preview ol {
-  list-style-type: decimal;
-}
-
-/* 첫 번째 레벨: 로마 대문자 */
-.preview ol ol {
-  list-style-type: upper-roman;
-}
-
-/* 두 번째 레벨: 알파벳 대문자 */
-.preview ol ol ol {
-  list-style-type: upper-alpha;
-}
-
-/* 세 번째 레벨: 로마 소문자 */
-.preview ol ol ol ol {
-  list-style-type: lower-roman;
-}
-
-/* 네 번째 레벨: 알파벳 소문자 */
-.preview ol ol ol ol ol {
-  list-style-type: lower-alpha;
-}
-
-/* 공통 스타일 */
-.preview ol,
-.preview ol ol {
   margin: 0;
-  padding-left: 2em;
+  padding-left: 1em;
+  list-style-type: none;
+}
+
+/* 리스트 마커 스타일링 */
+.preview .list-marker {
+  display: inline-block;
+  width: 1.5em;
+  margin-left: -1.5em;
+  margin-right: 0.25em;
+  text-align: right;
+  font-family: monospace;
+}
+
+/* 리스트 항목 스타일링 */
+.preview li {
+  margin: 0;
+  line-height: 1.5rem;
+  min-height: 1.5rem;
+  padding: 0;
+  position: relative;
+  font-family: monospace;
+}
+
+/* 들여쓰기 레벨에 따른 마진 */
+.preview ol ol {
+  padding-left: 1em;
+}
+
+/* 기존의 indent 클래스 제거 */
+.preview .indent-0,
+.preview .indent-1,
+.preview .indent-2,
+.preview .indent-3,
+.preview .indent-4 {
+  margin-left: 0;
 }

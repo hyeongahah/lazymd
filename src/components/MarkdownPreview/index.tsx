@@ -3,7 +3,7 @@ import { useMarkdown } from '@/hooks/useMarkdown';
 import { useEffect, useState } from 'react';
 import { useScrollSync } from '@/hooks/useScrollSync';
 import styles from './styles.module.css';
-import { basicSyntax } from '@/features/markdownSyntax';
+import { parseMarkdown } from '@/utils/parseUtils';
 
 export function MarkdownPreview() {
   const { markdownText } = useMarkdown();
@@ -13,8 +13,8 @@ export function MarkdownPreview() {
   useEffect(() => {
     const renderMarkdown = async () => {
       try {
-        const content = await basicSyntax(markdownText);
-        setHtml(content);
+        const parsedHtml = parseMarkdown(markdownText);
+        setHtml(parsedHtml);
       } catch (error) {
         console.error('Markdown rendering error:', error);
         setHtml('<p>Error rendering markdown</p>');

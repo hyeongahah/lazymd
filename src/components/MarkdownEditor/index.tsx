@@ -51,8 +51,10 @@ export function MarkdownEditor() {
           setMarkdownText,
           textareaRef.current!
         )
-      )
+      ) {
+        e.preventDefault();
         return;
+      }
 
       // 순서 없는 리스트 처리 시도
       if (
@@ -64,10 +66,12 @@ export function MarkdownEditor() {
           setMarkdownText,
           textareaRef.current!
         )
-      )
+      ) {
+        e.preventDefault();
         return;
+      }
 
-      // 반 텍스트 들여쓰기 처리
+      // 탭 키 처리
       if (e.key === 'Tab') {
         handleNormalIndent(
           textareaRef.current!,

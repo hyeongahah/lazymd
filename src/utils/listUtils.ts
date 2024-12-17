@@ -38,7 +38,7 @@ export const handleListIndentation = (
   const newIndent = indent + '  ';
   const newMarker = getNewMarker(currentIndentLevel + 1);
 
-  // 현재 줄의 시작 위치를 찾기
+  // 현재 줄의 시작 치를 찾기
   const currentLineStart =
     markdownText.lastIndexOf('\n', selectionStart - 1) + 1;
   const lineStart = currentLineStart >= 0 ? currentLineStart : 0;
@@ -58,36 +58,78 @@ export const handleListIndentation = (
   );
 };
 
-// 순서 있는 리스트의 마커 생성
-export const getOrderedListMarker = (
-  level: number,
-  index: number = 1
-): string => {
-  switch (level) {
-    case 0: // 최상위: 숫자
-      return `${index}. `;
-    case 1: // 1단계 하위: 로마 대문자
-      return `${toRomanUpper(index)}. `;
-    case 2: // 2단계 하위: 알파벳 대문자
-      return `${String.fromCharCode(64 + index)}. `;
-    case 3: // 3단계 하위: 로마 소문자
-      return `${toRomanLower(index)}. `;
-    case 4: // 4단계 하위: 알파벳 소문자
-      return `${String.fromCharCode(96 + index)}. `;
+// 로마 숫자 변환 함수
+const toRoman = (num: number, isUpperCase: boolean): string => {
+  const romanNumerals = isUpperCase
+    ? ['I', 'IV', 'V', 'IX', 'X', 'XL', 'L', 'XC', 'C']
+    : ['i', 'iv', 'v', 'ix', 'x', 'xl', 'l', 'xc', 'c'];
+  const numbers = [1, 4, 5, 9, 10, 40, 50, 90, 100];
+  let result = '';
+
+  for (let i = numbers.length - 1; i >= 0; i--) {
+    while (num >= numbers[i]) {
+      result += romanNumerals[i];
+      num -= numbers[i];
+    }
+  }
+  return result;
+};
+
+// 알파벳 변환 함수
+const toAlpha = (num: number, isUpperCase: boolean): string => {
+  const base = isUpperCase ? 65 : 97;
+  return String.fromCharCode(((num - 1) % 26) + base);
+};
+
+// 들여쓰기 레벨에 따른 마커 스타일 결정
+export const getOrderedListMarker = (level: number, index: number): string => {
+  // 5단계마다 반복되는 패턴
+  const style = level % 5;
+  switch (style) {
+    case 0: // 숫자
+      return `${index}.`;
+    case 1: // 대문자 로마
+      return `${toRoman(index, true)}.`;
+    case 2: // 대문자 알파벳
+      return `${toAlpha(index, true)}.`;
+    case 3: // 소문자 로마
+      return `${toRoman(index, false)}.`;
+    case 4: // 소문자 알파벳
+      return `${toAlpha(index, false)}.`;
     default:
-      return `${index}. `;
+      return `${index}.`;
   }
 };
 
-// 로마 숫자 변환 (대문자)
-export const toRomanUpper = (num: number): string => {
-  const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-  return roman[num - 1] || String(num);
+// 다음 레벨의 마커 가져오기
+export const getNextLevelMarker = (currentLevel: number): string => {
+  const nextLevel = currentLevel + 1;
+  return getOrderedListMarker(nextLevel, 1);
 };
 
-// 로마 숫자 변환 (소문자)
-export const toRomanLower = (num: number): string => {
-  return toRomanUpper(num).toLowerCase();
+// 같은 레벨의 다음 마커 가져오기
+export const getNextMarkerInLevel = (
+  currentMarker: string,
+  level: number
+): string => {
+  const match = currentMarker.match(/^(\d+|\w+)\./);
+  if (!match) return '1.';
+
+  const current = match[1];
+  let nextIndex = 1;
+
+  if (/^\d+$/.test(current)) {
+    nextIndex = parseInt(current) + 1;
+  } else if (/^[IVX]+$/i.test(current)) {
+    // 로마 숫자의 경우
+    nextIndex = romanToNumber(current) + 1;
+  } else if (/^[A-Za-z]$/.test(current)) {
+    // 알파벳의 경우
+    const base = current.toUpperCase() === current ? 65 : 97;
+    nextIndex = current.charCodeAt(0) - base + 2;
+  }
+
+  return getOrderedListMarker(level, nextIndex);
 };
 
 // 리스트의 엔터 키 처리
