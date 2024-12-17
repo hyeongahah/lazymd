@@ -19,6 +19,9 @@ export const parseInlineStyles = (text: string): string => {
   // 인라인 코드 추가
   text = text.replace(/`(.*?)`/g, '<code>$1</code>');
 
+  // 하이라이트 파싱 추가 (== 문법)
+  text = text.replace(/==(.*?)==/g, '<mark>$1</mark>');
+
   // 인라인 링크 추가 ([text](url) 형식)
   text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
 

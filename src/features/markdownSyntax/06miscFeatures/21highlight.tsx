@@ -11,12 +11,12 @@ const isHighlightText = (
   let textBefore = text.substring(0, start);
   let textAfter = text.substring(end);
 
-  let startIndex = textBefore.lastIndexOf('<mark>');
-  let endIndex = textAfter.indexOf('</mark>');
+  let startIndex = textBefore.lastIndexOf('==');
+  let endIndex = textAfter.indexOf('==');
 
   if (startIndex !== -1 && endIndex !== -1) {
     const highlightStart = startIndex;
-    const highlightEnd = end + endIndex + 7; // </mark> 길이 포함
+    const highlightEnd = end + endIndex + 2; // == 길이 포함
 
     return {
       isHighlight: true,
@@ -48,13 +48,13 @@ export const handleHighlight = (
     // 하이라이트 제거
     const textWithoutHighlight =
       markdownText.substring(0, highlightStart) +
-      markdownText.substring(highlightStart + 6, highlightEnd - 7) +
+      markdownText.substring(highlightStart + 2, highlightEnd - 2) +
       markdownText.substring(highlightEnd);
     setMarkdownText(textWithoutHighlight);
 
     setTimeout(() => {
       textareaRef.selectionStart = highlightStart;
-      textareaRef.selectionEnd = highlightEnd - 13; // <mark></mark> 길이만큼 뺌
+      textareaRef.selectionEnd = highlightEnd - 4; // == == 길이만큼 뺌
       textareaRef.focus();
     }, 0);
     return;
@@ -62,7 +62,7 @@ export const handleHighlight = (
 
   if (start !== end) {
     // 선택된 텍스트에 하이라이트 적용
-    const highlightText = `<mark>${selectedText}</mark>`;
+    const highlightText = `==${selectedText}==`;
     const newText =
       markdownText.substring(0, start) +
       highlightText +
@@ -70,13 +70,13 @@ export const handleHighlight = (
     setMarkdownText(newText);
 
     setTimeout(() => {
-      textareaRef.selectionStart = start + 6;
-      textareaRef.selectionEnd = end + 6;
+      textareaRef.selectionStart = start + 2;
+      textareaRef.selectionEnd = end + 2;
       textareaRef.focus();
     }, 0);
   } else {
     // 기본 템플릿 삽입
-    const highlightTemplate = '<mark>형광펜테스트</mark>';
+    const highlightTemplate = '==형광펜테스트==';
     const newText =
       markdownText.substring(0, start) +
       highlightTemplate +
@@ -84,8 +84,8 @@ export const handleHighlight = (
     setMarkdownText(newText);
 
     setTimeout(() => {
-      textareaRef.selectionStart = start + 6;
-      textareaRef.selectionEnd = start + 12;
+      textareaRef.selectionStart = start + 2;
+      textareaRef.selectionEnd = start + 8;
       textareaRef.focus();
     }, 0);
   }
