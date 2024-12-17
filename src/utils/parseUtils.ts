@@ -3,42 +3,17 @@ import { parseItalic } from '@/features/markdownSyntax/01basicSyntax/11Italic';
 import { getOrderedListMarker } from '@/utils/listUtils';
 
 // 인라인 스타일 파싱 함수
-export const parseInlineStyles = (text: string) => {
-  // 볼드체와 이탤릭체가 중첩된 경우 (***text***)
-  if (text.startsWith('***') && text.endsWith('***')) {
-    const innerText = text.slice(3, -3);
-    return {
-      type: 'element',
-      tagName: 'strong',
-      properties: {},
-      children: [
-        {
-          type: 'element',
-          tagName: 'em',
-          properties: {},
-          children: [{ type: 'text', value: innerText }],
-        },
-      ],
-    };
-  }
+export const parseInlineStyles = (text: string): string => {
+  // 볼드체와 이탤릭체가 함께 있는 경우
+  text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
 
-  // 볼드체 처리
-  const boldResult = parseBold(text);
-  if (boldResult) return boldResult;
+  // 볼드체
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-  // 이탤릭체 처리
-  const italicResult = parseItalic(text);
-  if (italicResult) return italicResult;
+  // 이탤릭체
+  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-  // 일반 텍스트
-  if (text.trim()) {
-    return {
-      type: 'text',
-      value: text,
-    };
-  }
-
-  return null;
+  return text;
 };
 
 export const parseMarkdown = (text: string): string => {
@@ -51,10 +26,20 @@ export const parseMarkdown = (text: string): string => {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+
+    // 헤더 매칭
+    const headerMatch = line.match(/^(#{1,6})\s(.+)$/);
+    if (headerMatch) {
+      const level = headerMatch[1].length;
+      const content = parseInlineStyles(headerMatch[2]);
+      html += `<h${level}>${content}</h${level}>`;
+      continue;
+    }
+
+    // 순서 있는 리스트 매칭
     const listMatch = line.match(
       /^(\s*)(?:(\d+)|([IVXivx]+)|([A-Za-z]))\.?\s(.*)$/
     );
-
     if (listMatch) {
       const [, indent, num, roman, alpha, text] = listMatch;
       const level = indent ? indent.length / 2 : 0;
@@ -110,17 +95,10 @@ export const parseMarkdown = (text: string): string => {
       currentLevel = -1;
 
       if (line.trim()) {
-        html += `<p>${line}</p>`;
+        // 일반 텍스트에 인라인 스타일 적용
+        const parsedLine = parseInlineStyles(line);
+        html += `<p>${parsedLine}</p>`;
       }
-    }
-  }
-
-  // 남은 리스트 태그 닫기
-  if (listStack.length > 0) {
-    html += '</li>';
-    while (listStack.length > 0) {
-      html += '</ol>';
-      listStack.pop();
     }
   }
 

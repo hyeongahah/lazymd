@@ -38,7 +38,7 @@ export const handleListIndentation = (
   const newIndent = indent + '  ';
   const newMarker = getNewMarker(currentIndentLevel + 1);
 
-  // 현재 줄의 시작 치를 찾기
+  // 현재 줄의 시작 ���를 찾기
   const currentLineStart =
     markdownText.lastIndexOf('\n', selectionStart - 1) + 1;
   const lineStart = currentLineStart >= 0 ? currentLineStart : 0;
@@ -165,3 +165,30 @@ export const handleListEnterKey = (
     updateCursorPosition(textArea, selectionStart + insertion.length);
   }
 };
+
+function romanToNumber(roman: string): number {
+  const romanValues: { [key: string]: number } = {
+    i: 1,
+    v: 5,
+    x: 10,
+    l: 50,
+    c: 100,
+    d: 500,
+    m: 1000,
+    I: 1,
+    V: 5,
+    X: 10,
+    L: 50,
+    C: 100,
+    D: 500,
+    M: 1000,
+  };
+
+  let result = 0;
+  for (let i = 0; i < roman.length; i++) {
+    const current = romanValues[roman[i]];
+    const next = romanValues[roman[i + 1]];
+    result += next > current ? -current : current;
+  }
+  return result;
+}
