@@ -1,7 +1,6 @@
 import { parseBold } from '@/features/markdownSyntax/01basicSyntax/10Bold';
 import { parseItalic } from '@/features/markdownSyntax/01basicSyntax/11Italic';
 import { getOrderedListMarker } from '@/utils/listUtils';
-import { parseStrikethrough } from '@/features/markdownSyntax/01basicSyntax/12Strikethrough';
 
 // 인라인 스타일 파싱 함수
 export const parseInlineStyles = (text: string): string => {
@@ -16,6 +15,9 @@ export const parseInlineStyles = (text: string): string => {
 
   // 취소선 추가
   text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
+
+  // 인라인 코드 추가
+  text = text.replace(/`(.*?)`/g, '<code>$1</code>');
 
   return text;
 };
@@ -108,10 +110,3 @@ export const parseMarkdown = (text: string): string => {
 
   return html;
 };
-
-// 기존 파서 배열에 취소선 파서 추가
-export const parsers = [
-  // 기존 파서들...
-  parseStrikethrough,
-  // ...
-];
