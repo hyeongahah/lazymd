@@ -17,6 +17,7 @@ import { BoldButton } from '@/features/markdownSyntax/01basicSyntax/10Bold';
 import { ItalicButton } from '@/features/markdownSyntax/01basicSyntax/11Italic';
 import { StrikethroughButton } from '@/features/markdownSyntax/01basicSyntax/12Strikethrough';
 import { UnderlineButton } from '@/features/markdownSyntax/09simpleEdit/35underline';
+import { HighlightButton } from '@/features/markdownSyntax/06miscFeatures/21highlight';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -131,6 +132,8 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                 <StrikethroughButton />
               ) : buttonNumber === 8 ? (
                 <UnderlineButton />
+              ) : buttonNumber === 9 ? (
+                <HighlightButton />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}
