@@ -80,6 +80,15 @@ export const parseMarkdown = (text: string): string => {
     for (let j = 0; j < lines.length; j++) {
       const line = lines[j];
 
+      // 헤더 매칭
+      const headerMatch = line.match(/^(#{1,6})\s(.+)$/);
+      if (headerMatch) {
+        const level = headerMatch[1].length;
+        const content = parseInlineStyles(headerMatch[2].trim());
+        html += `<h${level}>${content}</h${level}>`;
+        continue;
+      }
+
       // 체크리스트 매칭
       const checklistMatch = line.match(/^(\s*)[-*+]\s+\[([ x])\]\s*(.*)$/);
       if (checklistMatch) {
@@ -103,16 +112,55 @@ export const parseMarkdown = (text: string): string => {
         continue;
       }
 
-      // 헤더 매칭
-      const headerMatch = line.match(/^(#{1,6})\s(.+)$/);
-      if (headerMatch) {
-        const level = headerMatch[1].length;
-        const content = parseInlineStyles(headerMatch[2].trim());
-        html += `<h${level}>${content}</h${level}>`;
+      // 순서 없는 리스트 매칭
+      const unorderedListMatch = line.match(/^(\s*)[-*+]\s+(?!\[[ x]\])(.*)$/);
+      if (unorderedListMatch) {
+        const [, indent, text] = unorderedListMatch;
+        const level = indent ? indent.length / 2 : 0;
+        const markers = ['disc', 'circle', 'square'];
+        const markerStyle = markers[level % markers.length];
+
+        // 새로운 리스트 시작
+        if (currentLevel === -1) {
+          html += `<ul style="list-style-type: ${markerStyle}">`;
+          currentLevel = 0;
+        }
+        // 들여쓰기 레벨이 증가한 경우
+        else if (level > currentLevel) {
+          html = html.replace(/<\/li>$/, ''); // 마지막 li 태그를 제거
+          html += `<ul style="list-style-type: ${markerStyle}">`;
+          currentLevel = level;
+        }
+        // 들여쓰기 레벨이 감소한 경우
+        else if (level < currentLevel) {
+          html += '</li>';
+          while (currentLevel > level) {
+            html += '</ul></li>';
+            currentLevel--;
+          }
+        }
+        // 같은 레벨의 새로운 항목
+        else if (level === currentLevel && html.endsWith('</li>')) {
+          html = html.slice(0, -5); // 마지막 </li> 제거
+        }
+
+        html += `<li>${parseInlineStyles(text)}`;
+
+        // 다음 줄이 리스트가 아니거나 마지막 줄인 경우 리스트 종료
+        if (
+          j === lines.length - 1 ||
+          !lines[j + 1].match(/^(\s*)[-*+]\s+(?!\[[ x]\])/)
+        ) {
+          html += '</li>';
+          while (currentLevel >= 0) {
+            html += '</ul>';
+            currentLevel--;
+          }
+        }
         continue;
       }
 
-      // 순��� 있는 리스트 매칭
+      // 순서 있는 리스트 매칭
       const listMatch = line.match(
         /^(\s*)(?:(\d+)|([IVXivx]+)|([A-Za-z]))\.?\s(.*)$/
       );
