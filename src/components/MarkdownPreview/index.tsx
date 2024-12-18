@@ -2,7 +2,13 @@ import React, { useRef, useEffect } from 'react';
 import { useMarkdown } from '@/hooks/useMarkdown';
 import useScrollSync from '@/hooks/useScrollSync';
 import styles from './styles.module.css';
+import statsStyles from './statsBox.module.css';
 import { parseMarkdown } from '@/utils/parseUtils';
+import {
+  getCharacterCount,
+  getWordCount,
+  getReadingTime,
+} from '@/utils/textCount';
 
 export function MarkdownPreview() {
   const { markdownText } = useMarkdown();
@@ -20,7 +26,24 @@ export function MarkdownPreview() {
   return (
     <div className={styles.container}>
       <div className={styles.notice}>
-        공지사항 : 수학 기호 입력 기능 추가 예정
+        <div className={`${statsStyles.statsBox} ${statsStyles.box1}`}>
+          글자수
+        </div>
+        <div className={`${statsStyles.statsBox} ${statsStyles.box2}`}>
+          {getCharacterCount(markdownText)}
+        </div>
+        <div className={`${statsStyles.statsBox} ${statsStyles.box3}`}>
+          단어수
+        </div>
+        <div className={`${statsStyles.statsBox} ${statsStyles.box4}`}>
+          {getWordCount(markdownText)}
+        </div>
+        <div className={`${statsStyles.statsBox} ${statsStyles.box5}`}>
+          읽기 예상 시간
+        </div>
+        <div className={`${statsStyles.statsBox} ${statsStyles.box6}`}>
+          {getReadingTime(markdownText)}
+        </div>
       </div>
       <div
         ref={previewRef}
