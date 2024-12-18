@@ -1,18 +1,10 @@
 import React from 'react';
-import { FileUpload } from './FileUpload';
-import { FileDownload } from './FileDownload';
-import { ThemeToggle } from './ThemeToggle';
-import styles from './styles.module.css';
-import { useMarkdown } from '@/hooks/useMarkdown';
+import styles from '@/pages/page.module.css';
 
 export function MenuButtons() {
-  const { markdownText } = useMarkdown();
-
   return (
-    <div className={styles.menuButtons}>
-      <FileUpload />
-      <FileDownload text={markdownText} />
-      <ThemeToggle />
+    <div className={styles.menuButtonsGroup}>
+      {/* 여기에 추가 메뉴 버튼들이 들어갈 수 있습니다 */}
     </div>
   );
 }

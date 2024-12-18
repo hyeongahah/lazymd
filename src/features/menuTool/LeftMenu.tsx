@@ -8,7 +8,7 @@ import { LazyMdIntro } from './LazyMdIntro';
 
 export function LeftMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(true);
-  const { text } = useMarkdown();
+  const { markdownText } = useMarkdown();
 
   return (
     <div className={`${styles.leftPage} ${!isMenuOpen ? styles.closed : ''}`}>
@@ -23,7 +23,7 @@ export function LeftMenu() {
       <div className={styles.menuContent}>
         <div className={styles.menuButtons}>
           <FileUpload />
-          <FileDownload text={text} />
+          <FileDownload text={markdownText} />
           <MenuButtons />
           <LazyMdIntro />
         </div>

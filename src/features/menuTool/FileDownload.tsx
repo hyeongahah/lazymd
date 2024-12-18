@@ -1,19 +1,15 @@
-import { useCallback, useState } from 'react';
+import React from 'react';
 import styles from '@/pages/page.module.css';
 
 interface FileDownloadProps {
   text: string;
 }
 
-export const FileDownload = ({ text }: FileDownloadProps) => {
-  const [isPromptOpen, setIsPromptOpen] = useState(false);
+export function FileDownload({ text }: FileDownloadProps) {
+  const handleDownload = () => {
+    const filename = prompt('파일 이름을 입력하세요:', 'document.md');
+    if (!filename) return;
 
-  const handleDownload = useCallback(() => {
-    const filename = prompt('Enter file name:', 'LazyMD.md');
-
-    if (!filename) return; // 취소하거나 빈 값인 경우
-
-    // 파일명에 .md 확장자가 없으면 추가
     const finalFilename = filename.endsWith('.md')
       ? filename
       : `${filename}.md`;
@@ -25,11 +21,11 @@ export const FileDownload = ({ text }: FileDownloadProps) => {
     a.download = finalFilename;
     a.click();
     URL.revokeObjectURL(url);
-  }, [text]);
+  };
 
   return (
     <button className={styles.menuButton} onClick={handleDownload}>
       <span>💾</span> Save File
     </button>
   );
-};
+}
