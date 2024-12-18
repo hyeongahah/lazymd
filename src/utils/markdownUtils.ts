@@ -1,44 +1,6 @@
-import MarkdownIt from 'markdown-it';
+import { parseMarkdown } from './parseUtils';
 
-export const createMarkdownIt = () => {
-  const md = MarkdownIt({
-    html: true,
-    breaks: true,
-    linkify: true,
-  });
-
-  const defaultRender =
-    md.renderer.rules.text ||
-    function (tokens, idx, options, env, self) {
-      return self.renderToken(tokens, idx, options);
-    };
-
-  md.renderer.rules.text = function (tokens, idx, options, env, self) {
-    const token = tokens[idx];
-    if (token.content === '') {
-      return '<br/>';
-    }
-    return defaultRender(tokens, idx, options, env, self);
-  };
-
-  md.renderer.rules.softbreak = function () {
-    return '<br/>';
-  };
-
-  md.renderer.rules.hardbreak = function () {
-    return '<br/>';
-  };
-
-  md.renderer.rules.paragraph_open = function () {
-    return '<p>';
-  };
-
-  md.renderer.rules.paragraph_close = function () {
-    return '</p>';
-  };
-
-  return md;
-};
+export { parseMarkdown };
 
 export const syncScroll = (
   textarea: HTMLTextAreaElement,

@@ -4,6 +4,7 @@ interface MarkdownState {
   markdownText: string;
   text: string;
   setMarkdownText: (text: string | ((prev: string) => string)) => void;
+  setText: (text: string) => void;
 }
 
 export const useMarkdown = create<MarkdownState>((set) => ({
@@ -14,10 +15,5 @@ export const useMarkdown = create<MarkdownState>((set) => ({
       markdownText:
         typeof text === 'function' ? text(state.markdownText) : text,
     })),
+  setText: (text: string) => set({ text }),
 }));
-
-const handleTextChange = (newText: string) => {
-  setUndoStack([...undoStack, markdownText]);
-  setRedoStack([]);
-  setMarkdownText(newText);
-};
