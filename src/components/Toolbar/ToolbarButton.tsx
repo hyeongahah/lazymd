@@ -81,6 +81,14 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
     });
   };
 
+  const handleClearAll = () => {
+    if (textareaRef.current) {
+      setMarkdownText('');
+      textareaRef.current.setSelectionRange(0, 0);
+      textareaRef.current.focus();
+    }
+  };
+
   return (
     <div className={styles.toolbar}>
       <button
@@ -108,7 +116,7 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                   }}
                 />
               ) : buttonNumber === 3 ? (
-                <ClearAllButton />
+                <ClearAllButton onClick={handleClearAll} />
               ) : buttonNumber === 4 ? (
                 <ClearFormattingButton
                   onClick={() => {

@@ -759,7 +759,7 @@
   background-color: var(--button-hover);
 }
 
-/* 모바일 환경에서 메뉴 컨텐츠 스타일 수정 */
+/* 모바일 환경에서 메뉴 컨텐츠 스타일 수�� */
 @media (max-width: 992px) {
   .menuContent {
     margin-top: 0;
@@ -773,7 +773,7 @@
   }
 }
 
-/* 모바일 환��에서 leftPage 스타일 수정 */
+/* 모바일 환경에서 leftPage 스타일 수정 */
 @media (max-width: 992px) {
   .leftPage {
     display: none;
@@ -803,4 +803,22 @@
   .menuButtons {
     gap: 0.8rem;
   }
+}
+
+.confirmToast {
+  position: fixed !important;
+  left: var(--toast-left) !important;
+  top: calc(var(--toast-top) + 15px) !important;
+  transform: translate(150px, 0) translateX(-70%) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  z-index: 9999 !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.confirmToast .Toastify__progress-bar {
+  border-radius: 0 0 2px 8px !important;
+  height: 4px !important;
 }
