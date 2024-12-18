@@ -204,7 +204,7 @@
   font-size: 0.9rem;
 }
 
-/* 체크리스트 스타�� */
+/* 체크리스트 스타일 */
 .preview .task-list {
   list-style: none;
   margin: 0;
@@ -231,4 +231,23 @@
 
 .preview .task-list-item input[type='checkbox']:checked {
   accent-color: var(--text-color);
+}
+
+/* 인용문 스타일 */
+.preview blockquote {
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid var(--border-color);
+  background-color: var(--menu-background);
+  color: var(--text-color);
+  font-style: italic;
+}
+
+.preview blockquote blockquote {
+  margin-left: 0.5rem;
+  border-left-color: var(--text-secondary);
+}
+
+.preview blockquote blockquote blockquote {
+  border-left-color: var(--text-color);
 }

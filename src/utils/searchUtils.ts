@@ -65,5 +65,5 @@ export const getAutocompleteSuggestions = (query: string): SyntaxItem[] => {
 
       return 0;
     })
-    .slice(0, 5);
+    .slice(0, 7);
 };

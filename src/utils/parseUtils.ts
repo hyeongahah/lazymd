@@ -50,9 +50,32 @@ export const parseMarkdown = (text: string): string => {
       .replace(/\n/g, ' ') // 줄바꿈을 공백으로
       .trim();
 
-    const lines = processedParagraph.split('\n');
+    const lines = paragraph.split('\n');
     let currentListStack: { level: number; count: number }[] = [];
     let currentLevel = -1;
+
+    // 인용문 확인
+    if (lines[0].startsWith('>')) {
+      const quotedContent = lines
+        .map((line) => {
+          // 중첩된 인용문 레벨 계산
+          const level = (line.match(/^>+/)?.[0] || '').length;
+          // '>' 문자와 그 뒤의 공백 제거
+          const content = line.replace(/^>+\s?/, '');
+          return { level, content };
+        })
+        .reduce((acc, { level, content }) => {
+          // 현재 레벨에 따라 인용문 중첩
+          let html = content;
+          for (let i = 0; i < level; i++) {
+            html = `<blockquote>${html}</blockquote>`;
+          }
+          return acc + html + ' ';
+        }, '');
+
+      html += parseInlineStyles(quotedContent.trim());
+      continue;
+    }
 
     for (let j = 0; j < lines.length; j++) {
       const line = lines[j];
@@ -89,7 +112,7 @@ export const parseMarkdown = (text: string): string => {
         continue;
       }
 
-      // 순서 있는 리스트 매칭
+      // 순��� 있는 리스트 매칭
       const listMatch = line.match(
         /^(\s*)(?:(\d+)|([IVXivx]+)|([A-Za-z]))\.?\s(.*)$/
       );

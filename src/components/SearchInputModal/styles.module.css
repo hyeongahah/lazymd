@@ -1,12 +1,15 @@
 .modal {
-  width: 400px !important;
+  width: 240px !important;
+  height: 150px !important;
   overflow: visible !important;
 }
 
 .searchSection {
   position: relative;
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .searchInput {
@@ -24,61 +27,20 @@
   border-color: #1e90ff;
 }
 
-.buttonSection {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.searchButton,
-.closeButton {
-  padding: 0.8rem 2rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-
-.searchButton {
-  background-color: #1e90ff;
-  color: white;
-  border-color: #1e90ff;
-}
-
-.searchButton:hover {
-  background-color: #1a7fd1;
-}
-
-.closeButton {
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
-.closeButton:hover {
-  background-color: var(--button-hover);
-}
-
 .suggestions {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
-  margin-top: 4px;
   padding: 0;
   list-style: none;
   background-color: var(--background-color);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  max-height: 400px;
+  z-index: 10002;
+  max-height: 300px;
   overflow-y: auto;
-  z-index: 9999;
-}
-
-.suggestions::before {
-  display: none;
 }
 
 .suggestions::-webkit-scrollbar {
@@ -124,4 +86,42 @@
 .suggestion .nameKo {
   color: var(--text-secondary);
   font-size: 0.9em;
+}
+
+.buttonSection {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.searchButton,
+.closeButton {
+  padding: 0.8rem 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.searchButton {
+  background-color: #1e90ff;
+  color: white;
+  border-color: #1e90ff;
+}
+
+.searchButton:hover {
+  background-color: #1a7fd1;
+}
+
+.closeButton {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.closeButton:hover {
+  background-color: var(--button-hover);
 }
