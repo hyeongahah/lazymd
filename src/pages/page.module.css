@@ -1,27 +1,3 @@
-:root[data-theme='light'] {
-  --background-color: #ffffff;
-  --text-color: #333333;
-  --border-color: #eaeaea;
-  --menu-background: #f8f9fa;
-  --button-hover: #f1f1f1;
-}
-
-:root[data-theme='dark'] {
-  --background-color: #1a1a1a;
-  --text-color: #ffffff;
-  --border-color: #404040;
-  --menu-background: #2d2d2d;
-  --button-hover: #404040;
-}
-
-:root {
-  --editor-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
-  --editor-font-size: 16px;
-  --editor-line-height: 1.6;
-  --editor-padding: 1rem;
-}
-
 .container {
   width: 100%;
   height: 100vh;
@@ -486,7 +462,7 @@
   height: 16px;
 }
 
-/* 토글 버튼 텍스트 */
+/* 토글 버�� 텍스트 */
 .toggleText {
   font-size: 0.9rem;
 }
@@ -558,7 +534,7 @@
   display: flex;
 }
 
-/* 헤딩 옵션 버튼 */
+/* 헤�� 옵션 버튼 */
 .headingOption {
   width: 30px;
   height: 30px;
