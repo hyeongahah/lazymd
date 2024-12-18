@@ -1,11 +1,16 @@
 import React from 'react';
 import styles from '@/pages/page.module.css';
 import { Logo } from './Logo';
-import { Maximize2 } from 'lucide-react';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import { useMenuStore } from '@/store/menuStore';
 import { useSearchStore } from '@/store/searchStore';
 
-export function Header() {
+interface HeaderProps {
+  isExpanded: boolean;
+  onExpandToggle: () => void;
+}
+
+export function Header({ isExpanded, onExpandToggle }: HeaderProps) {
   const { isOpen, toggle } = useMenuStore();
   const { openSearchModal } = useSearchStore();
 
@@ -33,8 +38,12 @@ export function Header() {
         </button>
       </div>
       <div className={styles.headerExpandToggle}>
-        <button className={styles.toggleButton}>
-          <Maximize2 size={18} />
+        <button
+          className={styles.toggleButton}
+          onClick={onExpandToggle}
+          title={isExpanded ? '프리뷰 축소' : '프리뷰 확대'}
+        >
+          {isExpanded ? <Minimize2 size={24} /> : <Maximize2 size={24} />}
         </button>
       </div>
     </header>

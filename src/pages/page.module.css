@@ -146,6 +146,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: flex 0.3s ease;
+}
+
+.rightPage.expanded {
+  flex: 2;
 }
 
 .editor,
@@ -182,6 +187,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   font-size: 0.9rem;
   transition: all 0.2s ease;
@@ -317,7 +323,7 @@
   white-space: pre;
 }
 
-/* 반응형 미디��� 쿼리 */
+/* 반응형 미디어 쿼리 */
 @media (min-width: 992px) {
   .main {
     flex-direction: row;
@@ -410,6 +416,25 @@
     width: 45px;
     min-width: 45px;
   }
+
+  .toggleButton {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 8px;
+    border-radius: 20px;
+  }
+
+  .headerExpandToggle .toggleButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .headerExpandToggle .toggleButton svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -467,6 +492,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   font-size: 0.9rem;
   transition: all 0.2s ease;
@@ -747,7 +773,7 @@
   }
 }
 
-/* 모바일 환경에서 leftPage 스타일 수정 */
+/* 모바일 환��에서 leftPage 스타일 수정 */
 @media (max-width: 992px) {
   .leftPage {
     display: none;

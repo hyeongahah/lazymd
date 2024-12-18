@@ -8,9 +8,14 @@ import styles from './page.module.css';
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleStart = () => {
     setShowEditor(true);
+  };
+
+  const handleExpandToggle = () => {
+    setIsExpanded(!isExpanded);
   };
 
   if (!showEditor) {
@@ -18,13 +23,17 @@ export default function Home() {
   }
 
   return (
-    <Layout>
+    <Layout onExpandToggle={handleExpandToggle} isExpanded={isExpanded}>
       <main className={styles.main}>
         <LeftPage />
-        <div className={styles.centerPage}>
-          <MarkdownEditor />
-        </div>
-        <div className={styles.rightPage}>
+        {!isExpanded && (
+          <div className={styles.centerPage}>
+            <MarkdownEditor />
+          </div>
+        )}
+        <div
+          className={`${styles.rightPage} ${isExpanded ? styles.expanded : ''}`}
+        >
           <MarkdownPreview />
         </div>
       </main>

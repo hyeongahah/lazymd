@@ -7,9 +7,11 @@ import { Header } from '@/components/Header';
 
 interface LayoutProps {
   children: ReactNode;
+  onExpandToggle: () => void;
+  isExpanded: boolean;
 }
 
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children, onExpandToggle, isExpanded }: LayoutProps) {
   const { isSearchModalOpen, searchResult, openSearchModal } = useSearchStore();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -36,8 +38,14 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className={styles.container}>
-      <Header />
-      {children}
+      <Header isExpanded={isExpanded} onExpandToggle={onExpandToggle} />
+      <main className={styles.main}>
+        <div
+          className={`${styles.content} ${isExpanded ? styles.expanded : ''}`}
+        >
+          {children}
+        </div>
+      </main>
       {isSearchModalOpen && <SearchInputModal />}
       {searchResult && <SearchResultModal />}
     </div>
