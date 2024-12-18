@@ -9,7 +9,7 @@ import { LazyMdIntro } from '@/features/menuTool/LazyMdIntro';
 
 export function LeftPage() {
   const { isOpen, toggle } = useMenuStore();
-  const { text } = useMarkdown();
+  const { markdownText } = useMarkdown();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -17,31 +17,61 @@ export function LeftPage() {
       setIsMobile(window.innerWidth <= 992);
     };
 
-    // 초기 체크
     checkMobile();
-
-    // 리사이즈 이벤트 리스너 추가
     window.addEventListener('resize', checkMobile);
-
-    // 클린업
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen && isMobile) {
+        toggle();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isMobile, toggle]);
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget && isMobile) {
+      toggle();
+    }
+  };
+
+  const menuContent = (
+    <div className={styles.menuContent}>
+      <div className={styles.menuButtons}>
+        <FileDownload text={markdownText} />
+        <FileUpload />
+        <ThemeToggle />
+        <LazyMdIntro />
+      </div>
+      {isMobile && (
+        <button className={styles.modalCloseButton} onClick={toggle}>
+          Close
+        </button>
+      )}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        {isOpen && (
+          <div
+            className={`${styles.menuModal} ${isOpen ? styles.open : ''}`}
+            onClick={handleOverlayClick}
+          >
+            <div className={styles.menuModalContent}>{menuContent}</div>
+          </div>
+        )}
+      </>
+    );
+  }
+
   return (
     <div className={`${styles.leftPage} ${!isOpen ? styles.closed : ''}`}>
-      <div className={styles.menuContent}>
-        <div className={styles.menuButtons}>
-          <FileDownload text={text} />
-          <FileUpload />
-          <ThemeToggle />
-          <LazyMdIntro />
-        </div>
-        {isMobile && (
-          <button className={styles.closeButton} onClick={toggle}>
-            Close
-          </button>
-        )}
-      </div>
+      {menuContent}
     </div>
   );
 }

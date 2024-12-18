@@ -685,3 +685,97 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
+
+/* 모바일 메뉴 모달 스타일 */
+.menuModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.menuModal.open {
+  display: flex;
+}
+
+.menuModalContent {
+  background-color: var(--menu-background);
+  border-radius: 8px;
+  padding: 1.2rem;
+  width: auto;
+  min-width: 200px;
+  max-width: 250px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modalCloseButton {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  width: fit-content;
+  align-self: center;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.modalCloseButton:hover {
+  background-color: var(--button-hover);
+}
+
+/* 모바일 환경에서 메뉴 컨텐츠 스타일 수정 */
+@media (max-width: 992px) {
+  .menuContent {
+    margin-top: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .menuButtons {
+    gap: 0.8rem;
+  }
+}
+
+/* 모바일 환경에서 leftPage 스타일 수정 */
+@media (max-width: 992px) {
+  .leftPage {
+    display: none;
+  }
+
+  .leftPage.open {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 300px;
+    height: auto;
+    max-height: 80vh;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+  }
+
+  .menuContent {
+    margin-top: 0;
+    padding: 1rem;
+  }
+
+  .menuButtons {
+    gap: 0.8rem;
+  }
+}
