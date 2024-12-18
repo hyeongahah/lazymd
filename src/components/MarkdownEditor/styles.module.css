@@ -16,7 +16,14 @@
   background-color: var(--background-secondary);
   padding: 0;
   border-right: 1px solid var(--border-color);
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.lineNumbers::-webkit-scrollbar {
+  display: none;
+  width: 0;
 }
 
 .lineNumber {

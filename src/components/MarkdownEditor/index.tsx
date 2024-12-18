@@ -16,18 +16,31 @@ import { autoSave, loadAutoSavedContent } from '@/utils/autoSaveUtils';
 
 export function MarkdownEditor() {
   const { markdownText, setMarkdownText } = useMarkdown();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [lineCount, setLineCount] = useState(1);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
   const { undoManager } = useUndo();
   const isComposing = useRef(false);
-  const [currentLine, setCurrentLine] = useState(1);
 
-  // 컴포넌트 마운트 시 저장된 내용 불러오기
   useEffect(() => {
-    const savedContent = loadAutoSavedContent();
-    if (savedContent) {
-      setMarkdownText(savedContent);
+    // 텍스트 변경시 라인 수 계산
+    const lines = markdownText.split('\n').length;
+    setLineCount(lines);
+  }, [markdownText]);
+
+  const renderLineNumbers = () => {
+    return Array.from({ length: lineCount }, (_, i) => (
+      <div key={i + 1} className={styles.lineNumber}>
+        {i + 1}
+      </div>
+    ));
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    const lineNumbers = document.querySelector(`.${styles.lineNumbers}`);
+    if (lineNumbers) {
+      lineNumbers.scrollTop = e.currentTarget.scrollTop;
     }
-  }, []);
+  };
 
   // 키 이벤트 핸들러
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -35,7 +48,7 @@ export function MarkdownEditor() {
     if (e.key === 'Tab') e.preventDefault();
 
     // Undo 단축키 처리
-    handleUndoKeyPress(e.nativeEvent, textareaRef.current, undoManager);
+    handleUndoKeyPress(e.nativeEvent, editorRef.current, undoManager);
 
     if (e.key === 'Tab' || e.key === 'Enter') {
       const { selectionStart } = e.currentTarget;
@@ -49,7 +62,7 @@ export function MarkdownEditor() {
           e.key === 'Tab',
           markdownText,
           setMarkdownText,
-          textareaRef.current!
+          editorRef.current!
         )
       ) {
         e.preventDefault();
@@ -64,7 +77,7 @@ export function MarkdownEditor() {
           e.key === 'Tab',
           markdownText,
           setMarkdownText,
-          textareaRef.current!
+          editorRef.current!
         )
       ) {
         e.preventDefault();
@@ -74,7 +87,7 @@ export function MarkdownEditor() {
       // 탭 키 처리
       if (e.key === 'Tab') {
         handleNormalIndent(
-          textareaRef.current!,
+          editorRef.current!,
           markdownText,
           selectionStart,
           setMarkdownText
@@ -96,34 +109,14 @@ export function MarkdownEditor() {
   const handleCompositionStart = () => handleComposition(isComposing, true);
   const handleCompositionEnd = () => handleComposition(isComposing, false);
 
-  // 커서 위치 변경 감지 핸들러 추가
-  const handleCursorChange = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
-    const textarea = e.currentTarget;
-    const cursorPosition = textarea.selectionStart;
-    const textBeforeCursor = textarea.value.substring(0, cursorPosition);
-    const currentLineNumber = textBeforeCursor.split('\n').length;
-    setCurrentLine(currentLineNumber);
-  };
-
   return (
     <div className={styles.editorContainer}>
-      <Toolbar undoManager={undoManager} textareaRef={textareaRef} />
+      <Toolbar undoManager={undoManager} textareaRef={editorRef} />
       <div className={styles.editorContent}>
-        <div className={styles.lineNumbers}>
-          {markdownText.split('\n').map((_, index) => (
-            <div
-              key={index}
-              className={`${styles.lineNumber} ${
-                currentLine === index + 1 ? styles.active : ''
-              }`}
-            >
-              {index + 1}
-            </div>
-          ))}
-        </div>
+        <div className={styles.lineNumbers}>{renderLineNumbers()}</div>
         <div className={styles.editorWrapper}>
           <textarea
-            ref={textareaRef}
+            ref={editorRef}
             className={styles.editor}
             value={markdownText}
             onChange={handleChange}
@@ -132,9 +125,7 @@ export function MarkdownEditor() {
             onCompositionEnd={handleCompositionEnd}
             placeholder='Write markdown here...'
             spellCheck={false}
-            onSelect={handleCursorChange} // 커서 변경 감지
-            onClick={handleCursorChange} // 클릭으로 인한 커서 변경 감지
-            onKeyUp={handleCursorChange} // 키보드로 인한 커서 변경 감지
+            onScroll={handleScroll}
           />
         </div>
       </div>

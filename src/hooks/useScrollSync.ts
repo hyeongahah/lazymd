@@ -1,33 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { RefObject, useEffect, UIEvent } from 'react';
 
-export const useScrollSync = () => {
-  const elementRef = useRef<HTMLDivElement>(null);
+const useScrollSync = (ref: RefObject<HTMLDivElement | null>) => {
+  const handleScroll = (event: UIEvent<HTMLDivElement>) => {
+    // 스크롤 동기화 구현
+  };
 
   useEffect(() => {
-    const element = elementRef.current;
+    const element = ref.current;
     if (!element) return;
+  }, [ref]);
 
-    // 스크롤을 최하단으로 이동
-    const scrollToBottom = () => {
-      element.scrollTop = element.scrollHeight;
-    };
-
-    // MutationObserver를 사용하여 컨텐츠 변경 감지
-    const observer = new MutationObserver(() => {
-      scrollToBottom();
-    });
-
-    // 옵저버 설정
-    observer.observe(element, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  return elementRef;
+  return handleScroll;
 };
+
+export default useScrollSync;

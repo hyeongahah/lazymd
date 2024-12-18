@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
 import { useMarkdown } from '@/hooks/useMarkdown';
 import { useEffect, useState } from 'react';
-import { useScrollSync } from '@/hooks/useScrollSync';
+import useScrollSync from '@/hooks/useScrollSync';
 import styles from './styles.module.css';
 import { parseMarkdown } from '@/utils/parseUtils';
 
 export function MarkdownPreview() {
   const { markdownText } = useMarkdown();
   const previewRef = useRef<HTMLDivElement>(null);
-  const { syncScroll } = useScrollSync();
+  const syncScroll = useScrollSync(previewRef);
 
   return (
     <div className={styles.container}>
