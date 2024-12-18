@@ -18,6 +18,7 @@ import { ItalicButton } from '@/features/markdownSyntax/01basicSyntax/11Italic';
 import { StrikethroughButton } from '@/features/markdownSyntax/01basicSyntax/12Strikethrough';
 import { UnderlineButton } from '@/features/markdownSyntax/09simpleEdit/35underline';
 import { HighlightButton } from '@/features/markdownSyntax/06miscFeatures/21highlight';
+import { ClearAllButton } from '@/features/markdownSyntax/09simpleEdit/50clearAll';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -107,6 +108,8 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                   }}
                 />
               ) : buttonNumber === 3 ? (
+                <ClearAllButton />
+              ) : buttonNumber === 4 ? (
                 <ClearFormattingButton
                   onClick={() => {
                     if (textareaRef.current) {
@@ -118,21 +121,21 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                     }
                   }}
                 />
-              ) : buttonNumber === 4 ? (
+              ) : buttonNumber === 5 ? (
                 <HeadingDropdownButton
                   onClick={() => {}}
                   textareaRef={textareaRef}
                   setMarkdownText={setMarkdownText}
                 />
-              ) : buttonNumber === 5 ? (
-                <BoldButton />
               ) : buttonNumber === 6 ? (
-                <ItalicButton />
+                <BoldButton />
               ) : buttonNumber === 7 ? (
-                <StrikethroughButton />
+                <ItalicButton />
               ) : buttonNumber === 8 ? (
-                <UnderlineButton />
+                <StrikethroughButton />
               ) : buttonNumber === 9 ? (
+                <UnderlineButton />
+              ) : buttonNumber === 10 ? (
                 <HighlightButton />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
