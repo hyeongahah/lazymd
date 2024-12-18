@@ -1,0 +1,34 @@
+.welcomeContainer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color);
+}
+
+.welcomeContent {
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  color: #1e90ff;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+}
+
+.startButton {
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  background-color: #1e90ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
