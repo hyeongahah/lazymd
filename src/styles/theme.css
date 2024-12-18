@@ -10,6 +10,9 @@
   --editor-font-size: 16px;
   --editor-line-height: 1.6;
   --editor-padding: 1rem;
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-thumb-hover: #a8a8a8;
 }
 
 [data-theme='dark'] {
@@ -18,4 +21,7 @@
   --border-color: #404040;
   --menu-background: #2d2d2d;
   --button-hover: #404040;
+  --scrollbar-track: #2d2d2d;
+  --scrollbar-thumb: #4a4a4a;
+  --scrollbar-thumb-hover: #5a5a5a;
 }

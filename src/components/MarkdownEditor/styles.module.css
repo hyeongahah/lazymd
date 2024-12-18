@@ -92,17 +92,17 @@
 
 /* 다크 모드 */
 [data-theme='dark'] .editor {
-  scrollbar-color: var(--scrollbar-thumb-dark) var(--scrollbar-track-dark);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 [data-theme='dark'] .editor::-webkit-scrollbar-track {
-  background: var(--scrollbar-track-dark);
+  background: var(--scrollbar-track);
 }
 
 [data-theme='dark'] .editor::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb-dark);
+  background: var(--scrollbar-thumb);
 }
 
 [data-theme='dark'] .editor::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover-dark);
+  background: var(--scrollbar-thumb-hover);
 }
