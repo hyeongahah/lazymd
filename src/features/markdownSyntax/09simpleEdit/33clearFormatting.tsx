@@ -12,7 +12,8 @@ const clearFormatting = (
   if (selectionStart === selectionEnd) {
     return text
       .replace(/^(#{1,6}\s+|[-*+]\s+|\d+\.\s+|\s{2,})/gm, '') // 줄 시작 부분의 서식 제거
-      .replace(/[*_~`\[\](){}]/g, ''); // 인라인 서식 제거
+      .replace(/[*_~`\[\](){}=]/g, '') // 인라인 마크다운 서식 제거
+      .replace(/<\/?[^>]+(>|$)/g, ''); // HTML 태그 제거
   }
 
   // 선택된 부분의 텍스트만 서식 제거
@@ -20,7 +21,8 @@ const clearFormatting = (
   const selectedText = text
     .slice(selectionStart, selectionEnd)
     .replace(/^(#{1,6}\s+|[-*+]\s+|\d+\.\s+|\s{2,})/gm, '') // 줄 시작 부분의 서식 제거
-    .replace(/[*_~`\[\](){}]/g, ''); // 인라인 서식 제거
+    .replace(/[*_~`\[\](){}=]/g, '') // 인라인 마크다운 서식 제거
+    .replace(/<\/?[^>]+(>|$)/g, ''); // HTML 태그 제거
   const afterSelection = text.slice(selectionEnd);
 
   return beforeSelection + selectedText + afterSelection;
