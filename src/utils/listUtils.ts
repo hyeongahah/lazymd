@@ -2,16 +2,7 @@ import { updateCursorPosition } from './editorUtils';
 
 // 들여쓰기 레벨에 따른 마커 결정 함수
 export const getMarkerForLevel = (level: number): string => {
-  switch (level) {
-    case 0:
-      return '-'; // 최상위 레벨
-    case 1:
-      return '*'; // 첫 번째 들여쓰기
-    case 2:
-      return '+'; // 두 번째 들여쓰기
-    default:
-      return '-'; // 그 이상은 다시 '-'부터
-  }
+  return '-'; // 모든 레벨에서 '-' 사용
 };
 
 // 현재 들여쓰기 레벨 계산

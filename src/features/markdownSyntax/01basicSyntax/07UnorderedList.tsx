@@ -30,7 +30,7 @@ export const parseUnorderedList = (text: string): ElementNode => {
   let listStack: ListNode[] = [currentList];
 
   items.forEach((item) => {
-    const match = item.match(/^(\s*)([-*+])\s*(.*)$/);
+    const match = item.match(/^(\s*)(-)\s*(.*)$/);
     if (!match) return;
 
     const [, indent, , content] = match;
@@ -82,7 +82,7 @@ export const handleUnorderedList = (
   setMarkdownText: (text: string) => void,
   textArea: HTMLTextAreaElement
 ): boolean => {
-  const unorderedMatch = currentLine.match(/^(\s*)([-*+])\s*(.*)$/);
+  const unorderedMatch = currentLine.match(/^(\s*)(-)\s*(.*)$/);
   if (!unorderedMatch) return false;
 
   const [, indent, , text] = unorderedMatch;

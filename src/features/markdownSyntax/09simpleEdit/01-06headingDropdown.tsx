@@ -2,7 +2,7 @@ import { Heading } from 'lucide-react';
 import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 import React, { useRef, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import styles from './styles.module.css';
+import styles from './01-06headingDropdown.module.css';
 import { handleHeaders } from '@/features/markdownSyntax';
 
 interface HeadingDropdownButtonProps {

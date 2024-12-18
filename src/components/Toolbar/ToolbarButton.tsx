@@ -11,7 +11,7 @@ import {
   ClearFormattingButton,
   handleClearFormatting,
 } from '@/features/markdownSyntax/09simpleEdit/33clearFormatting';
-import { HeadingDropdownButton } from '@/features/markdownSyntax/09simpleEdit/34headingDropdown';
+import { HeadingDropdownButton } from '@/features/markdownSyntax/01basicSyntax/01-06headingDropdown';
 import { useUndo } from '@/features/markdownSyntax/09simpleEdit/31undo';
 import { BoldButton } from '@/features/markdownSyntax/01basicSyntax/10Bold';
 import { ItalicButton } from '@/features/markdownSyntax/01basicSyntax/11Italic';

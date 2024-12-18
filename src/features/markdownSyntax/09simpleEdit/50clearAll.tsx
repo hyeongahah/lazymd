@@ -3,7 +3,7 @@ import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import pageStyles from '@/pages/page.module.css';
-import styles from './50clearAll.module.css';
+import styles from '../markStyle/50clearAll.module.css';
 
 interface ClearAllButtonProps {
   onClick: () => void;
@@ -11,7 +11,7 @@ interface ClearAllButtonProps {
 
 export function ClearAllButton({ onClick }: ClearAllButtonProps) {
   const handleClick = () => {
-    const button = document.querySelector(`[title="모든 내용 삭제"]`);
+    const button = document.querySelector(`[title="Clear All"]`);
     if (!button) return;
 
     const rect = button.getBoundingClientRect();
@@ -26,7 +26,9 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
 
     const confirmToast = (
       <div className={styles.toastStyle}>
-        <div className={styles.titleStyle}>모든 내용을 삭제하시겠습니까?</div>
+        <div className={styles.titleStyle}>
+          Are you sure you want to delete all content?
+        </div>
         <div className={styles.buttonContainerStyle}>
           <button
             onClick={() => {
@@ -35,7 +37,7 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
               const successToast = (
                 <div className={styles.successToastStyle}>
                   <div className={styles.successTitleStyle}>
-                    모든 내용이 삭제되었습니다
+                    All content has been deleted
                   </div>
                 </div>
               );
@@ -50,13 +52,13 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
             }}
             className={styles.deleteButton}
           >
-            삭제
+            Delete
           </button>
           <button
             onClick={() => toast.dismiss()}
             className={styles.cancelButton}
           >
-            취소
+            Cancel
           </button>
         </div>
       </div>
@@ -74,7 +76,7 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
 
   return (
     <>
-      <ToolbarButton onClick={handleClick} title='모든 내용 삭제'>
+      <ToolbarButton onClick={handleClick} title='Clear All'>
         <Trash2 size={18} />
       </ToolbarButton>
       <ToastContainer />
