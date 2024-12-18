@@ -18,10 +18,20 @@ export const parseTaskList = (text: string): ElementNode => {
   const items = text.split('\n');
   const listItems = items.map((item): ElementNode => {
     const match = item.match(/^(\s*)[-*+]\s+\[([ x])\]\s*(.*)$/);
-    if (!match)
+    if (!match) {
       return { type: 'element', tagName: 'li', properties: {}, children: [] };
+    }
 
-    // ... 기존 parseTaskList 로직 ...
+    const [, indent, checked, content] = match;
+    return {
+      type: 'element',
+      tagName: 'li',
+      properties: {
+        className: ['task-list-item', indent ? 'nested-list' : ''],
+        'data-checked': checked === 'x',
+      },
+      children: [{ type: 'text', value: content }],
+    };
   });
 
   return {
@@ -39,5 +49,10 @@ export const handleTaskList = (
   setMarkdownText: (text: string) => void,
   textArea: HTMLTextAreaElement
 ): boolean => {
-  // ... 기존 handleTaskList 로직 ...
+  // 체크리스트 로직 구현
+  const taskListPattern = /^[-*+]\s+\[([ x])\]\s+/;
+  if (taskListPattern.test(currentLine)) {
+    return true;
+  }
+  return false;
 };

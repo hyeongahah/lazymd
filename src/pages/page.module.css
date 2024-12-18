@@ -29,6 +29,7 @@
   flex-direction: column;
   background-color: var(--background-color);
   color: var(--text-color);
+  overflow: hidden;
 }
 
 .header {
@@ -37,6 +38,7 @@
   border-bottom: 1px solid var(--border-color);
   display: flex;
   position: relative;
+  z-index: 1;
 }
 
 .headerMenuToggle {
@@ -46,7 +48,6 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  border-right: none;
 }
 
 .headerLogo {
@@ -67,14 +68,10 @@
 }
 
 .main {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
   overflow: hidden;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  left: 0;
 }
 
 .content {
@@ -267,113 +264,44 @@
 }
 
 /* 반응형 미디어 쿼리 */
-@media (max-width: 1200px) {
-  .leftPage {
-    width: 160px;
-    min-width: 160px;
+@media (min-width: 992px) {
+  .main {
+    flex-direction: row;
+  }
+
+  .content {
+    flex-direction: row;
   }
 
   .centerPage,
   .rightPage {
-    min-width: 250px;
+    flex: 1;
+    min-width: 300px;
+    height: 100%;
+  }
+
+  .centerPage {
+    border-right: 1px solid var(--border-color);
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 991px) {
   .main {
     flex-direction: column;
-    overflow: auto;
   }
 
-  .leftPage {
-    display: none;
-    width: 0;
-    min-width: 0;
-  }
-
-  .leftPage:not(.closed) {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .menuContent {
-    width: 200px;
-    max-height: 80vh;
-    margin: 0;
-    padding: 1.5rem;
-    background-color: var(--menu-background);
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    display: flex;
+  .content {
     flex-direction: column;
-  }
-
-  .menuButtons {
-    flex: 1;
-    margin-bottom: 1rem;
-  }
-
-  .closeButton {
-    width: 100%;
-    padding: 0.8vh 1rem;
-    border: 1px solid var(--border-color);
-    background-color: var(--background-color);
-    border-radius: 6px;
-    color: var(--text-color);
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: auto;
-  }
-
-  .closeButton:hover {
-    background-color: var(--button-hover);
   }
 
   .centerPage,
   .rightPage {
     width: 100%;
-    min-width: 100%;
     height: 50vh;
   }
 
-  .toggleButton {
-    position: static;
-    margin-right: 1rem;
-    height: 25px;
-    min-width: 25px;
-    border-radius: 4px;
-  }
-
-  .headerMenuToggle {
-    width: 50px;
-    min-width: 50px;
-  }
-
-  .headerSyntaxSearch {
-    width: 50px;
-    min-width: 50px;
-  }
-
-  .header {
-    height: 50px;
-  }
-
-  .logo {
-    height: 25px;
-    display: flex;
-    align-items: center;
+  .centerPage {
+    border-bottom: 1px solid var(--border-color);
   }
 }
 
@@ -525,7 +453,7 @@
   display: none;
 }
 
-/* 헤딩 버튼 스타일 */
+/* 헤딩 버튼 ���타일 */
 .headingButton {
   position: relative;
   padding: 0.4rem;
