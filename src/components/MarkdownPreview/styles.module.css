@@ -149,7 +149,7 @@
   list-style-type: square;
 }
 
-/* 순서 있는 리��트 기본 스타일 */
+/* 순서 있는 리스트 기본 스타일 */
 .preview ol {
   margin: 0;
   padding-left: 1em;
@@ -202,4 +202,33 @@
   padding: 0 1rem;
   color: var(--text-color);
   font-size: 0.9rem;
+}
+
+/* 체크리스트 스타�� */
+.preview .task-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 1.5em;
+}
+
+.preview .task-list-item {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  line-height: 1.5rem;
+  position: relative;
+  padding-left: 1em;
+}
+
+.preview .task-list-item input[type='checkbox'] {
+  position: absolute;
+  left: -1.5em;
+  margin: 0;
+  width: 1em;
+  height: 1em;
+  cursor: default;
+}
+
+.preview .task-list-item input[type='checkbox']:checked {
+  accent-color: var(--text-color);
 }

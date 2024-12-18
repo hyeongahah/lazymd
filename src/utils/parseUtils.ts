@@ -42,6 +42,29 @@ export const parseMarkdown = (text: string): string => {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
+    // 체크리스트 매칭
+    const checklistMatch = line.match(/^(\s*)[-*+]\s+\[([ x])\]\s*(.*)$/);
+    if (checklistMatch) {
+      const [, indent, checked, content] = checklistMatch;
+      const isChecked = checked === 'x';
+
+      // 체크리스트가 시작될 때 ul 태그 추가
+      if (!html.includes('<ul class="task-list">')) {
+        html += '<ul class="task-list">';
+      }
+
+      // 불필요한 개행과 공백 제거
+      html += `<li class="task-list-item"><input type="checkbox" ${
+        isChecked ? 'checked' : ''
+      } disabled>${parseInlineStyles(content)}</li>`;
+
+      // 다음 줄이 체크리스트가 아니면 ul 태그 닫기
+      if (!lines[i + 1]?.match(/^(\s*)[-*+]\s+\[([ x])\]\s*(.*)$/)) {
+        html += '</ul>';
+      }
+      continue;
+    }
+
     // 헤더 매칭
     const headerMatch = line.match(/^(#{1,6})\s(.+)$/);
     if (headerMatch) {
