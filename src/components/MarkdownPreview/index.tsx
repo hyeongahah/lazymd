@@ -27,19 +27,19 @@ export function MarkdownPreview() {
     <div className={styles.container}>
       <div className={styles.notice}>
         <div className={`${statsStyles.statsBox} ${statsStyles.box1}`}>
-          글자수
+          Chars
         </div>
         <div className={`${statsStyles.statsBox} ${statsStyles.box2}`}>
           {getCharacterCount(markdownText)}
         </div>
         <div className={`${statsStyles.statsBox} ${statsStyles.box3}`}>
-          단어수
+          Words
         </div>
         <div className={`${statsStyles.statsBox} ${statsStyles.box4}`}>
           {getWordCount(markdownText)}
         </div>
         <div className={`${statsStyles.statsBox} ${statsStyles.box5}`}>
-          읽기 예상 시간
+          Read Time
         </div>
         <div className={`${statsStyles.statsBox} ${statsStyles.box6}`}>
           {getReadingTime(markdownText)}

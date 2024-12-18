@@ -1,16 +1,15 @@
 import { ReactNode, useEffect, useState } from 'react';
 import styles from '@/pages/page.module.css';
-import { useMenuStore } from '@/store/menuStore';
 import { useSearchStore } from '@/store/searchStore';
 import { SearchInputModal } from '@/components/SearchInputModal';
 import { SearchResultModal } from '@/components/SearchResultModal';
+import { Header } from '@/components/Header';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { isOpen, toggle } = useMenuStore();
   const { isSearchModalOpen, searchResult, openSearchModal } = useSearchStore();
   const [isMobile, setIsMobile] = useState(false);
 
@@ -26,7 +25,7 @@ export function Layout({ children }: LayoutProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'F1') {
-        e.preventDefault(); // 브라우저 기본 F1 동작 방지
+        e.preventDefault();
         openSearchModal();
       }
     };
@@ -37,29 +36,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <div className={styles.headerMenuToggle}>
-          <button
-            className={styles.toggleButton}
-            onClick={toggle}
-            title={isOpen ? 'Close Menu' : 'Open Menu'}
-          >
-            <span className={styles.toggleIcon}>{isOpen ? '◀' : '▶'}</span>
-          </button>
-        </div>
-        <div className={styles.headerLogo}>
-          <div className={styles.logo}>LazyMD</div>
-        </div>
-        <div className={styles.headerSyntaxSearch}>
-          <button
-            className={styles.toggleButton}
-            onClick={openSearchModal}
-            title='Search Syntax (F1)'
-          >
-            <span className={styles.toggleIcon}>🔍</span>
-          </button>
-        </div>
-      </header>
+      <Header />
       {children}
       {isSearchModalOpen && <SearchInputModal />}
       {searchResult && <SearchResultModal />}
