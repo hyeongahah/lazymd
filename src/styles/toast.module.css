@@ -1,0 +1,17 @@
+.confirmToast {
+  position: fixed !important;
+  left: var(--toast-left) !important;
+  top: var(--toast-top) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  z-index: 9999 !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+}
+
+.confirmToast .Toastify__progress-bar {
+  border-radius: 0 0 2px 8px !important;
+  height: 4px !important;
+}

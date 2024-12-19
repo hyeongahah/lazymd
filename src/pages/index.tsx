@@ -4,9 +4,8 @@ import { LeftPage } from '@/components/LeftPage';
 import { MarkdownEditor } from '@/components/MarkdownEditor';
 import { MarkdownPreview } from '@/components/MarkdownPreview';
 import { WelcomePage } from '../components/WelcomePage';
+import { ToastProvider } from '@/components/Toast/ToastProvider';
 import styles from './page.module.css';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
   const [showEditor, setShowEditor] = useState(false);
@@ -24,32 +23,7 @@ export default function Home() {
     return (
       <>
         <WelcomePage onStart={handleStart} />
-        <ToastContainer
-          position='top-center'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-          style={{
-            fontSize: '1rem',
-            fontWeight: 'bold',
-            minHeight: '64px',
-            width: '320px',
-          }}
-          toastStyle={{
-            background: '#ffffff',
-            color: '#333333',
-            border: '1px solid #dddddd',
-            borderRadius: '8px',
-            padding: '16px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          }}
-        />
+        <ToastProvider />
       </>
     );
   }
@@ -73,32 +47,7 @@ export default function Home() {
           </div>
         </main>
       </Layout>
-      <ToastContainer
-        position='top-center'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-        style={{
-          fontSize: '1rem',
-          fontWeight: 'bold',
-          minHeight: '64px',
-          width: '320px',
-        }}
-        toastStyle={{
-          background: '#ffffff',
-          color: '#333333',
-          border: '1px solid #dddddd',
-          borderRadius: '8px',
-          padding: '16px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        }}
-      />
+      <ToastProvider />
     </>
   );
 }

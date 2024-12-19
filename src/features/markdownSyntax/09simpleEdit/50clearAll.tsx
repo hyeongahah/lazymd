@@ -1,8 +1,8 @@
 import { Trash2 } from 'lucide-react';
 import { ToolbarButton } from '@/components/Toolbar/ToolbarButton';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import pageStyles from '@/pages/page.module.css';
+import toastStyles from '@/styles/toast.module.css';
 import styles from '../markStyle/50clearAll.module.css';
 
 interface ClearAllButtonProps {
@@ -15,8 +15,8 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
     if (!button) return;
 
     const rect = button.getBoundingClientRect();
-    const positionY = rect.bottom + 10;
-    const positionX = rect.left;
+    const positionY = rect.bottom + 5;
+    const positionX = rect.left - 400;
 
     document.documentElement.style.setProperty(
       '--toast-left',
@@ -43,7 +43,7 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
               );
               toast(successToast, {
                 autoClose: 300,
-                className: pageStyles.confirmToast,
+                className: toastStyles.confirmToast,
                 hideProgressBar: true,
                 closeOnClick: false,
                 draggable: false,
@@ -69,17 +69,14 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
       closeOnClick: false,
       draggable: false,
       closeButton: false,
-      className: pageStyles.confirmToast,
+      className: toastStyles.confirmToast,
       toastId: 'confirm-clear-all',
     });
   };
 
   return (
-    <>
-      <ToolbarButton onClick={handleClick} title='Clear All'>
-        <Trash2 size={18} />
-      </ToolbarButton>
-      <ToastContainer />
-    </>
+    <ToolbarButton onClick={handleClick} title='Clear All'>
+      <Trash2 size={18} />
+    </ToolbarButton>
   );
 }
