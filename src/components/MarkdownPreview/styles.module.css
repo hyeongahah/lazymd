@@ -119,6 +119,80 @@
   padding: 1em;
   border-radius: 4px;
   overflow-x: auto;
+  margin: 1em 0;
+}
+
+.preview pre code {
+  background-color: transparent;
+  padding: 0;
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+/* Prism.js 테마 커스터마이징 */
+.preview .token.comment,
+.preview .token.prolog,
+.preview .token.doctype,
+.preview .token.cdata {
+  color: #6a9955;
+}
+
+.preview .token.punctuation {
+  color: #d4d4d4;
+}
+
+.preview .token.property,
+.preview .token.tag,
+.preview .token.boolean,
+.preview .token.number,
+.preview .token.constant,
+.preview .token.symbol,
+.preview .token.deleted {
+  color: #b5cea8;
+}
+
+.preview .token.selector,
+.preview .token.attr-name,
+.preview .token.string,
+.preview .token.char,
+.preview .token.builtin,
+.preview .token.inserted {
+  color: #ce9178;
+}
+
+.preview .token.operator,
+.preview .token.entity,
+.preview .token.url,
+.preview .language-css .token.string,
+.preview .style .token.string {
+  color: #d4d4d4;
+}
+
+.preview .token.atrule,
+.preview .token.attr-value,
+.preview .token.keyword {
+  color: #c586c0;
+}
+
+.preview .token.function {
+  color: #dcdcaa;
+}
+
+.preview .token.regex,
+.preview .token.important,
+.preview .token.variable {
+  color: #d16969;
+}
+
+.preview .token.important,
+.preview .token.bold {
+  font-weight: bold;
+}
+
+.preview .token.italic {
+  font-style: italic;
 }
 
 /* 리스트 스타일 */
@@ -133,7 +207,7 @@
   line-height: 1.5rem;
 }
 
-/* ��된 리스트 스타일 */
+/* 된 리스트 스타일 */
 .preview .nested-list {
   margin: 0;
   padding-left: 1.5em;

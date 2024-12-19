@@ -27,6 +27,7 @@ import {
 } from '@/features/markdownSyntax/01basicSyntax/07UnorderedList';
 import { OrderedListButton } from '@/features/markdownSyntax/01basicSyntax/08OrderedList';
 import { InlineLinkButton } from '@/features/markdownSyntax/02linksAndImages/14InlineLink';
+import { CodeBlockButton } from '@/features/markdownSyntax/04codeBlocks/18CodeBlock';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -354,6 +355,8 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                 />
               ) : buttonNumber === 14 ? (
                 <InlineLinkButton />
+              ) : buttonNumber === 15 ? (
+                <CodeBlockButton />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}
