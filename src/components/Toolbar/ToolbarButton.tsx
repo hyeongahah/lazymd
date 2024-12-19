@@ -26,6 +26,7 @@ import {
   handleUnorderedList,
 } from '@/features/markdownSyntax/01basicSyntax/07UnorderedList';
 import { OrderedListButton } from '@/features/markdownSyntax/01basicSyntax/08OrderedList';
+import { InlineLinkButton } from '@/features/markdownSyntax/02linksAndImages/14InlineLink';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -258,7 +259,7 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
 
                         setMarkdownText(newText);
 
-                        // 커�� 위치 조정
+                        // 커서 위치 조정
                         setTimeout(() => {
                           if (textareaRef.current) {
                             textareaRef.current.selectionStart =
@@ -351,6 +352,8 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                     }
                   }}
                 />
+              ) : buttonNumber === 14 ? (
+                <InlineLinkButton />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}
