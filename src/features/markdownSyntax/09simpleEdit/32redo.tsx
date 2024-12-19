@@ -5,7 +5,7 @@ import { useUndoStore } from './31undo';
 
 export function RedoButton({ onClick }: { onClick: () => void }) {
   return (
-    <ToolbarButton onClick={onClick} title='Redo (Ctrl+Y)'>
+    <ToolbarButton onClick={onClick} title='Redo'>
       <RotateCw size={18} />
     </ToolbarButton>
   );

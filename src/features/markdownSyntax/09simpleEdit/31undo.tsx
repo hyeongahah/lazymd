@@ -26,7 +26,7 @@ export function UndoButton({ undoManager, textareaRef }: UndoButtonProps) {
   return (
     <ToolbarButton
       onClick={() => undoManager.undo(textareaRef.current)}
-      title='Undo (Ctrl+Z)'
+      title='Undo'
     >
       <RotateCcw size={18} />
     </ToolbarButton>
