@@ -1,21 +1,48 @@
+/**
+ * 마크다운 리스트 관련 유틸리티 함수들을 모아둔 모듈
+ * @module listUtils
+ */
+
 import { updateCursorPosition } from './editorUtils';
 
-// 들여쓰기 레벨에 따른 마커 결정 함수
+/**
+ * 들여쓰기 레벨에 따른 마커 결정
+ * @param {number} level - 들여쓰기 레벨
+ * @returns {string} 리스트 마커 문자열
+ */
 export const getMarkerForLevel = (level: number): string => {
   return '-'; // 모든 레벨에서 '-' 사용
 };
 
-// 현재 들여쓰기 레벨 계산
+/**
+ * 현재 들여쓰기 레벨 계산
+ * @param {string} indent - 들여쓰기 문자열
+ * @returns {number} 들여쓰기 레벨
+ */
 export const calculateIndentLevel = (indent: string): number => {
   return indent.length / 2;
 };
 
-// 들여쓰기 생성
+/**
+ * 들여쓰기 생성
+ * @param {number} level - 들여쓰기 레벨
+ * @returns {string} 들여쓰기 문자열
+ */
 export const createIndent = (level: number): string => {
   return '  '.repeat(level);
 };
 
-// 탭 키로 들여쓰기 및 마커 스타일 변경 처리
+/**
+ * 탭 키로 들여쓰기 및 마커 스타일 변경 처리
+ * @param {string} indent - 현재 들여쓰기
+ * @param {string} text - 현재 텍스트
+ * @param {number} selectionStart - 현재 커서 위치
+ * @param {string} markdownText - 전체 마크다운 텍스트
+ * @param {number} currentIndentLevel - 현재 들여쓰기 레벨
+ * @param {Function} getNewMarker - 새로운 마커 생성 함수
+ * @param {Function} setMarkdownText - 마크다운 텍스트 설정 함수
+ * @param {HTMLTextAreaElement} textArea - 텍스트 에디터 요소
+ */
 export const handleListIndentation = (
   indent: string,
   text: string,
@@ -29,7 +56,6 @@ export const handleListIndentation = (
   const newIndent = indent + '  ';
   const newMarker = getNewMarker(currentIndentLevel + 1);
 
-  // 현재 줄의 시작 ���를 찾기
   const currentLineStart =
     markdownText.lastIndexOf('\n', selectionStart - 1) + 1;
   const lineStart = currentLineStart >= 0 ? currentLineStart : 0;
@@ -49,7 +75,12 @@ export const handleListIndentation = (
   );
 };
 
-// 로마 숫자 변환 함수
+/**
+ * 숫자를 로마 숫자로 변환
+ * @param {number} num - 변환할 숫자
+ * @param {boolean} isUpperCase - 대문자 여부
+ * @returns {string} 로마 숫자 문자열
+ */
 const toRoman = (num: number, isUpperCase: boolean): string => {
   const romanNumerals = isUpperCase
     ? ['I', 'IV', 'V', 'IX', 'X', 'XL', 'L', 'XC', 'C']
@@ -66,15 +97,24 @@ const toRoman = (num: number, isUpperCase: boolean): string => {
   return result;
 };
 
-// 알파벳 변환 함수
+/**
+ * 숫자를 알파벳으로 변환
+ * @param {number} num - 변환할 숫자
+ * @param {boolean} isUpperCase - 대문자 여부
+ * @returns {string} 알파벳 문자열
+ */
 const toAlpha = (num: number, isUpperCase: boolean): string => {
   const base = isUpperCase ? 65 : 97;
   return String.fromCharCode(((num - 1) % 26) + base);
 };
 
-// 들여쓰기 레벨에 따른 마커 스타일 결정
+/**
+ * 들여쓰기 레벨에 따른 순서 있는 리스트 마커 스타일 결정
+ * @param {number} level - 들여쓰기 레벨
+ * @param {number} index - 리스트 아이템 인덱스
+ * @returns {string} 마커 문자열
+ */
 export const getOrderedListMarker = (level: number, index: number): string => {
-  // 5단계마다 반복되는 패턴
   const style = level % 5;
   switch (style) {
     case 0: // 숫자
@@ -92,13 +132,22 @@ export const getOrderedListMarker = (level: number, index: number): string => {
   }
 };
 
-// 다음 레벨의 마커 가져오기
+/**
+ * 다음 레벨의 마커 가져오기
+ * @param {number} currentLevel - 현재 레벨
+ * @returns {string} 다음 레벨의 마커
+ */
 export const getNextLevelMarker = (currentLevel: number): string => {
   const nextLevel = currentLevel + 1;
   return getOrderedListMarker(nextLevel, 1);
 };
 
-// 같은 레벨의 다음 마커 가져오기
+/**
+ * 같은 레벨의 다음 마커 가져오기
+ * @param {string} currentMarker - 현재 마커
+ * @param {number} level - 현재 레벨
+ * @returns {string} 다음 마커
+ */
 export const getNextMarkerInLevel = (
   currentMarker: string,
   level: number
@@ -112,10 +161,8 @@ export const getNextMarkerInLevel = (
   if (/^\d+$/.test(current)) {
     nextIndex = parseInt(current) + 1;
   } else if (/^[IVX]+$/i.test(current)) {
-    // 로마 숫자의 경우
     nextIndex = romanToNumber(current) + 1;
   } else if (/^[A-Za-z]$/.test(current)) {
-    // 알파벳의 경우
     const base = current.toUpperCase() === current ? 65 : 97;
     nextIndex = current.charCodeAt(0) - base + 2;
   }
@@ -123,7 +170,19 @@ export const getNextMarkerInLevel = (
   return getOrderedListMarker(level, nextIndex);
 };
 
-// 리스트의 엔터 키 처리
+/**
+ * 리스트의 엔터 키 처리
+ * @param {string} indent - 현재 들여쓰기
+ * @param {string} text - 현재 텍스트
+ * @param {number} selectionStart - 현재 커서 위치
+ * @param {string} markdownText - 전체 마크다운 텍스트
+ * @param {Function} getMarker - 마커 생성 함수
+ * @param {number} indentLevel - 들여쓰기 레벨
+ * @param {string} marker - 현재 마커
+ * @param {Function} getNextIndex - 다음 인덱스 계산 함수
+ * @param {Function} setMarkdownText - 마크다운 텍스트 설정 함수
+ * @param {HTMLTextAreaElement} textArea - 텍스트 에디터 요소
+ */
 export const handleListEnterKey = (
   indent: string,
   text: string,
@@ -137,14 +196,12 @@ export const handleListEnterKey = (
   textArea: HTMLTextAreaElement
 ) => {
   if (!text.trim()) {
-    // 빈 항목이면 리스트 종료
     const lineStart =
       selectionStart - (indent.length + text.length + marker.length + 1);
     const newValue = markdownText.substring(0, lineStart) + '\n';
     setMarkdownText(newValue);
     updateCursorPosition(textArea, lineStart + 1);
   } else {
-    // 다음 항목 추가 (현재 레벨의 마커 스타일 유지)
     const nextMarker = getMarker(indentLevel, getNextIndex(marker));
     const insertion = `\n${indent}${nextMarker}`;
     const newValue =
@@ -157,6 +214,11 @@ export const handleListEnterKey = (
   }
 };
 
+/**
+ * 로마 숫자를 일반 숫자로 변환
+ * @param {string} roman - 로마 숫자 문자열
+ * @returns {number} 변환된 숫자
+ */
 function romanToNumber(roman: string): number {
   const romanValues: { [key: string]: number } = {
     i: 1,

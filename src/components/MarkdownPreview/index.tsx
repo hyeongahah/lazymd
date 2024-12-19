@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useMarkdown } from '@/hooks/useMarkdown';
 import useScrollSync from '@/hooks/useScrollSync';
 import styles from './styles.module.css';
@@ -14,6 +14,15 @@ export function MarkdownPreview() {
   const { markdownText } = useMarkdown();
   const previewRef = useRef<HTMLDivElement>(null);
   const syncScroll = useScrollSync(previewRef);
+  const [parsedHtml, setParsedHtml] = useState('');
+
+  useEffect(() => {
+    const parseContent = async () => {
+      const html = await parseMarkdown(markdownText);
+      setParsedHtml(html);
+    };
+    parseContent();
+  }, [markdownText]);
 
   // 텍스트가 변경될 때마다 스크롤을 최하단으로 이동
   useEffect(() => {
@@ -50,7 +59,7 @@ export function MarkdownPreview() {
         className={styles.preview}
         onScroll={syncScroll}
         dangerouslySetInnerHTML={{
-          __html: parseMarkdown(markdownText),
+          __html: parsedHtml,
         }}
       />
     </div>

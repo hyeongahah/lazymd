@@ -18,7 +18,9 @@
   line-height: 1.5rem;
   margin-top: 0;
   white-space: pre-wrap;
-  word-break: break-all;
+  word-break: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .preview::-webkit-scrollbar {
@@ -204,7 +206,7 @@
   font-size: 0.9rem;
 }
 
-/* 체크리스트 스타�� */
+/* 체크리스트 스타일 */
 .preview .task-list {
   list-style: none;
   margin: 0;
@@ -260,4 +262,38 @@
 
 .preview blockquote blockquote blockquote {
   border-left-color: var(--text-color);
+}
+
+/* 줄 번호 스타일 */
+.lineNumbers {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  background-color: var(--menu-background);
+  border-right: 1px solid var(--border-color);
+  user-select: none;
+}
+
+.lineNumber {
+  padding: 0 8px;
+  text-align: right;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5rem;
+  min-height: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.currentLine {
+  background-color: rgba(255, 255, 255, 0.1);
+  animation: highlightLine 0.3s ease-in-out;
+}
+
+@keyframes highlightLine {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }

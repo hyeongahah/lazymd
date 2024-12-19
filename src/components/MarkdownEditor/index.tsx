@@ -17,6 +17,7 @@ import { autoSave, loadAutoSavedContent } from '@/utils/autoSaveUtils';
 export function MarkdownEditor() {
   const { markdownText, setMarkdownText } = useMarkdown();
   const [lineCount, setLineCount] = useState(1);
+  const [currentLineNumber, setCurrentLineNumber] = useState(1);
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const { undoManager } = useUndo();
   const isComposing = useRef(false);
@@ -27,9 +28,20 @@ export function MarkdownEditor() {
     setLineCount(lines);
   }, [markdownText]);
 
+  const getCurrentLineNumber = (textarea: HTMLTextAreaElement) => {
+    const text = textarea.value;
+    const cursorPosition = textarea.selectionStart;
+    return text.substring(0, cursorPosition).split('\n').length;
+  };
+
   const renderLineNumbers = () => {
     return Array.from({ length: lineCount }, (_, i) => (
-      <div key={i + 1} className={styles.lineNumber}>
+      <div
+        key={i + 1}
+        className={`${styles.lineNumber} ${
+          i + 1 === currentLineNumber ? styles.currentLine : ''
+        }`}
+      >
         {i + 1}
       </div>
     ));
@@ -42,19 +54,30 @@ export function MarkdownEditor() {
     }
   };
 
+  const handleCursorChange = () => {
+    if (editorRef.current) {
+      setCurrentLineNumber(getCurrentLineNumber(editorRef.current));
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    setMarkdownText(newText);
+    undoManager.saveState(newText, e.target.selectionStart);
+    autoSave(newText);
+  };
+
   // 키 이벤트 핸들러
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (isComposing.current && e.key === 'Enter') return;
     if (e.key === 'Tab') e.preventDefault();
 
-    // Undo 단축키 처리
     handleUndoKeyPress(e.nativeEvent, editorRef.current, undoManager);
 
     if (e.key === 'Tab' || e.key === 'Enter') {
       const { selectionStart } = e.currentTarget;
       const currentLine = getCurrentLine(markdownText, selectionStart);
 
-      // 순서 있는 리스트 처리 시도
       if (
         handleOrderedList(
           currentLine,
@@ -69,7 +92,6 @@ export function MarkdownEditor() {
         return;
       }
 
-      // 순서 없는 리스트 처리 시도
       if (
         handleUnorderedList(
           currentLine,
@@ -84,7 +106,6 @@ export function MarkdownEditor() {
         return;
       }
 
-      // 탭 키 처리
       if (e.key === 'Tab') {
         handleNormalIndent(
           editorRef.current!,
@@ -94,15 +115,6 @@ export function MarkdownEditor() {
         );
       }
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newText = e.target.value;
-    setMarkdownText(newText);
-    undoManager.saveState(newText, e.target.selectionStart);
-
-    // 자동 저장 트리거
-    autoSave(newText);
   };
 
   // 한글 입력 관련 핸들러
@@ -121,6 +133,9 @@ export function MarkdownEditor() {
             value={markdownText}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            onKeyUp={handleCursorChange}
+            onClick={handleCursorChange}
+            onSelect={handleCursorChange}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             placeholder='Write markdown here...'

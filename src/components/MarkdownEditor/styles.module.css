@@ -37,13 +37,35 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.lineNumber.active {
-  background-color: var(--menu-background);
+.lineNumber.currentLine {
   color: var(--text-color);
   font-weight: bold;
+  background-color: var(--menu-background);
+}
+
+.lineNumber.currentLine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100%;
+  background-color: var(--accent-color);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .editorWrapper {
