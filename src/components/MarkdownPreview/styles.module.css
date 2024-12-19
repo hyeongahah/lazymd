@@ -204,7 +204,7 @@
   font-size: 0.9rem;
 }
 
-/* 체크리스트 스타일 */
+/* 체크리스트 스타�� */
 .preview .task-list {
   list-style: none;
   margin: 0;
@@ -217,20 +217,30 @@
   margin: 0;
   line-height: 1.5rem;
   position: relative;
-  padding-left: 1em;
+  padding-left: 3em;
 }
 
 .preview .task-list-item input[type='checkbox'] {
   position: absolute;
-  left: -1.5em;
+  left: 1em;
   margin: 0;
   width: 1em;
   height: 1em;
   cursor: default;
 }
 
+.preview .task-list-item input[type='checkbox'] + * {
+  margin-left: 1em;
+}
+
 .preview .task-list-item input[type='checkbox']:checked {
   accent-color: var(--text-color);
+}
+
+.preview .task-list-item::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
 }
 
 /* 인용문 스타일 */

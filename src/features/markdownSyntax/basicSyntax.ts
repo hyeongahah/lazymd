@@ -21,7 +21,7 @@ export const basicSyntax = async (content: string): Promise<string> => {
 
           // 라우팅만 담당
           if (/^#{1,6}\s/.test(trimmedBlock)) return parseHeaders(trimmedBlock);
-          if (/^[-*+]\s+\[[ x]\]/.test(trimmedBlock))
+          if (/^[-*+]\s+\[[ x]?\]/.test(trimmedBlock))
             return parseTaskList(trimmedBlock);
           if (/^\d+\.\s+/.test(trimmedBlock))
             return parseOrderedList(trimmedBlock);

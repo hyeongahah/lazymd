@@ -15,7 +15,7 @@ export function TaskListButton({ onClick }: { onClick: () => void }) {
 export const parseTaskList = (text: string): ElementNode => {
   const items = text.split('\n');
   const listItems = items.map((item): ElementNode => {
-    const match = item.match(/^(\s*)[-*+]\s*\[([ x])\](.*)$/);
+    const match = item.match(/^(\s*)[-*+]\s*\[([ x])\]\s(.*)$/);
     if (!match) {
       return { type: 'element', tagName: 'li', properties: {}, children: [] };
     }
