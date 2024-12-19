@@ -22,7 +22,6 @@ interface UndoButtonProps {
   textareaRef: React.MutableRefObject<HTMLTextAreaElement | null>;
 }
 
-// Undo 버튼 컴포넌트
 export function UndoButton({ undoManager, textareaRef }: UndoButtonProps) {
   return (
     <ToolbarButton
@@ -40,12 +39,16 @@ export const useUndoStore = create<UndoStore>((set) => ({
   currentLine: '',
   pushState: (state) =>
     set((store) => {
+      if (state.content === store.currentLine) return store;
+
       if (state.content.endsWith('\n')) {
         return {
           undoStack: [...store.undoStack, state],
+          redoStack: [],
           currentLine: '',
         };
       }
+
       return {
         ...store,
         currentLine: state.content,
@@ -53,8 +56,6 @@ export const useUndoStore = create<UndoStore>((set) => ({
     }),
   setCurrentLine: (line) => set({ currentLine: line }),
 }));
-
-// ... 기존 UndoManager, useUndo 코드 ...
 
 export class UndoManager {
   constructor(private setMarkdownText: (text: string) => void) {}
@@ -67,7 +68,7 @@ export class UndoManager {
     const currentLine = lines[lines.length - 1];
     const previousLines = lines.slice(0, -1).join('\n');
 
-    // 첫 줄이거나 엔터키가 눌렸을 때
+    // 첫 줄이거나 엔터키가 눌렸을 때만 상태 저장
     if (!store.undoStack.length || content.endsWith('\n')) {
       store.pushState({ content, cursorPosition });
     } else {
@@ -96,7 +97,7 @@ export class UndoManager {
 
     // 이전 상태로 복원
     const newUndoStack = [...undoStack];
-    const currentState = newUndoStack.pop(); // 현재 상태 제거
+    const currentState = newUndoStack.pop();
     const previousState = newUndoStack[newUndoStack.length - 1];
 
     if (previousState && currentState) {
@@ -105,7 +106,6 @@ export class UndoManager {
       textArea.selectionEnd = previousState.cursorPosition;
       textArea.focus();
 
-      // 현재 상태를 redo 스택에 저장
       useUndoStore.setState({
         undoStack: newUndoStack,
         redoStack: [...redoStack, currentState],
@@ -125,7 +125,6 @@ export const useUndo = () => {
   return { undoManager };
 };
 
-// Ctrl+Z 단축키 처리
 export const handleUndoKeyPress = (
   e: KeyboardEvent,
   textArea: HTMLTextAreaElement | null,

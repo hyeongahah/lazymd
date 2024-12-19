@@ -6,6 +6,7 @@ import { UndoButton } from '@/features/markdownSyntax/09simpleEdit/31undo';
 import {
   RedoButton,
   RedoManager,
+  handleRedoKeyPress,
 } from '@/features/markdownSyntax/09simpleEdit/32redo';
 import {
   ClearFormattingButton,
@@ -48,6 +49,15 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
   const lastScrollRef = useRef<number>(0);
   const { markdownText, setMarkdownText } = useMarkdown();
   const redoManager = new RedoManager(setMarkdownText);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      handleRedoKeyPress(e, textareaRef.current, redoManager);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [redoManager, textareaRef]);
 
   useEffect(() => {
     const content = contentRef.current;
@@ -139,11 +149,7 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                 />
               ) : buttonNumber === 2 ? (
                 <RedoButton
-                  onClick={() => {
-                    if (textareaRef.current) {
-                      redoManager.redo(textareaRef.current);
-                    }
-                  }}
+                  onClick={() => redoManager.redo(textareaRef.current)}
                 />
               ) : buttonNumber === 3 ? (
                 <ClearAllButton onClick={handleClearAll} />
