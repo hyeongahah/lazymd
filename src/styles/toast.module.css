@@ -7,11 +7,20 @@
   z-index: 9999 !important;
   border: none !important;
   padding: 0 !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   margin: 0 !important;
+  transform: none !important;
+  width: auto !important;
+}
+
+.confirmToast .Toastify__toast {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: auto !important;
 }
 
 .confirmToast .Toastify__progress-bar {
-  border-radius: 0 0 2px 8px !important;
-  height: 4px !important;
+  display: none !important;
 }

@@ -6,6 +6,10 @@
   width: 320px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(10px);
+  position: absolute;
+  z-index: 9999;
+  left: 0;
+  top: 0;
 }
 
 .titleStyle {
@@ -63,6 +67,10 @@
   width: 280px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   backdrop-filter: blur(10px);
+  position: absolute;
+  z-index: 9999;
+  left: 0;
+  top: 0;
 }
 
 .successTitleStyle {

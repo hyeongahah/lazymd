@@ -12,11 +12,14 @@ interface ClearAllButtonProps {
 export function ClearAllButton({ onClick }: ClearAllButtonProps) {
   const handleClick = () => {
     const button = document.querySelector(`[title="Clear All"]`);
-    if (!button) return;
+    const lineNumbers = document.querySelector(
+      '.styles-module__Z8lnqa__lineNumbers'
+    );
+    if (!button || !lineNumbers) return;
 
-    const rect = button.getBoundingClientRect();
-    const positionY = rect.bottom + 5;
-    const positionX = rect.left - 400;
+    const rect = lineNumbers.getBoundingClientRect();
+    const positionX = rect.left;
+    const positionY = rect.top;
 
     document.documentElement.style.setProperty(
       '--toast-left',
