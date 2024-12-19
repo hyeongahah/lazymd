@@ -1,5 +1,5 @@
-import { ReactNode, useRef } from 'react';
-import styles from '@/pages/page.module.css';
+import { ReactNode, useRef, useEffect } from 'react';
+import styles from './styles.module.css';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMarkdown } from '@/hooks/useMarkdown';
 import { UndoButton } from '@/features/markdownSyntax/09simpleEdit/31undo';
@@ -32,25 +32,7 @@ export function ToolbarButton({
   title,
 }: ToolbarButtonProps) {
   return (
-    <button
-      className={styles.toolbarButton}
-      onClick={onClick}
-      title={title}
-      style={{
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '30px',
-        height: '30px',
-        padding: '4px',
-        margin: '0 2px',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        isolation: 'isolate',
-        zIndex: 1,
-      }}
-    >
+    <button className={styles.toolbarButton} onClick={onClick} title={title}>
       {children}
     </button>
   );
@@ -63,21 +45,64 @@ interface ToolbarProps {
 
 export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const lastScrollRef = useRef<number>(0);
   const { markdownText, setMarkdownText } = useMarkdown();
   const redoManager = new RedoManager(setMarkdownText);
 
-  const handleScroll = (direction: 'left' | 'right') => {
+  useEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
+
+    const handleScroll = () => {
+      lastScrollRef.current = content.scrollLeft;
+    };
+
+    content.addEventListener('scroll', handleScroll);
+    return () => content.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea || !contentRef.current) return;
+
+    const handleFocus = () => {
+      if (contentRef.current) {
+        contentRef.current.scrollLeft = lastScrollRef.current;
+      }
+    };
+
+    textarea.addEventListener('focus', handleFocus);
+    return () => textarea.removeEventListener('focus', handleFocus);
+  }, [textareaRef]);
+
+  const handleScroll = (e: React.MouseEvent, direction: 'left' | 'right') => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!contentRef.current) return;
 
-    const scrollAmount = 200;
-    const currentScroll = contentRef.current.scrollLeft;
+    const container = contentRef.current;
+    const buttonWidth = 34;
+    const gapWidth = 8;
+    const unitWidth = buttonWidth + gapWidth;
 
-    contentRef.current.scrollTo({
-      left:
-        direction === 'left'
-          ? currentScroll - scrollAmount
-          : currentScroll + scrollAmount,
-      behavior: 'smooth',
+    const currentScroll = container.scrollLeft;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+
+    let targetScroll;
+    if (direction === 'left') {
+      targetScroll = Math.max(0, currentScroll - unitWidth * 6);
+    } else {
+      targetScroll = Math.min(maxScroll, currentScroll + unitWidth * 6);
+    }
+
+    lastScrollRef.current = targetScroll;
+
+    requestAnimationFrame(() => {
+      container.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth',
+      });
     });
   };
 
@@ -93,11 +118,16 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
     <div className={styles.toolbar}>
       <button
         className={`${styles.scrollButton} ${styles.scrollLeft}`}
-        onClick={() => handleScroll('left')}
+        onClick={(e) => handleScroll(e, 'left')}
+        onMouseDown={(e) => e.preventDefault()}
       >
         <ChevronLeft size={18} />
       </button>
-      <div className={styles.toolbarContent} ref={contentRef}>
+      <div
+        className={styles.toolbarContent}
+        ref={contentRef}
+        onClick={(e) => e.stopPropagation()}
+      >
         {Array.from({ length: 20 }, (_, i) => {
           const buttonNumber = i + 1;
           return (
@@ -156,7 +186,8 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
       </div>
       <button
         className={`${styles.scrollButton} ${styles.scrollRight}`}
-        onClick={() => handleScroll('right')}
+        onClick={(e) => handleScroll(e, 'right')}
+        onMouseDown={(e) => e.preventDefault()}
       >
         <ChevronRight size={18} />
       </button>
