@@ -21,6 +21,11 @@ import { UnderlineButton } from '@/features/markdownSyntax/09simpleEdit/35underl
 import { HighlightButton } from '@/features/markdownSyntax/06miscFeatures/21highlight';
 import { ClearAllButton } from '@/features/markdownSyntax/09simpleEdit/50clearAll';
 import { BlockquoteButton } from '@/features/markdownSyntax/03blockElements/17Blockquote';
+import {
+  UnorderedListButton,
+  handleUnorderedList,
+} from '@/features/markdownSyntax/01basicSyntax/07UnorderedList';
+import { OrderedListButton } from '@/features/markdownSyntax/01basicSyntax/08OrderedList';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -187,6 +192,164 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                   onClick={() => {}}
                   textareaRef={textareaRef}
                   setMarkdownText={setMarkdownText}
+                />
+              ) : buttonNumber === 12 ? (
+                <UnorderedListButton
+                  onClick={() => {
+                    if (textareaRef.current) {
+                      const start = textareaRef.current.selectionStart;
+                      const end = textareaRef.current.selectionEnd;
+                      const text = textareaRef.current.value;
+
+                      // 선택된 텍스트가 있는 경우
+                      if (start !== end) {
+                        const selectedText = text.substring(start, end);
+                        const lines = selectedText.split('\n');
+                        const isAllList = lines.every((line) =>
+                          line.trimStart().startsWith('- ')
+                        );
+
+                        const newLines = lines
+                          .map((line) => {
+                            const trimmed = line.trimStart();
+                            return isAllList
+                              ? line.replace(/^\s*- /, '')
+                              : `- ${line}`;
+                          })
+                          .join('\n');
+
+                        const newText =
+                          text.substring(0, start) +
+                          newLines +
+                          text.substring(end);
+                        setMarkdownText(newText);
+
+                        // 커서 위치 조정
+                        setTimeout(() => {
+                          if (textareaRef.current) {
+                            textareaRef.current.selectionStart = start;
+                            textareaRef.current.selectionEnd =
+                              start + newLines.length;
+                            textareaRef.current.focus();
+                          }
+                        }, 0);
+                      } else {
+                        // 현재 줄에 리스트 마커 추가/제거
+                        const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+                        const lineEnd = text.indexOf('\n', start);
+                        const currentLine = text.substring(
+                          lineStart,
+                          lineEnd === -1 ? text.length : lineEnd
+                        );
+
+                        const trimmedLine = currentLine.trimStart();
+                        const isAlreadyList = trimmedLine.startsWith('- ');
+
+                        const newLine = isAlreadyList
+                          ? currentLine.replace(/^\s*- /, '')
+                          : `- ${currentLine}`;
+
+                        const newText =
+                          text.substring(0, lineStart) +
+                          newLine +
+                          text.substring(
+                            lineEnd === -1 ? text.length : lineEnd
+                          );
+
+                        setMarkdownText(newText);
+
+                        // 커�� 위치 조정
+                        setTimeout(() => {
+                          if (textareaRef.current) {
+                            textareaRef.current.selectionStart =
+                              lineStart + newLine.length;
+                            textareaRef.current.selectionEnd =
+                              lineStart + newLine.length;
+                            textareaRef.current.focus();
+                          }
+                        }, 0);
+                      }
+                    }
+                  }}
+                />
+              ) : buttonNumber === 13 ? (
+                <OrderedListButton
+                  onClick={() => {
+                    if (textareaRef.current) {
+                      const start = textareaRef.current.selectionStart;
+                      const end = textareaRef.current.selectionEnd;
+                      const text = textareaRef.current.value;
+
+                      // 선택된 텍스트가 있는 경우
+                      if (start !== end) {
+                        const selectedText = text.substring(start, end);
+                        const lines = selectedText.split('\n');
+                        const isAllList = lines.every((line) =>
+                          line.trimStart().match(/^\d+\.\s/)
+                        );
+
+                        const newLines = lines
+                          .map((line, index) => {
+                            const trimmed = line.trimStart();
+                            return isAllList
+                              ? line.replace(/^\s*\d+\.\s/, '')
+                              : `${index + 1}. ${line}`;
+                          })
+                          .join('\n');
+
+                        const newText =
+                          text.substring(0, start) +
+                          newLines +
+                          text.substring(end);
+                        setMarkdownText(newText);
+
+                        // 커서 위치 조정
+                        setTimeout(() => {
+                          if (textareaRef.current) {
+                            textareaRef.current.selectionStart = start;
+                            textareaRef.current.selectionEnd =
+                              start + newLines.length;
+                            textareaRef.current.focus();
+                          }
+                        }, 0);
+                      } else {
+                        // 현재 줄에 리스트 마커 추가/제거
+                        const lineStart = text.lastIndexOf('\n', start - 1) + 1;
+                        const lineEnd = text.indexOf('\n', start);
+                        const currentLine = text.substring(
+                          lineStart,
+                          lineEnd === -1 ? text.length : lineEnd
+                        );
+
+                        const trimmedLine = currentLine.trimStart();
+                        const isAlreadyList = trimmedLine.match(/^\d+\.\s/);
+
+                        const newLine = isAlreadyList
+                          ? currentLine.replace(/^\s*\d+\.\s/, '')
+                          : `1. ${currentLine}`;
+
+                        const newText =
+                          text.substring(0, lineStart) +
+                          newLine +
+                          text.substring(
+                            lineEnd === -1 ? text.length : lineEnd
+                          );
+
+                        setMarkdownText(newText);
+
+                        // 커서 위치 조정
+                        setTimeout(() => {
+                          if (textareaRef.current) {
+                            textareaRef.current.selectionStart =
+                              lineStart + newLine.length;
+                            textareaRef.current.selectionEnd =
+                              lineStart + newLine.length;
+                            textareaRef.current.focus();
+                          }
+                        }, 0);
+                      }
+                    }
+                  }}
                 />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
