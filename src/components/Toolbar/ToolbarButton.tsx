@@ -20,6 +20,7 @@ import { StrikethroughButton } from '@/features/markdownSyntax/01basicSyntax/12S
 import { UnderlineButton } from '@/features/markdownSyntax/09simpleEdit/35underline';
 import { HighlightButton } from '@/features/markdownSyntax/06miscFeatures/21highlight';
 import { ClearAllButton } from '@/features/markdownSyntax/09simpleEdit/50clearAll';
+import { BlockquoteButton } from '@/features/markdownSyntax/03blockElements/17Blockquote';
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -181,6 +182,12 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                 <UnderlineButton />
               ) : buttonNumber === 10 ? (
                 <HighlightButton />
+              ) : buttonNumber === 11 ? (
+                <BlockquoteButton
+                  onClick={() => {}}
+                  textareaRef={textareaRef}
+                  setMarkdownText={setMarkdownText}
+                />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}

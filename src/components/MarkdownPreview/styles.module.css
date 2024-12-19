@@ -133,7 +133,7 @@
   line-height: 1.5rem;
 }
 
-/* 중첩된 리스트 스타일 */
+/* ��첩된 리스트 스타일 */
 .preview .nested-list {
   margin: 0;
   padding-left: 1.5em;
@@ -252,7 +252,6 @@
   border-left: 4px solid var(--border-color);
   background-color: var(--menu-background);
   color: var(--text-color);
-  font-style: italic;
 }
 
 .preview blockquote blockquote {
