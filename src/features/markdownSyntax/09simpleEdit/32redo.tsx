@@ -18,11 +18,9 @@ export class RedoManager {
     if (!textArea) return;
 
     const store = useUndoStore.getState();
-    const { undoStack, redoStack, currentLine } = store;
+    const { undoStack, redoStack } = store;
 
     if (redoStack.length === 0) return;
-
-    if (currentLine) return;
 
     const newRedoStack = [...redoStack];
     const nextState = newRedoStack.pop();
@@ -43,7 +41,7 @@ export class RedoManager {
 
   public canRedo(): boolean {
     const store = useUndoStore.getState();
-    return store.redoStack.length > 0 && !store.currentLine;
+    return store.redoStack.length > 0;
   }
 }
 

@@ -11,8 +11,8 @@ const clearFormatting = (
   // 선택된 텍스트가 없으면 전체 텍스트를 대상으로
   if (selectionStart === selectionEnd) {
     return text
-      .replace(/^(#{1,6}\s+|[-*+]\s+|\d+\.\s+|\s{2,})/gm, '') // 줄 시작 부분의 서식 제거
-      .replace(/[*_~`\[\](){}=]/g, '') // 인라인 마크다운 서식 제거
+      .replace(/^(#{1,6}\s+|[-*+]\s+|\d+\.\s+|>\s+|\s{2,})/gm, '') // 줄 시작 부분의 서식 제거
+      .replace(/[*_~`\[\](){}]/g, '') // 기본 인라인 마크다운 서식 제거
       .replace(/<\/?[^>]+(>|$)/g, ''); // HTML 태그 제거
   }
 
@@ -20,8 +20,8 @@ const clearFormatting = (
   const beforeSelection = text.slice(0, selectionStart);
   const selectedText = text
     .slice(selectionStart, selectionEnd)
-    .replace(/^(#{1,6}\s+|[-*+]\s+|\d+\.\s+|\s{2,})/gm, '') // 줄 시작 부분의 서식 제거
-    .replace(/[*_~`\[\](){}=]/g, '') // 인라인 마크다운 서식 제거
+    .replace(/^(#{1,6}\s+|[-*+]\s+|\d+\.\s+|>\s+|\s{2,})/gm, '') // 줄 시작 부분의 서식 제거
+    .replace(/[*_~`\[\](){}]/g, '') // 기본 인라인 마크다운 서식 제거
     .replace(/<\/?[^>]+(>|$)/g, ''); // HTML 태그 제거
   const afterSelection = text.slice(selectionEnd);
 

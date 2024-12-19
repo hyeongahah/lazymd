@@ -22,9 +22,7 @@ export const parseInlineStyles = (text: string): string => {
   text = text.replace(/`(.*?)`/g, '<code>$1</code>');
 
   // 하이라이트 (== 문법)
-  while (text.includes('==')) {
-    text = text.replace(/==([^=]*?)==/g, '<mark>$1</mark>');
-  }
+  text = text.replace(/==(.*?)==/g, '<mark>$1</mark>');
 
   // 인라인 링크 ([text](url) 형식)
   text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
@@ -40,7 +38,7 @@ export const parseInlineStyles = (text: string): string => {
 export const parseMarkdown = async (text: string): Promise<string> => {
   if (!text) return '';
 
-  // 텍스트를 빈 줄로 구분된 단락들로 나눔 (두 번 이상의 줄바���으로 구분)
+  // 텍스트를 빈 줄로 구분된 단락들로 나눔 (두 번 이상의 줄바꿈으로 구분)
   const paragraphs = text.split(/\n\n+/);
   let html = '';
 
@@ -113,7 +111,7 @@ export const parseMarkdown = async (text: string): Promise<string> => {
         continue;
       }
 
-      // 순서 없는 리스트 처리: -, *, + 로 시작하는 라인
+      // 순서 없는 리스트 처리: -, *, + 로 시작하�� 라인
       const unorderedListMatch = line.match(/^(\s*)[-*+]\s+(?!\[[ x]\])(.*)$/);
       if (unorderedListMatch) {
         hasSpecialBlock = true;

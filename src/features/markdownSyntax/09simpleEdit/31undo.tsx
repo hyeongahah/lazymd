@@ -88,10 +88,17 @@ export class UndoManager {
 
     // 현재 작성 중인 줄이 있으면 그 줄부터 제거
     if (currentLine) {
+      const currentState = {
+        content: textArea.value,
+        cursorPosition: textArea.selectionStart,
+      };
       const lines = textArea.value.split('\n');
       const content = lines.slice(0, -1).join('\n') + '\n';
       this.setMarkdownText(content);
-      store.setCurrentLine('');
+      useUndoStore.setState({
+        currentLine: '',
+        redoStack: [...redoStack, currentState],
+      });
       return;
     }
 
