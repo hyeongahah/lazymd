@@ -146,7 +146,7 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
         ref={contentRef}
         onClick={(e) => e.stopPropagation()}
       >
-        {Array.from({ length: 20 }, (_, i) => {
+        {Array.from({ length: 14 }, (_, i) => {
           const buttonNumber = i + 1;
           return (
             <div key={buttonNumber} className={styles.toolbarItem}>
@@ -355,8 +355,6 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
                 />
               ) : buttonNumber === 14 ? (
                 <InlineLinkButton />
-              ) : buttonNumber === 15 ? (
-                <CodeBlockButton />
               ) : (
                 <ToolbarButton onClick={() => {}} title={undefined}>
                   {buttonNumber}
