@@ -12,9 +12,7 @@ interface ClearAllButtonProps {
 export function ClearAllButton({ onClick }: ClearAllButtonProps) {
   const handleClick = () => {
     const button = document.querySelector(`[title="Clear All"]`);
-    const lineNumbers = document.querySelector(
-      '.styles-module__Z8lnqa__lineNumbers'
-    );
+    const lineNumbers = document.querySelector('[class*="lineNumbers"]');
     if (!button || !lineNumbers) return;
 
     const rect = lineNumbers.getBoundingClientRect();
@@ -36,7 +34,7 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
           <button
             onClick={() => {
               onClick();
-              toast.dismiss();
+              toast.dismiss('confirm-clear-all');
               const successToast = (
                 <div className={styles.successToastStyle}>
                   <div className={styles.successTitleStyle}>
@@ -51,6 +49,7 @@ export function ClearAllButton({ onClick }: ClearAllButtonProps) {
                 closeOnClick: false,
                 draggable: false,
                 closeButton: false,
+                toastId: 'success-clear-all',
               });
             }}
             className={styles.deleteButton}

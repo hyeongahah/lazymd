@@ -127,6 +127,7 @@ export function Toolbar({ undoManager, textareaRef }: ToolbarProps) {
   const handleClearAll = () => {
     if (textareaRef.current) {
       setMarkdownText('');
+      textareaRef.current.value = '';
       textareaRef.current.setSelectionRange(0, 0);
       textareaRef.current.focus();
     }
